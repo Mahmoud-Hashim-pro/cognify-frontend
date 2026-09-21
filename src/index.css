@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Alexandria:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* Make `dark:` variants follow the app's theme toggle (.dark class) instead of
+   the OS preference, so the manual Light/Dark toggle is consistent everywhere. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Cognify Redesign v2 (final): dark-first, violet primary, Inter, cool neutrals. */
+  --font-sans: "Inter", "Alexandria", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", "Alexandria", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-primary: #6D4AFF;
+  --color-primary-press: #5B3DF5;
+  --color-primary-soft: #EDE9FF;
+  --color-secondary: #5C5C68;
+  --color-success: #15A06A;
+  --color-warning: #6D4AFF;
+  --color-accent: #6D4AFF;
+  --color-accent-soft: #EDE9FF;
+  --color-danger: #E5484D;
+  --color-danger-soft: #FCEAEA;
+  --color-bg-main: #F3F3F6;
+  --color-bg-card: #FFFFFF;
+  --color-surface-2: #F7F7FA;
+  --color-surface-3: #ECECF0;
+  --color-text-main: #18181F;
+  --color-text-muted: #5C5C68;
+  --color-faint: #9090A0;
+  --color-border: #E6E6EB;
+  --color-border-2: #D8D8DF;
+}
+
+@layer base {
+  html, body {
+    overflow-x: clip;
+    max-width: 100vw;
+  }
+  body {
+    @apply bg-bg-main text-text-main font-sans;
+  }
+}
+
+/* Obsidian Glassmorphic Design System Tokens */
+.obsidian-card {
+  background-color: rgba(18, 21, 36, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 1.5rem;
+}
+
+.obsidian-card-interactive {
+  background-color: rgba(18, 21, 36, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 1.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.obsidian-card-interactive:hover {
+  border-color: rgba(100, 116, 139, 0.8);
+  transform: translateY(-1px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+/* Hide scrollbar completely while maintaining scroll functionality */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* --- Dark Theme Overrides (Cognify Redesign v2: near-black + violet) --- */
+.dark body {
+  background-color: #09090B !important;
+}
+
+/* Backgrounds */
+.dark .bg-slate-50,
+.dark .bg-bg-main {
+  background-color: #09090B !important;
+  color: #ECECEF !important;
+}
+
+.dark .bg-white,
+.dark .bg-bg-card {
+  background-color: #111114 !important;
+  border-color: #232328 !important;
+  color: #ECECEF !important;
+}
+
+.dark .bg-slate-100,
+.dark .bg-\[\#f1f5f9\] {
+  background-color: #17171C !important;
+  border-color: #2A2A31 !important;
+  color: #ECECEF !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #1C1C22 !important;
+}
+
+/* Texts */
+.dark .text-slate-900,
+.dark .text-black,
+.dark .text-text-main {
+  color: #ECECEF !important;
+}
+
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #D4D4DA !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-text-muted {
+  color: #9B9BA6 !important;
+}
+
+/* Borders */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-border {
+  border-color: #232328 !important;
+}
+
+/* Design tokens — v2 dark values. */
+.dark .bg-surface-2 { background-color: #17171C !important; }
+.dark .bg-surface-3 { background-color: #1C1C22 !important; }
+.dark .text-faint { color: #65656F !important; }
+.dark .border-border-2 { border-color: #2E2E35 !important; }
+.dark .bg-primary { background-color: #7C5CFF !important; }
+.dark .bg-primary-soft { background-color: #211A36 !important; }
+.dark .bg-accent-soft { background-color: #211A36 !important; }
+.dark .bg-danger-soft { background-color: #2C1517 !important; }
+.dark .text-primary { color: #BBAAFF !important; }
+.dark .text-accent { color: #BBAAFF !important; }
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 14px 34px -16px rgba(0,0,0,0.75) !important;
+}
+
+/* Dark CTA tiles → keep them dark; primary-on-dark buttons go violet. */
+.dark .bg-slate-900,
+.dark .bg-slate-950 {
+  background-color: #17171C !important;
+}
+.dark .bg-slate-900.text-white {
+  background-color: #7C5CFF !important;
+}
+
+
+
+/* Splash screen animations */
+@keyframes splashPop { from { opacity:0; transform: scale(.7); } to { opacity:1; transform:none; } }
+.splash-pop { animation: splashPop .5s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes splashDot { 0%,100%{ opacity:.25; } 50%{ opacity:1; } }
+.splash-dot { animation: splashDot 1.2s ease-in-out infinite; }
+
+/* ── Single-switch auto-scan highlight ──────────────────────────────────────
+   Deliberately loud: the student may be reading this from across the room, or
+   with low vision on top of the motor impairment. The row highlight is calmer
+   than the item one so the two scan stages are never confused. */
+@keyframes cognifyScanPulse {
+  0%, 100% { box-shadow: 0 0 0 4px #fbbf24, 0 0 22px 6px rgba(251,191,36,.75); }
+  50%      { box-shadow: 0 0 0 6px #fde68a, 0 0 34px 10px rgba(251,191,36,.95); }
+}
+.cognify-scan-hl {
+  outline: 4px solid #fbbf24 !important;
+  outline-offset: 2px;
+  border-radius: 14px;
+  animation: cognifyScanPulse 1s ease-in-out infinite;
+  position: relative;
+  z-index: 40;
+}
+.cognify-scan-hl-row {
+  outline: 3px dashed #38bdf8 !important;
+  outline-offset: 2px;
+  border-radius: 14px;
+  background-color: rgba(56, 189, 248, .14) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cognify-scan-hl { animation: none; box-shadow: 0 0 0 5px #fbbf24; }
+}
+/* Keep the scanned item clear of the fixed switch bar at the bottom. */
+.cognify-scan-hl, .cognify-scan-hl-row { scroll-margin-bottom: 130px; scroll-margin-top: 90px; }

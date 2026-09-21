@@ -1,0 +1,195 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Goal } from '../../types';
+import { isGoalOverdue, deriveGoalMeta, updateGoal, parseGoalLocalDate } from '../../lib/goals';
+import { isArabicLocale } from '../../lib/translations';
+import MilestoneList from './MilestoneList';
+import {
+  ChevronDown,
+  ChevronUp,
+  Edit3,
+  Trash2,
+  Calendar,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Circle,
+} from 'lucide-react';
+
+interface GoalCardProps {
+  goal: Goal;
+  uid: string;
+  onEdit: (goal: Goal) => void;
+  onDelete: (goalId: string) => void;
+  language?: string;
+}
+
+const PRIORITY_STYLES = {
+  low:    { label: 'Low',    color: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30' },
+  medium: { label: 'Medium', color: 'text-amber-400 bg-amber-500/15 border-amber-500/30' },
+  high:   { label: 'High',   color: 'text-rose-400 bg-rose-500/15 border-rose-500/30' },
+};
+
+const STATUS_ICON = {
+  'not-started': <Circle className="w-4 h-4 text-slate-500" />,
+  'in-progress': <Clock className="w-4 h-4 text-cyan-400" />,
+  'completed':   <CheckCircle2 className="w-4 h-4 text-emerald-400" />,
+};
+
+export default function GoalCard({ goal, uid, onEdit, onDelete, language }: GoalCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [localGoal, setLocalGoal] = useState<Goal>(goal);
+  const overdue = isGoalOverdue(localGoal);
+  const isArabic = isArabicLocale(language);
+
+  // Sync local state when the PARENT passes a changed goal
+  useEffect(() => {
+    setLocalGoal(goal);
+  }, [goal.id, goal.progress, goal.status, goal.deadline, goal.milestones, goal.title]);
+
+  const handleMilestoneChange = async (milestones: typeof goal.milestones) => {
+    const { progress, status } = deriveGoalMeta(milestones, localGoal.deadline);
+    const updated: Goal = { ...localGoal, milestones, progress, status };
+    setLocalGoal(updated); // optimistic local update
+    await updateGoal(uid, localGoal.id, { milestones, progress, status });
+  };
+
+  const pri = PRIORITY_STYLES[localGoal.priority] ?? PRIORITY_STYLES.medium;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className={`bg-[#121524]/90 border rounded-3xl shadow-xl overflow-hidden backdrop-blur-xl transition-all hover:border-slate-700/80 ${
+        overdue ? 'border-rose-500/40' : 'border-slate-800/80'
+      }`}
+    >
+      {/* Card header */}
+      <div className="p-6">
+        <div className="flex items-start justify-between gap-4">
+          {/* Left: status icon + title */}
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div className="mt-0.5 flex-shrink-0">{STATUS_ICON[localGoal.status]}</div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h3 className="text-sm font-black text-white truncate">{localGoal.title}</h3>
+                {overdue && (
+                  <span className="flex items-center gap-1 text-[10px] font-black text-rose-400 bg-rose-500/15 border border-rose-500/30 px-2.5 py-0.5 rounded-full">
+                    <AlertTriangle className="w-3 h-3" />
+                    {isArabic ? 'متأخر' : 'Overdue'}
+                  </span>
+                )}
+              </div>
+              {localGoal.description && (
+                <p className="text-xs text-slate-400 font-medium line-clamp-1">{localGoal.description}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <button
+              onClick={() => onEdit(localGoal)}
+              className="p-2 rounded-xl hover:bg-amber-500/15 hover:text-amber-400 text-slate-500 transition-colors"
+              title={isArabic ? 'تعديل' : 'Edit'}
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDelete(localGoal.id)}
+              className="p-2 rounded-xl hover:bg-rose-500/15 hover:text-rose-400 text-slate-500 transition-colors"
+              title={isArabic ? 'حذف' : 'Delete'}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setExpanded((p) => !p)}
+              className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 transition-colors"
+            >
+              {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mt-4 space-y-1.5">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <span>{isArabic ? 'التقدم' : 'Progress'}</span>
+            <span className="font-mono text-cyan-400 font-bold">{localGoal.progress}%</span>
+          </div>
+          <div className="w-full h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
+            <motion.div
+              className={`h-full rounded-full ${
+                localGoal.status === 'completed'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                  : overdue
+                  ? 'bg-gradient-to-r from-rose-500 to-red-600'
+                  : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+              }`}
+              initial={{ width: 0 }}
+              animate={{ width: `${localGoal.progress}%` }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Meta row */}
+        <div className="flex flex-wrap items-center gap-2 mt-4">
+          <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-widest ${pri.color}`}>
+            {isArabic
+              ? localGoal.priority === 'low' ? 'منخفض' : localGoal.priority === 'medium' ? 'متوسط' : 'عالي'
+              : pri.label}
+          </span>
+
+          {localGoal.milestones.length > 0 && (
+            <span className="text-[10px] font-bold text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full">
+              {localGoal.milestones.filter((m) => m.completed).length} / {localGoal.milestones.length}{' '}
+              {isArabic ? 'خطوات' : 'milestones'}
+            </span>
+          )}
+
+          <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-400 ms-auto">
+            <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+            {parseGoalLocalDate(localGoal.deadline).toLocaleDateString(
+              isArabic ? 'ar-EG' : 'en-GB',
+              { day: 'numeric', month: 'short', year: 'numeric' }
+            )}
+          </span>
+        </div>
+      </div>
+
+      {/* Expandable milestones */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="milestones"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 pt-0 border-t border-slate-800/80 bg-[#0A0C14]/40">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-4 mb-3">
+                {isArabic ? 'الخطوات' : 'Milestones'}
+              </p>
+              {localGoal.milestones.length === 0 ? (
+                <p className="text-xs text-slate-500 italic font-medium">
+                  {isArabic ? 'لا توجد خطوات بعد' : 'No milestones added yet'}
+                </p>
+              ) : (
+                <MilestoneList
+                  milestones={localGoal.milestones}
+                  onChange={handleMilestoneChange}
+                  language={language}
+                />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}

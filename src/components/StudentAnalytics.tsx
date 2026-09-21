@@ -1,0 +1,306 @@
+import { localize, isArabicLocale } from '../lib/translations';
+import { useEffect, useMemo, useState } from 'react';
+import { UserProfile, Course, AttendanceSubject, Goal, PlannerTask, CalendarEvent } from '../types';
+import { Menu, LayoutDashboard, GraduationCap, CalendarCheck, CalendarDays, Target, AlertTriangle, Clock, ArrowLeft } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import { subscribeToCourses, calculateCGPA, calculateGPA, semestersOf } from '../lib/gpa';
+import { subscribeToAttendance, attendancePct, isDeprived } from '../lib/attendance';
+import { subscribeToEvents, ymd } from '../lib/calendar';
+import { subscribeToGoals, parseGoalLocalDate } from '../lib/goals';
+import { subscribeToTasks } from '../lib/planner';
+import AcademicCommandCenter from './AcademicCommandCenter';
+import LearningIntelligenceCard from './LearningIntelligenceCard';
+import { MetricsInput } from '../lib/studentMetrics';
+
+interface StudentAnalyticsProps {
+  profile: UserProfile;
+  onMenuClick?: () => void;
+  onNavigateBack?: () => void;
+}
+
+export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack }: StudentAnalyticsProps) {
+  const isAr = isArabicLocale(profile.language);
+  const t = (en: string, ar: string) => localize(profile.language, en, ar);
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [subjects, setSubjects] = useState<AttendanceSubject[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [tasks, setTasks] = useState<PlannerTask[]>([]);
+
+  useEffect(() => {
+    if (!profile.uid) return;
+    const u1 = subscribeToCourses(profile.uid, setCourses);
+    const u2 = subscribeToAttendance(profile.uid, setSubjects);
+    const u3 = subscribeToGoals(profile.uid, setGoals);
+    const u4 = subscribeToTasks(profile.uid, setTasks);
+    const u5 = subscribeToEvents(profile.uid, setEvents);
+    return () => { u1(); u2(); u3(); u4(); u5(); };
+  }, [profile.uid]);
+
+  const upcomingEvents = useMemo(() => {
+    const today = ymd(new Date());
+    return events
+      .filter((e) => e.date >= today)
+      .sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')))
+      .slice(0, 6);
+  }, [events]);
+
+  // Build the deterministic-metrics input from live academic data + the user's
+  // question history. Powers the Executive Command Center (S1) + Explainable AI.
+  const metricsInput = useMemo<MetricsInput>(() => ({
+    courses, subjects, goals, tasks,
+    questionHistory: profile.questionHistory || [],
+  }), [courses, subjects, goals, tasks, profile.questionHistory]);
+
+  const cgpa = useMemo(() => calculateCGPA(courses), [courses]);
+  const gpaTrend = useMemo(
+    () => semestersOf(courses).map((s) => ({
+      name: s,
+      gpa: calculateGPA(courses.filter((c) => (c.semester || 'Unspecified') === s)),
+    })).reverse(),
+    [courses],
+  );
+
+  const avgAttendance = useMemo(() => {
+    if (!subjects.length) return 0;
+    return Math.round(subjects.reduce((sum, s) => sum + attendancePct(s), 0) / subjects.length);
+  }, [subjects]);
+  const atRisk = useMemo(() => subjects.filter(isDeprived), [subjects]);
+
+  const activeGoals = useMemo(() => goals.filter((g) => g.status !== 'completed'), [goals]);
+  const completedGoals = useMemo(() => goals.filter((g) => g.status === 'completed'), [goals]);
+  const upcoming = useMemo(
+    () => activeGoals
+      .filter((g) => g.deadline)
+      .sort((a, b) => +parseGoalLocalDate(a.deadline) - +parseGoalLocalDate(b.deadline))
+      .slice(0, 5),
+    [activeGoals],
+  );
+
+  const daysUntil = (iso: string) => Math.ceil((+parseGoalLocalDate(iso) - Date.now()) / 86400000);
+
+  const Stat = ({ icon, label, value, tone }: { icon: any; label: string; value: string; tone: string }) => (
+    <div className="bg-[#121524]/90 rounded-3xl p-5 border border-slate-800/80 shadow-xl flex items-center gap-4 backdrop-blur-xl hover:border-slate-700/80 transition-all">
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${tone}`}>{icon}</div>
+      <div>
+        <div className="text-2xl font-black text-white font-mono tracking-tight">{value}</div>
+        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-0.5">{label}</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div dir={isAr ? 'rtl' : 'ltr'} className="flex-1 h-screen overflow-y-auto bg-[#0A0C14] text-slate-100 relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden font-sans flex flex-col custom-scrollbar p-6 md:p-10 gap-6">
+      {/* Ambient Lighting Orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
+      </div>
+
+      <header className="flex items-start gap-4">
+        {onNavigateBack && (
+          <button
+            onClick={onNavigateBack}
+            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md"
+            title={t('Back to Assistant', 'العودة للمساعد')}
+          >
+            <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+            <span className="text-xs font-bold hidden sm:inline">{t('Back', 'رجوع')}</span>
+          </button>
+        )}
+        {onMenuClick && (
+          <button
+            onClick={onMenuClick}
+            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all shrink-0 shadow-md"
+            aria-label={t('Toggle menu', 'القائمة')}
+            title={t('Open Menu', 'فتح القائمة')}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+        <div>
+          <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight uppercase flex items-center gap-3">
+            <span className="p-2 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <LayoutDashboard className="w-7 h-7" />
+            </span>
+            {t('Student Analytics', 'تحليلات الطالب')}
+          </h1>
+          <p className="text-xs md:text-sm text-slate-400 font-medium italic mt-1.5">
+            {t('Your academic life at a glance.', 'حياتك الأكاديمية في نظرة واحدة.')}
+          </p>
+        </div>
+      </header>
+
+      <div className="max-w-6xl w-full space-y-6 pb-12">
+        {/* S1 · Executive Command Center — the headline "what to do next" card */}
+        <AcademicCommandCenter input={metricsInput} isAr={isAr} language={profile.language} />
+
+        {/* Explainable Cognitive & Learning Intelligence Card (Evidence-Based Mastery) */}
+        <LearningIntelligenceCard profile={profile} />
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stat icon={<GraduationCap className="w-6 h-6 text-cyan-400" />} tone="bg-cyan-500/15 border border-cyan-500/20" label={t('Cumulative GPA', 'المعدل التراكمي')} value={cgpa.toFixed(2)} />
+          {subjects.length ? (
+            <Stat icon={<CalendarCheck className="w-6 h-6 text-emerald-400" />} tone="bg-emerald-500/15 border border-emerald-500/20" label={t('Avg Attendance', 'متوسط الحضور')} value={`${avgAttendance}%`} />
+          ) : (
+            <Stat icon={<CalendarDays className="w-6 h-6 text-cyan-400" />} tone="bg-cyan-500/15 border border-cyan-500/20" label={t('Upcoming Events', 'أحداث قادمة')} value={String(upcomingEvents.length)} />
+          )}
+          <Stat icon={<Target className="w-6 h-6 text-indigo-400" />} tone="bg-indigo-500/15 border border-indigo-500/20" label={t('Active Goals', 'أهداف نشطة')} value={String(activeGoals.length)} />
+          <Stat icon={<Target className="w-6 h-6 text-slate-400" />} tone="bg-slate-800 border border-slate-700" label={t('Completed Goals', 'أهداف مكتملة')} value={String(completedGoals.length)} />
+        </div>
+
+        {/* At-risk attendance alert */}
+        {atRisk.length > 0 && (
+          <div className="bg-rose-500/15 border border-rose-500/30 rounded-2xl p-4 flex items-center gap-3 text-rose-300 shadow-lg backdrop-blur-md">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-rose-400" />
+            <span className="text-sm font-bold">
+              {t('At risk of deprivation in:', 'معرّض للحرمان في:')} {atRisk.map((s) => s.name).join('، ')}
+            </span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* GPA trend */}
+          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400" />
+              {t('GPA by Semester', 'المعدل لكل ترم')}
+            </h2>
+            {gpaTrend.length ? (
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height={224} minWidth={0}>
+                  <BarChart data={gpaTrend} margin={{ top: 6, right: 0, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8' }} stroke="#334155" />
+                    <YAxis domain={[0, 4]} tick={{ fontSize: 10, fill: '#94a3b8' }} stroke="#334155" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#0F172A',
+                        borderColor: '#334155',
+                        borderRadius: '1rem',
+                        color: '#F8FAFC',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+                      }}
+                    />
+                    <Bar dataKey="gpa" radius={[6, 6, 0, 0]}>
+                      {gpaTrend.map((d, i) => (
+                        <Cell key={i} fill={d.gpa >= 3.5 ? '#10B981' : d.gpa >= 2.5 ? '#06B6D4' : '#F43F5E'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm py-12 text-center">{t('Add courses in the GPA Calculator to see your trend.', 'ضيف مواد في حاسبة الـ GPA عشان تشوف التطوّر.')}</p>
+            )}
+          </div>
+
+          {/* Attendance bars (legacy data) OR upcoming calendar events */}
+          {subjects.length ? (
+            <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                {t('Attendance', 'الحضور')}
+              </h2>
+              <div className="space-y-3.5">
+                {subjects.map((s) => {
+                  const pct = attendancePct(s);
+                  const deprived = isDeprived(s);
+                  return (
+                    <div key={s.id}>
+                      <div className="flex justify-between text-xs font-bold mb-1.5">
+                        <span className="text-slate-200">{s.name}</span>
+                        <span className={deprived ? 'text-rose-400 font-mono font-black' : 'text-slate-400 font-mono'}>{pct}%</span>
+                      </div>
+                      <div className="h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
+                        <div className={`h-full ${deprived ? 'bg-rose-500' : 'bg-gradient-to-r from-emerald-500 to-teal-400'}`} style={{ width: `${Math.min(100, pct)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                {t('Upcoming Events', 'الأحداث القادمة')}
+              </h2>
+              {upcomingEvents.length ? (
+                <div className="space-y-2.5">
+                  {upcomingEvents.map((e) => (
+                    <div key={e.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[#0A0C14] border border-slate-800/80 hover:border-slate-700/80 transition-all">
+                      <div className="text-center shrink-0 w-10 p-1 rounded-xl bg-slate-900 border border-slate-800">
+                        <div className="text-[9px] font-black text-cyan-400 uppercase">{new Date(e.date + 'T00:00:00').toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short' })}</div>
+                        <div className="text-base font-black text-white leading-none mt-0.5">{new Date(e.date + 'T00:00:00').getDate()}</div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-white text-sm truncate">{e.title}</div>
+                        {e.time && <div className="flex items-center gap-1 text-[11px] text-slate-400 font-mono mt-0.5"><Clock className="w-3 h-3 text-slate-500" />{e.time}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-500 text-sm py-12 text-center">{t('Add events in the Calendar to see them here.', 'ضيف أحداث في التقويم عشان تظهر هنا.')}</p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Goals + deadlines */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-400" />
+              {t('Goals Progress', 'تقدّم الأهداف')}
+            </h2>
+            {activeGoals.length ? (
+              <div className="space-y-3.5">
+                {activeGoals.slice(0, 6).map((g) => (
+                  <div key={g.id}>
+                    <div className="flex justify-between text-xs font-bold mb-1.5">
+                      <span className="text-slate-200 truncate">{g.title}</span>
+                      <span className="text-cyan-400 font-mono font-black">{g.progress}%</span>
+                    </div>
+                    <div className="h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
+                      <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style={{ width: `${g.progress}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm py-12 text-center">{t('No active goals.', 'مفيش أهداف نشطة.')}</p>
+            )}
+          </div>
+
+          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-400" /> {t('Upcoming Deadlines', 'مواعيد قريبة')}
+            </h2>
+            {upcoming.length ? (
+              <div className="space-y-2.5">
+                {upcoming.map((g) => {
+                  const d = daysUntil(g.deadline);
+                  return (
+                    <div key={g.id} className="flex items-center justify-between gap-3 p-3.5 bg-[#0A0C14] border border-slate-800/80 rounded-2xl">
+                      <span className="text-sm font-bold text-slate-200 truncate">{g.title}</span>
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-xl border ${d < 0 ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : d <= 3 ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'}`}>
+                        {d < 0 ? t('overdue', 'متأخر') : `${d} ${t('days', 'يوم')}`}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm py-12 text-center">{t('No upcoming deadlines.', 'مفيش مواعيد قريبة.')}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
