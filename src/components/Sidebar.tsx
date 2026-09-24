@@ -2,8 +2,8 @@ import { localize, isArabicLocale, getTranslation } from '../lib/translations';
 import { useState } from "react";
 import { UserProfile, CognitiveLevel, UserRole, ChatThread } from "../types";
 import { User, Settings, GraduationCap, Accessibility, LifeBuoy, MessageSquare, BarChart3, AlertCircle, LogOut, Plus, ChevronRight, X, Moon, Sun, Mic, Target, Calculator, CalendarCheck, LayoutDashboard, CalendarDays, Sparkles, Brain, Building2, Flame } from "lucide-react";
-import { logout, db } from "../lib/firebase";
-import { deleteDoc, doc } from "firebase/firestore";
+import { logout, db, cleanDataForFirestore } from "../lib/firebase";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { isAdminUser } from "../lib/roles";
 import { visibleAcademicSections } from "../lib/academics";
 import { isAccessibilityUser, AppView } from "../lib/access";
@@ -29,7 +29,19 @@ const Logo = ({ className = "w-5 h-5" }: { className?: string }) => (
 );
 
 export default function Sidebar({ profile, setProfile, currentView, setCurrentView, isDarkMode, toggleTheme, openLiveCaptions }: SidebarProps) {
-  const handleChange = (key: keyof UserProfile, value: string) => setProfile({ ...profile, [key]: value });
+  const handleChange = (key: keyof UserProfile, value: string) => {
+    const updated = { ...profile, [key]: value };
+    setProfile(updated);
+    // Local-first UI update above; persist so a refresh (or another device)
+    // doesn't silently revert the language/level/role change. App.tsx already
+    // syncs document.documentElement.lang/dir globally whenever profile.language
+    // changes, so that part needs no duplicate handling here.
+    if (profile.uid && db) {
+      setDoc(doc(db, `users/${profile.uid}`), cleanDataForFirestore({ [key]: value }), { merge: true }).catch(() => {
+        /* non-fatal: local state already updated, will retry on next change */
+      });
+    }
+  };
   const isAr = isArabicLocale(profile.language);
 
   const startNewChat = () => {

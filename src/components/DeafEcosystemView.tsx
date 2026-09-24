@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Accessibility, 
   Radio, 
-  Ear, 
   ArrowLeft, 
   SlidersHorizontal, 
   Bell, 
@@ -18,7 +17,7 @@ import AmbientSoundRadar from './AmbientSoundRadar';
 import HumanCommunicationBridge from './HumanCommunicationBridge';
 import type { DisabilityTab } from './DisabilityModeView';
 
-export type DeafTool = 'video' | 'radar' | 'bridge';
+export type DeafTool = 'bridge' | 'radar';
 
 interface DeafEcosystemViewProps {
   profile: UserProfile;
@@ -30,7 +29,7 @@ interface DeafEcosystemViewProps {
 
 export default function DeafEcosystemView({
   profile,
-  initialTab = 'video',
+  initialTab = 'bridge',
   onNavigateBack,
   onMenuClick,
   onTabChange,
@@ -46,7 +45,7 @@ export default function DeafEcosystemView({
 
   // Synchronize initialTab if parent changes it
   useEffect(() => {
-    if (initialTab && (initialTab === 'video' || initialTab === 'radar' || initialTab === 'bridge')) {
+    if (initialTab && (initialTab === 'bridge' || initialTab === 'radar')) {
       setActiveTool(initialTab);
     }
   }, [initialTab]);
@@ -74,13 +73,10 @@ export default function DeafEcosystemView({
 
       if (e.key === '1') {
         e.preventDefault();
-        handleSelectTool('video');
+        handleSelectTool('bridge');
       } else if (e.key === '2') {
         e.preventDefault();
         handleSelectTool('radar');
-      } else if (e.key === '3') {
-        e.preventDefault();
-        handleSelectTool('bridge');
       } else if (e.key === 'Escape') {
         onNavigateBack();
       }
@@ -92,12 +88,12 @@ export default function DeafEcosystemView({
 
   const DEAF_TOOLS = [
     {
-      id: 'video' as const,
+      id: 'bridge' as const,
       shortcut: '1',
-      titleEn: '3D Sign Studio',
-      titleAr: 'استوديو لغة الإشارة',
-      subtitleEn: '3D Avatar, Reverse Sign-to-Speech & Lexicon',
-      subtitleAr: 'أفاتار ثلاثي الأبعاد ونطق الإشارة لصوت مسموع',
+      titleEn: '3D Sign & Live Bridge',
+      titleAr: 'مترجم الإشارة والمحادثة الحية',
+      subtitleEn: '3D Avatar, Sign Studio & Two-Way Communication',
+      subtitleAr: 'أفاتار ثلاثي الأبعاد واستوديو الإشارة وجسر التواصل',
       icon: Accessibility,
       color: 'text-indigo-400',
       activeBg: 'bg-indigo-500/20 text-indigo-200 border-indigo-400 shadow-indigo-500/20',
@@ -115,18 +111,6 @@ export default function DeafEcosystemView({
       activeBg: 'bg-cyan-500/20 text-cyan-200 border-cyan-400 shadow-cyan-500/20',
       gradient: 'from-cyan-500 to-teal-500',
     },
-    {
-      id: 'bridge' as const,
-      shortcut: '3',
-      titleEn: 'Two-Way Live Bridge',
-      titleAr: 'جسر التواصل المباشر',
-      subtitleEn: 'Live speech subtitles & instant 2-way TTS',
-      subtitleAr: 'تفريغ فوري للكلام ونصوص متباينة للتحدث مع الآخرين',
-      icon: Ear,
-      color: 'text-emerald-400',
-      activeBg: 'bg-emerald-500/20 text-emerald-200 border-emerald-400 shadow-emerald-500/20',
-      gradient: 'from-emerald-500 to-teal-600',
-    },
   ];
 
   return (
@@ -143,12 +127,12 @@ export default function DeafEcosystemView({
           <div className="flex items-center gap-2.5 sm:gap-3.5">
             <button
               onClick={onNavigateBack}
-              aria-label={localize(profile.language, 'Back to Hub', 'العودة للمركز')}
+              aria-label={localize(profile.language, 'Back', 'رجوع')}
               className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
             >
               <ArrowLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
               <span className="hidden md:inline text-xs font-black uppercase tracking-wider">
-                {localize(profile.language, 'Hub', 'المركز')}
+                {localize(profile.language, 'Back', 'رجوع')}
               </span>
             </button>
 
@@ -202,7 +186,7 @@ export default function DeafEcosystemView({
         <div 
           role="tablist"
           aria-label={localize(profile.language, 'Deaf feature switcher', 'مبدل أدوات الصم')}
-          className="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-inner"
+          className="grid grid-cols-2 gap-1.5 sm:gap-2 p-1 bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-inner"
         >
           {DEAF_TOOLS.map((tool) => {
             const isSelected = activeTool === tool.id;
@@ -359,20 +343,24 @@ export default function DeafEcosystemView({
       {/* ── ACTIVE DEAF TOOL VIEW CONTAINER ── */}
       <main className="flex-1 min-h-0 relative overflow-hidden flex flex-col">
         <AnimatePresence mode="wait">
-          {activeTool === 'video' && (
+          {activeTool === 'bridge' && (
             <motion.div
-              key="deaf-tool-video"
+              key="deaf-tool-bridge"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.15 }}
-              className="w-full h-full min-h-0"
+              className="w-full h-full min-h-0 overflow-y-auto"
             >
               <SignVideoStudio
                 profile={profile}
                 onMenuClick={onMenuClick}
                 isEmbedded={true}
                 onNavigateBack={onNavigateBack}
+              />
+              <div className="border-t-2 border-indigo-500/30 mx-4 my-2" />
+              <HumanCommunicationBridge
+                profile={profile}
               />
             </motion.div>
           )}
@@ -389,21 +377,6 @@ export default function DeafEcosystemView({
               <AmbientSoundRadar
                 profile={profile}
                 onNavigateBack={onNavigateBack}
-              />
-            </motion.div>
-          )}
-
-          {activeTool === 'bridge' && (
-            <motion.div
-              key="deaf-tool-bridge"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.15 }}
-              className="w-full h-full min-h-0"
-            >
-              <HumanCommunicationBridge
-                profile={profile}
               />
             </motion.div>
           )}

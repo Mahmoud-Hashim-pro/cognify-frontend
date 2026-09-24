@@ -109,6 +109,7 @@ export default function App() {
   // have real data — otherwise the very first snapshot can be skipped and the
   // loading gate never releases ("SYNCING PROFILE…" forever).
   const profileAppliedRef = useRef(false);
+  const initialRouteAppliedRef = useRef(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   // True when the profile sync failed or timed out (as opposed to "this user
   // genuinely has no profile yet"). Without this the app can't tell the two
@@ -331,6 +332,7 @@ export default function App() {
     // account fires its onComplete and overwrites the existing profile (points/level).
     setProfileLoading(true);
     profileAppliedRef.current = false;
+    initialRouteAppliedRef.current = false;
     setProfileSyncFailed(false);
     let cancelled = false; // set on cleanup; guards the async auto-create continuation
 
@@ -371,35 +373,70 @@ export default function App() {
 
         const data = rawData as UserProfile;
 
-        // Honor user's login-time path selection if explicitly set to Normal
+        // Honor user's login-time path selection
         let preLoginPath: string | null = null;
+        let preLoginMode: string | null = null;
+        let preLoginDis: string | null = null;
         try {
           preLoginPath = localStorage.getItem('preLoginAccountPath');
+          preLoginMode = localStorage.getItem('preLoginAccessibilityMode');
+          preLoginDis = localStorage.getItem('preLoginDisability');
         } catch {}
 
-        if (preLoginPath === 'Normal' && data.accountPath !== 'Normal') {
+        if (preLoginPath === 'Normal') {
           data.accountPath = 'Normal';
           data.accessibilityMode = 'None';
-          setDoc(doc(db, path), { accountPath: 'Normal', accessibilityMode: 'None' }, { merge: true }).catch(() => {});
+          data.disabilityType = '';
+          try {
+            localStorage.removeItem('cognify_default_disability_tab');
+            localStorage.removeItem('preLoginAccessibilityMode');
+            localStorage.removeItem('preLoginDisability');
+          } catch {}
+          setDoc(doc(db, path), { accountPath: 'Normal', accessibilityMode: 'None', disabilityType: '' }, { merge: true }).catch(() => {});
+        } else if (preLoginPath === 'Special Needs' && preLoginMode && preLoginMode !== 'None') {
+          data.accountPath = 'Special Needs';
+          data.accessibilityMode = preLoginMode as AccessibilityMode;
+          if (preLoginDis) data.disabilityType = preLoginDis;
+          try {
+            const mappedTab = preLoginMode === 'Motor-Euphonia' ? 'motor' :
+                              preLoginMode === 'Neurodiversity' ? 'neurodiversity' :
+                              preLoginMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+            localStorage.setItem('cognify_default_disability_tab', mappedTab);
+          } catch {}
+          setDoc(doc(db, path), cleanDataForFirestore({ 
+            accountPath: 'Special Needs', 
+            accessibilityMode: preLoginMode, 
+            disabilityType: preLoginDis || data.disabilityType 
+          }), { merge: true }).catch(() => {});
         }
 
         setProfile(data);
         clearPreLoginState();
 
         // Smart Entry Routing:
-        // If the user has special needs / accessibility mode -> land on #disability
-        // If the user is a normal student/learner -> ALWAYS land directly on #chat, never disability or video
-        const hash = window.location.hash.replace('#', '');
-        const isA11y = isAccessibilityUser(data);
-        if (isA11y) {
-          if (!hash || hash === 'chat' || hash === '') {
-            setCurrentView('disability');
-            window.history.replaceState(null, '', '#disability');
-          }
-        } else {
-          if (!hash || hash === 'disability' || hash === 'video' || hash === '') {
-            setCurrentView('chat');
-            window.history.replaceState(null, '', '#chat');
+        // Execute ONLY ONCE on initial entry/mount so subsequent background snapshots
+        // (like country lookup completing 2s later, or task progress writes)
+        // NEVER override the user's active view or bounce them between screens!
+        if (!initialRouteAppliedRef.current) {
+          initialRouteAppliedRef.current = true;
+          const hash = window.location.hash.replace('#', '');
+          const isA11y = preLoginPath === 'Normal' ? false : isAccessibilityUser(data);
+          if (isA11y) {
+            // For accessibility users: if no hash or default empty/chat on first load, land on disability
+            if (!hash || hash === 'chat' || hash === '') {
+              setCurrentView('disability');
+              window.history.replaceState(null, '', '#disability');
+            } else if ((VALID_VIEWS as readonly string[]).includes(hash)) {
+              setCurrentView(hash as any);
+            }
+          } else {
+            // For normal users: if no hash, land on chat. If deep-linked or user navigated to another valid view, PRESERVE it!
+            if (!hash || hash === 'disability' || hash === 'video') {
+              setCurrentView('chat');
+              window.history.replaceState(null, '', '#chat');
+            } else if ((VALID_VIEWS as readonly string[]).includes(hash)) {
+              setCurrentView(hash as any);
+            }
           }
         }
 
@@ -432,26 +469,39 @@ export default function App() {
         // If the user selected 'Special Needs' at login but has no profile, auto-create it immediately to bypass onboarding!
         let preLoginPath: string | null = null;
         let preLoginDisability: string | null = null;
+        let preLoginMode: string | null = null;
         let preLoginOrgCode: string | null = null;
         try {
           preLoginPath = localStorage.getItem('preLoginAccountPath');
           preLoginDisability = localStorage.getItem('preLoginDisability');
+          preLoginMode = localStorage.getItem('preLoginAccessibilityMode');
           preLoginOrgCode = localStorage.getItem('preLoginOrgCode');
         } catch {}
 
         if (preLoginPath === 'Special Needs') {
           const disabilityType = preLoginDisability || 'Other';
-          
-          let accessibilityMode: AccessibilityMode = 'None';
-          if (disabilityType === 'Visual Impairment') {
-            accessibilityMode = 'Visual';
-          } else if (disabilityType === 'Hearing Impairment') {
-            accessibilityMode = 'Vocal-Deaf';
-          } else if (disabilityType === 'Speech Impairment') {
-            accessibilityMode = 'Speech';
-          } else if (disabilityType === 'Motor Impairment') {
-            accessibilityMode = 'Motor-Euphonia';
+
+          let accessibilityMode: AccessibilityMode = (preLoginMode as AccessibilityMode) || 'None';
+          if (accessibilityMode === 'None') {
+            if (disabilityType === 'Visual Impairment') {
+              accessibilityMode = 'Visual';
+            } else if (disabilityType === 'Hearing Impairment') {
+              accessibilityMode = 'Vocal-Deaf';
+            } else if (disabilityType === 'Speech Impairment') {
+              accessibilityMode = 'Speech';
+            } else if (disabilityType === 'Motor Impairment') {
+              accessibilityMode = 'Motor-Euphonia';
+            } else if (disabilityType === 'Cognitive/Learning Disability') {
+              accessibilityMode = 'Neurodiversity';
+            }
           }
+
+          try {
+            const mappedTab = accessibilityMode === 'Motor-Euphonia' ? 'motor' :
+                              accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
+                              accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+            localStorage.setItem('cognify_default_disability_tab', mappedTab);
+          } catch {}
 
           let visitorCountry: string | undefined;
           try {
@@ -465,7 +515,6 @@ export default function App() {
             name: user.displayName || user.email?.split('@')[0] || "User",
             points: 100,
             questionHistory: [],
-            chatHistory: [],
             level: 'Basic',
             role: 'Student',
             educationLevel: 'University',
@@ -500,6 +549,19 @@ export default function App() {
             setProfile(null);
           }
         } else {
+          // If the student already completed onboarding on this device (or cached in localStorage),
+          // preserve the local profile state instead of clobbering to null and looping back to step 1!
+          const cachedProfileJson = typeof window !== 'undefined' ? localStorage.getItem(`cognify_profile_${user.uid}`) : null;
+          if (cachedProfileJson) {
+            try {
+              const cached = JSON.parse(cachedProfileJson);
+              if (cached && cached.onboardingComplete) {
+                setProfile(cached);
+                setDoc(doc(db, path), cleanDataForFirestore(cached), { merge: true }).catch(() => {});
+                return;
+              }
+            } catch {}
+          }
           setProfile(null);
         }
       }
@@ -588,43 +650,42 @@ export default function App() {
     }
 
     const newProfile: UserProfile = {
-      uid: user.uid,
-      email: user.email || "",
-      name: user.displayName || user.email?.split('@')[0] || "User",
       points: 100,
       questionHistory: [],
-      chatHistory: [],
       level: 'Intermediate',
       role: 'Student',
       educationLevel: 'University',
       field: 'General',
       accessibilityMode: 'None',
       questionScore: 0,
-      onboardingComplete: true,
+      name: user.displayName || user.email?.split('@')[0] || "User",
       country: userCountry && userCountry !== 'Unknown' ? userCountry : undefined,
       ...data,
+      // Critical: Immutable identity and completion fields MUST come after ...data
+      // so they can never be overwritten by empty/stale formData from onboarding steps!
+      uid: user.uid,
+      email: (user.email || data.email || "").trim(),
+      onboardingComplete: true,
     };
 
+    // Cache locally immediately to eliminate any race condition or snapshot reset loop
     try {
-      const cleanedProfile = cleanDataForFirestore(newProfile);
+      localStorage.setItem(`cognify_profile_${user.uid}`, JSON.stringify(newProfile));
+      localStorage.setItem(`cognify_onboarded_${user.uid}`, 'true');
+    } catch {}
+
+    const cleanedProfile = cleanDataForFirestore(newProfile);
+    setProfile(cleanedProfile);
+
+    const targetView: AppView = isAccessibilityUser(cleanedProfile) ? 'disability' : 'chat';
+    setCurrentView(targetView);
+    window.history.replaceState(null, '', `#${targetView}`);
+
+    try {
       await setDoc(doc(db, path), cleanedProfile, { merge: true });
-      // Cleanly and immediately update local state to navigate the user away from Onboarding to the dashboard.
-      setProfile(cleanedProfile);
-      if (isAccessibilityUser(cleanedProfile)) {
-        setCurrentView('disability');
-        window.history.replaceState(null, '', '#disability');
-      } else {
-        setCurrentView('chat');
-        window.history.replaceState(null, '', '#chat');
-      }
     } catch (err) {
-      console.error("Failed to save onboarding profile:", err);
-      // Fallback: update local profile so user is not stuck on onboarding screen
-      setProfile(newProfile);
-      if (newProfile.accountPath === 'Special Needs') {
-        setCurrentView('disability');
-        window.history.replaceState(null, '', '#disability');
-      }
+      console.error("Failed to save onboarding profile to Firestore:", err);
+      // Even if Firestore write fails, local state and localStorage keep the user in the app!
     }
   };
 
@@ -754,7 +815,7 @@ export default function App() {
 
   // If user exists but no profile, show Onboarding
   if (!profile || !profile.onboardingComplete) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+    return <Onboarding user={user} onComplete={handleOnboardingComplete} />;
   }
 
   const renderView = () => {
@@ -1222,7 +1283,7 @@ export default function App() {
                       lastMessageSnippet: t.lastMessageSnippet || ""
                     }));
                   }
-                  cleanProfile.chatHistory = [];
+                  delete cleanProfile.chatHistory;
 
                   const finalProfileToSave = cleanDataForFirestore(cleanProfile);
                   await setDoc(doc(db, path), finalProfileToSave, { merge: true });

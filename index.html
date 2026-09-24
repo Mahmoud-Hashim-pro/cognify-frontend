@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl" class="notranslate" translate="no">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="google" content="notranslate" />
     <title>Cognify — Adaptive AI Study Mentor</title>
     <meta name="description" content="Cognify is an adaptive, accessible AI study mentor that tailors every answer to your level, field, and accessibility needs." />
     <meta name="theme-color" content="#0F172A" />
@@ -25,8 +26,17 @@
 
         // Register Service Worker for PWA mobile installability
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+          var refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', function() {
+            if (!refreshing) {
+              refreshing = true;
+              window.location.reload();
+            }
+          });
           window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+              reg.update();
+            }).catch(function(err) {
               console.warn('[SW Registration Error]:', err);
             });
           });

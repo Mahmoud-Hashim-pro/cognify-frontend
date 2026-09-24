@@ -76,7 +76,7 @@ export const DEFAULT_HEAD_TRACKING_CONFIG: HeadTrackingConfig = {
   // 0..1 pointer steadiness. Feeds the smoother's slow time constant AND the
   // micro-tremor deadband. 0.65 delivers rock-solid steadiness on keys while keeping instant saccade breakout.
   smoothing: 0.65,
-  trackingMode: 'hybrid', // Hybrid: 60% Iris + 40% Head gives best stability & reach
+  trackingMode: 'iris', // Iris/Nose/Hybrid switcher was removed from the UI; iris-only tracking is now the fixed mode.
 };
 
 // MediaPipe Landmark Loops

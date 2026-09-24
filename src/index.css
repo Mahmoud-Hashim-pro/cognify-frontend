@@ -188,6 +188,70 @@
   background-color: #7C5CFF !important;
 }
 
+/* --- Global Light Mode Theme Overrides ---------------------------------
+   When .dark is not present on :root, invert dark literal surfaces to clean light surfaces */
+:root:not(.dark) {
+  --color-bg-main: #F4F6F9;
+  --color-bg-card: #FFFFFF;
+  --color-text-main: #0F172A;
+  --color-text-muted: #475569;
+}
+
+:root:not(.dark) body,
+:root:not(.dark) #root {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+:root:not(.dark) .bg-\[\#0A0C14\],
+:root:not(.dark) .bg-\[\#0a0c14\],
+:root:not(.dark) .bg-\[\#0d101d\],
+:root:not(.dark) .bg-\[\#0D101D\],
+:root:not(.dark) .bg-\[\#0E111D\],
+:root:not(.dark) .bg-\[\#0e111d\],
+:root:not(.dark) .bg-\[\#0E111D\]\/95,
+:root:not(.dark) .bg-\[\#0e111d\]\/95,
+:root:not(.dark) .bg-\[\#181C2E\],
+:root:not(.dark) .bg-\[\#121524\],
+:root:not(.dark) .bg-\[\#121524\]\/95,
+:root:not(.dark) .bg-slate-950 {
+  background-color: #FFFFFF !important;
+}
+
+:root:not(.dark) .bg-slate-900,
+:root:not(.dark) .bg-slate-900\/60,
+:root:not(.dark) .bg-slate-900\/80,
+:root:not(.dark) .bg-slate-900\/90,
+:root:not(.dark) .bg-slate-900\/95 {
+  background-color: #F1F5F9 !important;
+}
+
+:root:not(.dark) .border-slate-800,
+:root:not(.dark) .border-slate-800\/80,
+:root:not(.dark) .border-slate-700,
+:root:not(.dark) .border-slate-700\/50,
+:root:not(.dark) .border-slate-700\/60,
+:root:not(.dark) .border-slate-700\/80 {
+  border-color: #E2E8F0 !important;
+}
+
+:root:not(.dark) .text-slate-100,
+:root:not(.dark) .text-slate-200 {
+  color: #0F172A !important;
+}
+
+:root:not(.dark) .text-slate-300,
+:root:not(.dark) .text-slate-400,
+:root:not(.dark) .text-slate-500 {
+  color: #475569 !important;
+}
+
+:root:not(.dark) .obsidian-card,
+:root:not(.dark) .obsidian-card-interactive {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+}
+
 
 
 /* Splash screen animations */

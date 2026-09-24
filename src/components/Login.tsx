@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { RadioGroup, Radio } from 'react-aria-components';
+import { AriaButton } from './ui/AriaButton';
 import { signInWithGoogle, signInWithGoogleRedirect, loginWithEmail, registerWithEmail, auth, clearPreLoginState } from '../lib/firebase';
 import { sendPasswordResetEmail, getRedirectResult } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
@@ -6,11 +8,125 @@ import {
   Chrome, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff, 
   ArrowLeft, ArrowRight, 
   Sparkles, Tag, ChevronDown, LockKeyhole, Globe,
-  Brain, GraduationCap, Heart, Check
+  Brain, GraduationCap, Heart, Check, Ear, Activity, Zap, Compass
 } from 'lucide-react';
+import type { AccessibilityMode } from '../types';
 
 type AccountPath = 'Normal' | 'Graduation Project' | 'Special Needs';
+// Friendly picker labels shown to the user — NOT the same set as the app's real
+// AccessibilityMode enum (which has 'Vocal-Deaf' / 'Sign-Only' / 'Motor-Euphonia' /
+// 'Neurodiversity' instead of 'Hearing' / 'Motor' / 'Cognitive'). DISABILITY_MODE_MAP
+// below is the single place that translates between the two — every option here
+// MUST have an entry there, or that user silently ends up with accessibilityMode 'None'.
 type DisabilityOption = 'Visual' | 'Hearing' | 'Motor' | 'Speech' | 'Cognitive';
+
+// The one source of truth for turning a picker chip into the real, canonical
+// AccessibilityMode value used everywhere else in the app (DisabilityModeView's
+// direct-suite routing, access.ts, etc.). Stored as-is in localStorage so
+// Onboarding.tsx / App.tsx no longer have to re-derive it by matching prose strings.
+const DISABILITY_MODE_MAP: Record<DisabilityOption, AccessibilityMode> = {
+  'Visual': 'Visual',
+  'Hearing': 'Vocal-Deaf',
+  'Motor': 'Motor-Euphonia',
+  'Speech': 'Speech',
+  'Cognitive': 'Neurodiversity',
+};
+
+// Human-readable label stored in profile.disabilityType for display + as a free-text
+// fallback (DisabilityModeView's detectDirectDisabilityTab regex-matches this when
+// accessibilityMode itself isn't set, e.g. for older accounts).
+const DISABILITY_LABEL_MAP: Record<DisabilityOption, string> = {
+  'Visual': 'Visual Impairment',
+  'Hearing': 'Hearing Impairment',
+  'Motor': 'Motor Impairment',
+  'Speech': 'Speech Impairment',
+  'Cognitive': 'Cognitive/Learning Disability',
+};
+
+// Each Special Needs accessibility feature, tagged with which disability chip(s) it's the primary match for.
+// Selecting a chip brings its matching feature(s) to the top and marks them as the "FOCUS" for that mode,
+// instead of the panel always defaulting to showing Vision Companion first regardless of selection.
+// Kept in sync with the real modules in DisabilityModeView.tsx's MODULES array —
+// titles/descriptions here must match what the user actually lands in, not a
+// generic marketing paraphrase, or the onboarding preview misrepresents the app.
+const SPECIAL_NEEDS_FEATURES: {
+  key: string;
+  Icon: typeof Sparkles;
+  title: { en: string; ar: string };
+  description: { en: string; ar: string };
+  matches: DisabilityOption[];
+}[] = [
+  {
+    key: 'vision',
+    Icon: Eye,
+    title: { en: 'Visual Companion (AI Eyes)', ar: 'الرفيق البصري الذكي' },
+    description: { en: 'Audio companion that reads currency, matches clothing colors, and recognizes faces', ar: 'رفيق صوتي يقرأ العملات، وينسّق ألوان الملابس، ويتعرف على الوجوه' },
+    matches: ['Visual'],
+  },
+  {
+    key: 'sign-language',
+    Icon: Heart,
+    title: { en: 'Deaf & Hard of Hearing Suite (All-in-One)', ar: 'منظومة الصم وضعاف السمع الشاملة (الكل في واحد)' },
+    description: { en: '3D sign language studio, sound & hazard radar, and a live two-way communication bridge', ar: 'استوديو لغة إشارة ثلاثي الأبعاد، رادار للأصوات والمخاطر، وجسر تواصل مباشر ثنائي الاتجاه' },
+    matches: ['Hearing'],
+  },
+  {
+    key: 'motor-voice',
+    Icon: Check,
+    title: { en: 'Motor & Euphonia Control', ar: 'التحكم الحركي وإيفونيا' },
+    description: { en: 'Head-tracking pointer, eye-gaze keyboard, and hands-free vocal triggers', ar: 'مؤشر بحركة الرأس، لوحة مفاتيح بالعين، وأوامر صوتية بدون لمس' },
+    matches: ['Motor', 'Speech'],
+  },
+  {
+    key: 'cognitive-scaffolding',
+    Icon: Brain,
+    title: { en: 'Neurodiversity & Autism Hub', ar: 'واحة التوحد وصعوبات التعلم' },
+    description: { en: 'Spoken PECS cards, visual daily routines, and calming sensory tools', ar: 'بطاقات PECS ناطقة، جدول روتين يومي بصري، وأدوات تهدئة حسية' },
+    matches: ['Cognitive'],
+  },
+  {
+    // These last three aren't tied to any single chip (matches: []) — available to
+    // every Special Needs account regardless of which focus they pick, so they're
+    // always listed but never get the "SELECTED" highlight. Together with the four
+    // above, this is the full real set of 7 suites in DisabilityModeView's MODULES
+    // (All Suites badge shows "7") — don't drop any of these three or the preview
+    // undersells the app again.
+    key: 'caregiver',
+    Icon: Heart,
+    title: { en: 'Caregiver & Specialist Hub', ar: 'لوحة المرافق والمختص الطبي' },
+    description: { en: 'Family & clinical monitoring dashboard, live SOS test dispatch, and encrypted backup', ar: 'لوحة متابعة للأهل والمختصين، اختبار نداء استغاثة مباشر، ونسخ احتياطي مشفر' },
+    matches: [],
+  },
+  {
+    key: 'chat',
+    Icon: Sparkles,
+    title: { en: 'Adaptive Cognitive Tutor', ar: 'المساعد التعليمي الذكي المهيأ' },
+    description: { en: 'Pedagogical tutoring assistant tailored to your pace, with step-by-step guidance and full screen-reader support', ar: 'مساعد تعليمي يتكيف مع وتيرتك، بشرح خطوة بخطوة ودعم كامل لقارئات الشاشة' },
+    matches: [],
+  },
+  {
+    key: 'settings',
+    Icon: Globe,
+    title: { en: 'Preferences & Dialects', ar: 'التفضيلات واللغات' },
+    description: { en: '11 languages & dialects including Egyptian Ammiya, plus adjustable accessibility profiles and display settings', ar: '11 لغة ولهجة ومنها المصري، مع إمكانية ضبط ملفات الإتاحة وإعدادات العرض' },
+    matches: [],
+  },
+];
+
+function getSpecialNeedsFeatures(
+  selected: DisabilityOption,
+  t: (en: string, ar: string) => string
+) {
+  return SPECIAL_NEEDS_FEATURES
+    .map((f) => ({
+      key: f.key,
+      Icon: f.Icon,
+      title: t(f.title.en, f.title.ar),
+      description: t(f.description.en, f.description.ar),
+      isPrimary: f.matches.includes(selected),
+    }))
+    .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
+}
 
 export default function Login() {
   const [lang, setLang] = useState<'en' | 'ar'>(() => {
@@ -54,6 +170,11 @@ export default function Login() {
   const authTimeoutRef = useRef<any>(null);
 
   useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+  }, [lang, isRtl]);
+
+  useEffect(() => {
     isMountedRef.current = true;
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any });
 
@@ -83,14 +204,14 @@ export default function Login() {
     try {
       localStorage.setItem('preLoginAccountPath', accountPath);
       if (accountPath === 'Special Needs') {
-        const fullMap: Record<DisabilityOption, string> = {
-          'Visual': 'Visual Impairment',
-          'Hearing': 'Hearing Impairment',
-          'Motor': 'Motor Impairment',
-          'Speech': 'Speech Impairment',
-          'Cognitive': 'Cognitive/Learning Disability',
-        };
-        localStorage.setItem('preLoginDisability', fullMap[selectedDisability] || 'Visual Impairment');
+        localStorage.setItem('preLoginDisability', DISABILITY_LABEL_MAP[selectedDisability] || 'Visual Impairment');
+        // The real enum value, stored directly — Onboarding.tsx / App.tsx should
+        // read this first instead of re-parsing the prose label above.
+        localStorage.setItem('preLoginAccessibilityMode', DISABILITY_MODE_MAP[selectedDisability] || 'Visual');
+      } else {
+        localStorage.setItem('preLoginAccessibilityMode', 'None');
+        localStorage.removeItem('preLoginDisability');
+        localStorage.removeItem('cognify_default_disability_tab');
       }
     } catch (err) {
       console.warn("LocalStorage unavailable in current context:", err);
@@ -257,25 +378,35 @@ export default function Login() {
       {/* Top Navbar */}
       <header className="max-w-5xl mx-auto w-full flex items-center justify-between z-10 py-3 mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 p-0.5 shadow-lg shadow-rose-500/20 flex items-center justify-center">
-            <div className="w-full h-full bg-[#0E111D] rounded-[14px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-rose-400" />
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 p-0.5 shadow-xl shadow-cyan-500/20 flex items-center justify-center">
+            <div className="w-full h-full bg-[#0B0F1F] rounded-[14px] flex items-center justify-center">
+              <Brain className="w-5 h-5 text-cyan-400" />
             </div>
           </div>
-          <span className="text-xl font-black text-white tracking-tight">Super Human</span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-black text-white tracking-tight">Cognify</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                2.0
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-400 font-medium">
+              {t("Adaptive AI Study Mentor", "مدرّسك الذكي التكيّفي")}
+            </span>
+          </div>
         </div>
 
         {/* Language Switcher */}
         <div className="flex items-center gap-1 p-1 bg-slate-900/90 border border-slate-800 rounded-full shadow-inner">
           <button
             onClick={() => setLang('en')}
-            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'en' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'en' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
           >
             EN
           </button>
           <button
             onClick={() => setLang('ar')}
-            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'ar' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
+            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'ar' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
           >
             AR
           </button>
@@ -295,34 +426,34 @@ export default function Login() {
             >
               {/* Hero Title Header */}
               <div className="space-y-2.5 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300 shadow-sm">
-                  <Tag className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{t("Same mentor, different calibration", "نفس المساعد، بمعايرة مخصصة لك")}</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-teal-500/15 border border-amber-500/30 text-amber-300 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{t("Personalized Calibration · One Platform, Three Experiences", "معايرة تكيّفية مخصصة · منصة واحدة، ثلاث تجارب")}</span>
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.15]">
                   {isRtl ? (
-                    <>سؤال واحد. <span className="text-amber-400">ثلاثة</span> <span className="text-rose-400">طرق</span> <span className="text-teal-400">لسماع</span> الإجابة.</>
+                    <>سؤال واحد. <span className="text-amber-400">ثلاثة</span> <span className="text-rose-400">طرق</span> <span className="text-cyan-400">لسماع</span> الإجابة.</>
                   ) : (
-                    <>One question. <span className="text-amber-400">Three</span> <span className="text-rose-400">ways</span> <span className="text-teal-400">to</span> hear the answer.</>
+                    <>One question. <span className="text-amber-400">Three</span> <span className="text-rose-400">ways</span> <span className="text-cyan-400">to</span> hear the answer.</>
                   )}
                 </h1>
 
-                <p className="text-xs sm:text-sm text-slate-400 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
                   {t(
-                    "Cognify doesn't just change its tone — it transforms its entire capabilities. Pick a path on the right and watch the mode overview on the left update.",
-                    "كوجنيفاي لا يغير نبرته فقط — بل يغير إمكانياته ومميزاته بالكامل. اختر مساراً على اليمين وشاهد ملخص قدرات كل وضع على اليسار فوراً."
+                    "Cognify doesn't just change its tone — it transforms its entire capabilities. Select a path below to see live capabilities and continue.",
+                    "كوجنيفاي لا يغير نبرته فقط — بل يغير إمكانياته ومميزاته بالكامل. اختر مساراً لمشاهدة قدراته المباشرة والمتابعة فوراً."
                   )}
                 </p>
               </div>
 
               {/* Main Interactive Comparison Card - Split View */}
-              <div className="bg-[#121524]/95 border border-slate-800/80 rounded-[28px] overflow-hidden shadow-2xl backdrop-blur-2xl">
+              <div className="bg-[#0D1122]/95 border border-slate-700/70 rounded-[32px] overflow-hidden shadow-2xl backdrop-blur-2xl ring-1 ring-white/5">
                 {/* Top Tri-Color Strip */}
-                <div className="grid grid-cols-3 h-1 w-full">
-                  <div className="bg-amber-400" />
-                  <div className="bg-teal-400" />
-                  <div className="bg-rose-500" />
+                <div className="grid grid-cols-3 h-1.5 w-full">
+                  <div className="bg-gradient-to-r from-amber-400 to-amber-500" />
+                  <div className="bg-gradient-to-r from-teal-400 to-emerald-500" />
+                  <div className="bg-gradient-to-r from-rose-500 to-pink-500" />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 p-5 sm:p-7 md:p-8">
@@ -385,7 +516,17 @@ export default function Login() {
                                       </span>
                                     </span>
                                   )}
-                                  {activePreviewPath === 'Special Needs' && t("All-in-One Multi-Modal Accessibility Hub", "مركز الإتاحة الشامل ومتعدد الوسائط")}
+                                  {activePreviewPath === 'Special Needs' && (
+                                    <span className="flex items-center gap-2 flex-wrap">
+                                      <span>{t("All-in-One Multi-Modal Accessibility Hub", "مركز الإتاحة الشامل ومتعدد الوسائط")}</span>
+                                      {/* Matches the real "All Suites" count inside the app (DisabilityModeView's
+                                          MODULES minus the admin-only Org Hub) — keep this number in sync if a
+                                          suite is ever added/removed there. */}
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 shrink-0">
+                                        {t(`${SPECIAL_NEEDS_FEATURES.length} Suites`, `${SPECIAL_NEEDS_FEATURES.length} أدوات`)}
+                                      </span>
+                                    </span>
+                                  )}
                                 </h3>
                                 <p className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 leading-relaxed">
                                   {activePreviewPath === 'Normal' && t(
@@ -407,38 +548,46 @@ export default function Login() {
                             <div className="h-px bg-slate-700/50 w-full" />
 
                             {/* Eye-catching Feature Highlights */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                               {activePreviewPath === 'Normal' && (
                                 <>
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("4 Adaptive Pedagogy Styles", "4 أساليب شرح تكيّفية")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Step-by-Step, Socratic, Visual & Technical", "خطوة بخطوة، سقراطي، تشبيهات وتقني")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Sparkles className="w-4 h-4 text-amber-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("4 Adaptive Pedagogy Styles", "4 أساليب شرح تكيّفية")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Step-by-Step, Socratic, Visual & Technical", "خطوة بخطوة، سقراطي، تشبيهات وتقني")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Dynamic GPA & Goal Tracker", "حاسبة GPA وتتبع الأهداف")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Live grade forecasting & study countdowns", "توقعات فورية للمعدل وعد تنازلي للمهام")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Check className="w-4 h-4 text-amber-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Dynamic GPA & Goal Tracker", "حاسبة GPA وتتبع الأهداف")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Live grade forecasting & study countdowns", "توقعات فورية للمعدل وعد تنازلي للمهام")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Brain className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Cognitive Gym & IQ Assessment", "الجيم المعرفي واختبارات الذكاء")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Daily brain workouts and cognitive metrics", "تمارين ذهنية يومية لقياس سرعة التفكير")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Brain className="w-4 h-4 text-amber-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Cognitive Gym & IQ Assessment", "الجيم المعرفي واختبارات الذكاء")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Daily brain workouts and cognitive metrics", "تمارين ذهنية يومية لقياس سرعة التفكير")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Tag className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Spaced Retention Flashcards", "تكرار متباعد ذكي")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Active recall cards against forgetting", "بطاقات استذكار لمحاربة النسيان")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Tag className="w-4 h-4 text-amber-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Spaced Retention Flashcards", "تكرار متباعد ذكي")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Active recall cards against forgetting", "بطاقات استذكار لمحاربة النسيان")}</div>
                                     </div>
                                   </div>
                                 </>
@@ -446,35 +595,43 @@ export default function Login() {
 
                               {activePreviewPath === 'Graduation Project' && (
                                 <>
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <GraduationCap className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Faculty Curriculum Alignment", "ربط مباشر بمقررات كليتك")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("AI knows your specific college & department", "فهم كامل لمقررات وتخصص كليتك")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <GraduationCap className="w-4 h-4 text-teal-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Faculty Curriculum Alignment", "ربط مباشر بمقررات كليتك")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("AI knows your specific college & department", "فهم كامل لمقررات وتخصص كليتك")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Sparkles className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Thesis & Literature Reviews", "صياغة الرسالة ومراجعة المراجع")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Academic methodology and research synthesis", "منهجيات بحث أكاديمية وصياغة علمية")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Sparkles className="w-4 h-4 text-teal-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Thesis & Literature Reviews", "صياغة الرسالة ومراجعة المراجع")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Academic methodology and research synthesis", "منهجيات بحث أكاديمية وصياغة علمية")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Check className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Automated Citation Engine", "محرك التوثيق الأكاديمي")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("IEEE, APA, Harvard format in a single click", "تنسيق مراجع معتمد بنقرة واحدة")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Check className="w-4 h-4 text-teal-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Automated Citation Engine", "محرك التوثيق الأكاديمي")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("IEEE, APA, Harvard format in a single click", "تنسيق مراجع معتمد بنقرة واحدة")}</div>
                                     </div>
                                   </div>
 
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Brain className="w-3.5 h-3.5 text-teal-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Sprint & Milestone Deliverables", "تتبع مراحل وتسليمات المشروع")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Track supervisor notes and project deadlines", "تتبع ملاحظات المشرف ومواعيد المناقشة")}</div>
+                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Brain className="w-4 h-4 text-teal-400" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="text-xs font-bold text-white leading-snug">{t("Sprint & Milestone Deliverables", "تتبع مراحل وتسليمات المشروع")}</div>
+                                      <div className="text-[11px] text-slate-300 leading-tight mt-1">{t("Track supervisor notes and project deadlines", "تتبع ملاحظات المشرف ومواعيد المناقشة")}</div>
                                     </div>
                                   </div>
                                 </>
@@ -482,37 +639,33 @@ export default function Login() {
 
                               {activePreviewPath === 'Special Needs' && (
                                 <>
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Sparkles className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Vision Companion & OCR", "رفيق الرؤية وقارئ المستندات")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Real-time camera scene and book page reader", "قراءة صوتية للمشاهد والكتب عبر الكاميرا")}</div>
+                                  {getSpecialNeedsFeatures(selectedDisability, t).map((feature) => (
+                                    <div
+                                      key={feature.key}
+                                      className={`p-3 rounded-2xl border flex items-start gap-3 transition-all shadow-md ${
+                                        feature.isPrimary
+                                          ? 'bg-rose-500/15 border-rose-500/50 ring-1 ring-rose-500/30'
+                                          : 'bg-slate-900/80 border-slate-700/70 hover:border-slate-600'
+                                      }`}
+                                    >
+                                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                                        feature.isPrimary ? 'bg-rose-500/25 border border-rose-400/50' : 'bg-slate-800 border border-slate-700'
+                                      }`}>
+                                        <feature.Icon className={`w-4 h-4 ${feature.isPrimary ? 'text-rose-300' : 'text-rose-400'}`} />
+                                      </div>
+                                      <div className="min-w-0">
+                                        <div className="text-xs font-bold text-white flex items-center gap-1.5 leading-snug">
+                                          <span className="truncate">{feature.title}</span>
+                                          {feature.isPrimary && (
+                                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black tracking-wider bg-rose-500/30 text-rose-200 border border-rose-400/50 shrink-0">
+                                              {t('FOCUS', 'محدد')}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="text-[11px] text-slate-300 leading-tight mt-1">{feature.description}</div>
+                                      </div>
                                     </div>
-                                  </div>
-
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Heart className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("3D Sign Language Avatar", "أفاتار لغة الإشارة ثلاثي الأبعاد")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Continuous sign rendering for hearing support", "ترجمة فورية وتفاعلية للإشارة بـ 3D")}</div>
-                                    </div>
-                                  </div>
-
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Hands-Free Motor & Voice", "أوامر صوتية وتحكم حركي")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("Complete vocal control without physical touch", "تحكم كامل وتوجيه بدون لمس الشاشة")}</div>
-                                    </div>
-                                  </div>
-
-                                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-start gap-2">
-                                    <Brain className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
-                                    <div>
-                                      <div className="text-xs font-bold text-slate-200">{t("Cognitive Micro-Scaffolding", "تفكيك إدراكي ميسّر")}</div>
-                                      <div className="text-[10px] text-slate-400 leading-tight mt-0.5">{t("High-contrast UI and distraction-free cards", "واجهة عالية التباين ومعلومات بدون تشويش")}</div>
-                                    </div>
-                                  </div>
+                                  ))}
                                 </>
                               )}
                             </div>
@@ -551,78 +704,115 @@ export default function Login() {
                       </div>
 
                       {/* Vertical Path Selector Timeline */}
-                      <div className="space-y-3 relative">
-                        {/* Connecting Line */}
-                        <div className={`absolute top-4 bottom-4 ${isRtl ? 'right-[11px]' : 'left-[11px]'} w-0.5 bg-slate-800 z-0`} />
-
-                        {/* 1. Normal */}
-                        <div
-                          onClick={() => setAccountPath('Normal')}
+                      <RadioGroup
+                        value={accountPath}
+                        onChange={(val) => setAccountPath(val as AccountPath)}
+                        aria-label={t("Choose your path", "اختر مسارك")}
+                        className="space-y-3 relative outline-none"
+                      >
+                        {/* 1. Normal Path */}
+                        <Radio
+                          value="Normal"
                           onMouseEnter={() => setHoveredPath('Normal')}
                           onMouseLeave={() => setHoveredPath(null)}
-                          className={`relative z-10 flex items-start gap-3.5 p-3.5 rounded-2xl cursor-pointer border transition-all ${
-                            accountPath === 'Normal'
-                              ? 'bg-amber-500/10 border-amber-500/40 shadow-md shadow-amber-500/5'
-                              : 'bg-transparent border-transparent hover:bg-slate-800/40'
-                          }`}
+                          className={({ isSelected, isFocusVisible }) =>
+                            `relative z-10 w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-slate-900/90 border-amber-500 shadow-xl shadow-amber-500/15 ring-1 ring-amber-400/40 scale-[1.01]'
+                                : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
+                            } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                          }
                         >
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                            accountPath === 'Normal'
-                              ? 'bg-amber-400 text-slate-950 ring-4 ring-amber-400/20'
-                              : 'bg-slate-800 text-slate-400 border border-slate-700'
-                          }`}>
-                            <div className={`w-2 h-2 rounded-full ${accountPath === 'Normal' ? 'bg-slate-950' : 'bg-slate-600'}`} />
-                          </div>
-                          <div>
-                            <div className={`text-sm font-black transition-colors ${accountPath === 'Normal' ? 'text-amber-300' : 'text-slate-200'}`}>
-                              {t("Normal", "عادي")}
-                            </div>
-                            <div className="text-xs text-slate-400 font-medium mt-0.5">
-                              {t("Standard cognitive evaluation path.", "المسار القياسي للتقييم المعرفي العام.")}
-                            </div>
-                          </div>
-                        </div>
+                          {({ isSelected }) => (
+                            <>
+                              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                                isSelected
+                                  ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30'
+                                  : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                              }`}>
+                                <Brain className="w-5 h-5" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-amber-300' : 'text-white'}`}>
+                                    {t("Normal Path", "المسار القياسي (عام)")}
+                                  </span>
+                                  <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
+                                    isSelected
+                                      ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
+                                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                                  }`}>
+                                    {t("Active · Ready", "جاهز للبدء")}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                  {t("Adaptive AI mentor, Socratic explanations, GPA forecasting & spaced retention flashcards.", "مساعد معرفي ذكي يتكيف مع استيعابك، حاسبة GPA، وتكرار متباعد لحفظ المعلومات.")}
+                                </p>
+                              </div>
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                isSelected
+                                  ? 'bg-amber-400 text-slate-950 shadow-sm ring-4 ring-amber-400/20'
+                                  : 'border border-slate-700 bg-slate-800/50'
+                              }`}>
+                                {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </>
+                          )}
+                        </Radio>
 
                         {/* 2. Graduation Project */}
-                        <div
-                          onClick={() => setAccountPath('Graduation Project')}
-                          onMouseEnter={() => setHoveredPath('Graduation Project')}
-                          onMouseLeave={() => setHoveredPath(null)}
-                          className={`relative z-10 flex flex-col gap-3 p-3.5 rounded-2xl cursor-pointer border transition-all ${
-                            accountPath === 'Graduation Project'
-                              ? 'bg-teal-500/10 border-teal-500/40 shadow-md shadow-teal-500/5'
-                              : 'bg-transparent border-transparent hover:bg-slate-800/40'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3.5">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                              accountPath === 'Graduation Project'
-                                ? 'bg-teal-400 text-slate-950 ring-4 ring-teal-400/20'
-                                : 'bg-slate-800 text-slate-400 border border-slate-700'
-                            }`}>
-                              <div className={`w-2 h-2 rounded-full ${accountPath === 'Graduation Project' ? 'bg-slate-950' : 'bg-slate-600'}`} />
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`text-sm font-black transition-colors ${accountPath === 'Graduation Project' ? 'text-teal-300' : 'text-slate-200'}`}>
-                                  {t("Graduation Project", "مشروع تخرج")}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0">
-                                  {t("Coming Soon", "قريباً")}
-                                </span>
-                              </div>
-                              <div className="text-xs text-slate-400 font-medium mt-0.5">
-                                {t("Anchored to your faculty & department.", "مرتبط بكليتك وتخصصك ومقرراتك الأكاديمية.")}
-                              </div>
-                            </div>
-                          </div>
+                        <div className="relative z-10 space-y-2">
+                          <Radio
+                            value="Graduation Project"
+                            onMouseEnter={() => setHoveredPath('Graduation Project')}
+                            onMouseLeave={() => setHoveredPath(null)}
+                            className={({ isSelected, isFocusVisible }) =>
+                              `w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                                isSelected
+                                  ? 'bg-gradient-to-r from-teal-500/20 via-teal-500/10 to-slate-900/90 border-teal-500 shadow-xl shadow-teal-500/15 ring-1 ring-teal-400/40 scale-[1.01]'
+                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
+                              } ${isFocusVisible ? 'ring-2 ring-teal-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                            }
+                          >
+                            {({ isSelected }) => (
+                              <>
+                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                                  isSelected
+                                    ? 'bg-gradient-to-br from-teal-400 to-emerald-600 text-slate-950 shadow-md shadow-teal-500/30'
+                                    : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                                }`}>
+                                  <GraduationCap className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-teal-300' : 'text-white'}`}>
+                                      {t("Graduation Project", "مشروع التخرج")}
+                                    </span>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 animate-pulse">
+                                      {t("Coming Soon", "قريباً")}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                    {t("Anchored to your faculty, department, courses & thesis formatting standards.", "مرتبط بكليتك وتخصصك ومقرراتك الأكاديمية وصياغة الرسائل العلمية.")}
+                                  </p>
+                                </div>
+                                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                  isSelected
+                                    ? 'bg-teal-400 text-slate-950 shadow-sm ring-4 ring-teal-400/20'
+                                    : 'border border-slate-700 bg-slate-800/50'
+                                }`}>
+                                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                                </div>
+                              </>
+                            )}
+                          </Radio>
 
                           {/* Graduation Coming Soon Note */}
                           {accountPath === 'Graduation Project' && (
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-semibold leading-relaxed space-y-1.5"
+                              className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-semibold leading-relaxed space-y-1.5 ms-4"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <div className="flex items-center gap-1.5 font-black text-amber-300">
@@ -631,8 +821,8 @@ export default function Login() {
                               </div>
                               <p className="text-[11px] text-amber-200/90 font-medium">
                                 {t(
-                                  "The Graduation Project pathway is under active development and will be unlocked in an upcoming release. Please select the 'Normal' or 'Special Needs' path to register and access all active modules today.",
-                                  "مسار مشروع التخرج قيد التجهيز وسيتم إطلاقه في تحديث قادم. يرجى اختيار المسار 'العادي' أو 'ذوي الهمم' للبدء والاستمتاع بكافة الأنظمة المتاحة."
+                                  "The Graduation Project pathway is under active development. Please select 'Normal' or 'Special Needs' to continue and unlock all active tools today.",
+                                  "مسار مشروع التخرج قيد التجهيز وسيتم إطلاقه قريباً. يرجى اختيار المسار 'العادي' أو 'ذوي الهمم' للمتابعة الآن."
                                 )}
                               </p>
                             </motion.div>
@@ -640,92 +830,134 @@ export default function Login() {
                         </div>
 
                         {/* 3. Special Needs */}
-                        <div
-                          onClick={() => setAccountPath('Special Needs')}
-                          onMouseEnter={() => setHoveredPath('Special Needs')}
-                          onMouseLeave={() => setHoveredPath(null)}
-                          className={`relative z-10 flex flex-col gap-3 p-3.5 rounded-2xl cursor-pointer border transition-all ${
-                            accountPath === 'Special Needs'
-                              ? 'bg-rose-500/10 border-rose-500/40 shadow-md shadow-rose-500/5'
-                              : 'bg-transparent border-transparent hover:bg-slate-800/40'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3.5">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                              accountPath === 'Special Needs'
-                                ? 'bg-rose-500 text-white ring-4 ring-rose-500/20'
-                                : 'bg-slate-800 text-slate-400 border border-slate-700'
-                            }`}>
-                              <div className={`w-2 h-2 rounded-full ${accountPath === 'Special Needs' ? 'bg-white' : 'bg-slate-600'}`} />
-                            </div>
-                            <div>
-                              <div className={`text-sm font-black transition-colors ${accountPath === 'Special Needs' ? 'text-rose-300' : 'text-slate-200'}`}>
-                                {t("Special Needs", "احتياجات خاصة (ذوي الهمم)")}
-                              </div>
-                              <div className="text-xs text-slate-400 font-medium mt-0.5">
-                                {t("Customized accessible experience.", "تجربة مخصصة سهلة الوصول مع دعم لغة الإشارة والتتبع.")}
-                              </div>
-                            </div>
-                          </div>
+                        <div className="relative z-10 space-y-2">
+                          <Radio
+                            value="Special Needs"
+                            onMouseEnter={() => setHoveredPath('Special Needs')}
+                            onMouseLeave={() => setHoveredPath(null)}
+                            className={({ isSelected, isFocusVisible }) =>
+                              `w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                                isSelected
+                                  ? 'bg-gradient-to-r from-rose-500/20 via-pink-500/10 to-slate-900/90 border-rose-500 shadow-xl shadow-rose-500/15 ring-1 ring-rose-400/40 scale-[1.01]'
+                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
+                              } ${isFocusVisible ? 'ring-2 ring-rose-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                            }
+                          >
+                            {({ isSelected }) => (
+                              <>
+                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                                  isSelected
+                                    ? 'bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-md shadow-rose-500/30'
+                                    : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                                }`}>
+                                  <Heart className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-rose-300' : 'text-white'}`}>
+                                      {t("Special Needs (Accessibility)", "مسار ذوي الهمم والإتاحة")}
+                                    </span>
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 shrink-0">
+                                      {t("4 Modalities", "4 أنظمة")}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                    {t("Assistive multi-modal hub: 3D sign avatar, audio camera eyes, motor & neuro tools.", "منظومة إتاحة شاملة: لغة إشارة 3D، رفيق بصري ذكي، تحكم حركي، وأدوات توحد.")}
+                                  </p>
+                                </div>
+                                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                  isSelected
+                                    ? 'bg-rose-500 text-white shadow-sm ring-4 ring-rose-500/20'
+                                    : 'border border-slate-700 bg-slate-800/50'
+                                }`}>
+                                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                                </div>
+                              </>
+                            )}
+                          </Radio>
 
-                          {/* Focus Chips */}
+                          {/* Focus Chips: independent React Aria RadioGroup */}
                           {accountPath === 'Special Needs' && (
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="space-y-2 pt-2 ps-9"
+                              className="pt-2 ps-2"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
-                                {t("Accessibility focus", "نوع الإتاحة المطلوب")}
-                              </label>
-                              <div className="flex flex-wrap gap-1.5">
-                                {(['Visual', 'Hearing', 'Motor', 'Speech', 'Cognitive'] as DisabilityOption[]).map((dis) => (
-                                  <button
-                                    key={dis}
-                                    type="button"
-                                    onClick={() => setSelectedDisability(dis)}
-                                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                                      selectedDisability === dis
-                                        ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
-                                        : 'bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:border-slate-500'
-                                    }`}
-                                  >
-                                    {dis === 'Visual' && t('Visual', 'بصري')}
-                                    {dis === 'Hearing' && t('Hearing', 'سمعي')}
-                                    {dis === 'Motor' && t('Motor', 'حركي')}
-                                    {dis === 'Speech' && t('Speech', 'نطق')}
-                                    {dis === 'Cognitive' && t('Cognitive', 'إدراكي')}
-                                  </button>
-                                ))}
-                              </div>
+                              <RadioGroup
+                                value={selectedDisability}
+                                onChange={(val) => setSelectedDisability(val as DisabilityOption)}
+                                aria-label={t("Accessibility focus", "نوع الإتاحة المطلوب")}
+                                orientation="horizontal"
+                                className="space-y-2.5 outline-none p-3.5 rounded-2xl bg-[#090C16]/95 border border-rose-500/30 shadow-inner"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] font-black uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+                                    {t("Select Primary Focus Suite:", "اختر نظام التركيز الأساسي:")}
+                                  </span>
+                                  <span className="text-[10px] text-slate-400 font-medium">
+                                    {t("All tools remain unlocked", "جميع الأدوات تظل متاحة")}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  {[
+                                    { id: 'Visual' as const, icon: Eye, labelEn: 'Visual (AI Eyes)', labelAr: 'الرفيق البصري (كاميرا)' },
+                                    { id: 'Hearing' as const, icon: Ear, labelEn: 'Deaf & Hearing (3D)', labelAr: 'الصم وضعاف السمع (إشارة)' },
+                                    { id: 'Motor' as const, icon: Activity, labelEn: 'Motor & Voice Control', labelAr: 'التحكم الحركي وإيفونيا' },
+                                    { id: 'Cognitive' as const, icon: Brain, labelEn: 'Neurodiversity & Autism', labelAr: 'التوحد وصعوبات التعلم' },
+                                  ].map((item) => (
+                                    <Radio
+                                      key={item.id}
+                                      value={item.id}
+                                      className={({ isSelected, isFocusVisible }) =>
+                                        `flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer transition-all outline-none border ${
+                                          isSelected
+                                            ? 'bg-rose-500/25 border-rose-400 text-white shadow-md shadow-rose-500/20 font-black'
+                                            : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-800/60 font-semibold'
+                                        } ${isFocusVisible ? 'ring-2 ring-rose-400 ring-offset-1 ring-offset-slate-900' : ''}`
+                                      }
+                                    >
+                                      <item.icon className="w-4 h-4 shrink-0 text-rose-400" />
+                                      <span className="text-xs truncate">{t(item.labelEn, item.labelAr)}</span>
+                                    </Radio>
+                                  ))}
+                                </div>
+                              </RadioGroup>
                             </motion.div>
                           )}
                         </div>
-                      </div>
+                      </RadioGroup>
                     </div>
 
                     {/* Continue Button */}
-                    <button
-                      onClick={handleContinuePath}
-                      disabled={accountPath === 'Graduation Project'}
-                      className={`w-full py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${
+                    <AriaButton
+                      onPress={handleContinuePath}
+                      isDisabled={accountPath === 'Graduation Project'}
+                      className={`w-full py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
                         accountPath === 'Normal'
-                          ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-400 text-slate-950 hover:opacity-95 shadow-amber-500/20'
+                          ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-500 text-slate-950 hover:brightness-110 shadow-amber-500/25 ring-1 ring-amber-300/30'
                           : accountPath === 'Graduation Project'
-                          ? 'bg-slate-800/90 text-slate-400 border border-slate-700/80 shadow-none'
-                          : 'bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white hover:opacity-95 shadow-rose-500/25'
+                          ? 'bg-slate-800 text-slate-400 border border-slate-700/80 shadow-none'
+                          : 'bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 text-white hover:brightness-110 shadow-rose-500/30 ring-1 ring-rose-300/30'
                       }`}
                     >
-                      <span>
+                      <span className="text-xs sm:text-sm font-black">
                         {accountPath === 'Graduation Project'
-                          ? t("Coming Soon · Choose Another Path", "متاح قريباً · يرجى اختيار مسار آخر")
-                          : t("Continue", "المتابعة")}
+                          ? t("Choose Another Path to Continue", "يرجى اختيار مسار آخر للمتابعة")
+                          : accountPath === 'Normal'
+                          ? t("Continue with Normal Path", "المتابعة بالمسار القياسي")
+                          : (() => {
+                              const primaryFeature = getSpecialNeedsFeatures(selectedDisability, t).find((f) => f.isPrimary);
+                              return primaryFeature
+                                ? t(`Continue to ${primaryFeature.title}`, `المتابعة إلى ${primaryFeature.title}`)
+                                : t("Continue with Special Needs Path", "المتابعة بمسار ذوي الهمم");
+                            })()}
                       </span>
                       {accountPath !== 'Graduation Project' && (
-                        <ArrowRight className={`w-4 h-4 ${isRtl ? 'rotate-180' : ''}`} />
+                        <ArrowRight className={`w-4 h-4 shrink-0 transition-transform ${isRtl ? 'rotate-180' : ''}`} />
                       )}
-                    </button>
+                    </AriaButton>
                   </div>
                 </div>
               </div>

@@ -130,8 +130,8 @@ export const loginWithEmail = (email: string, pass: string) => signInWithEmailAn
 // missing, so a previous user's university email / faculty / department survived
 // a logout and got written into the next person's profile via Onboarding.
 export const PRE_LOGIN_KEYS = [
-  'preLoginAccountPath', 'preLoginDisability', 'preLoginOrgCode',
-  'preLoginUniEmail', 'preLoginFaculty', 'preLoginDepartment',
+  'preLoginAccountPath', 'preLoginDisability', 'preLoginAccessibilityMode', 'preLoginOrgCode',
+  'preLoginUniEmail', 'preLoginFaculty', 'preLoginDepartment', 'preLoginLanguage',
 ];
 
 // Per-USER accessibility data. Cleared on logout ONLY (not by

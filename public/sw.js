@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cognify-v5-cache';
+const CACHE_NAME = 'cognify-v9-unified-cache';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -36,7 +36,15 @@ self.addEventListener('fetch', (event) => {
   // Network-first for navigation requests with offline fallback to cached index.html
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('/index.html'))
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match('/index.html'))
     );
     return;
   }

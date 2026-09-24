@@ -710,6 +710,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                  onClick={onNavigateBack}
                  className="p-2.5 text-slate-300 hover:text-white bg-[#121524] hover:bg-[#181C2E] shadow-md border border-slate-800/80 hover:border-slate-700 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
                  title="Back to Assistant / العودة للمساعد"
+                 aria-label="Back to Assistant / العودة للمساعد"
                >
                  <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
                  <span className="text-xs font-bold hidden sm:inline">Back</span>

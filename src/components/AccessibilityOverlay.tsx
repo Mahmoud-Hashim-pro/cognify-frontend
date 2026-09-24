@@ -811,6 +811,11 @@ export default function AccessibilityOverlay({
                       ? "Auto-Speak AI Response (ON)"
                       : "Auto-Speak AI Response (OFF)"
                   }
+                  aria-label={
+                    autoSpeak
+                      ? "Auto-Speak AI Response (ON)"
+                      : "Auto-Speak AI Response (OFF)"
+                  }
                 >
                   {autoSpeak ? (
                     <Volume2 className="w-6 h-6" />
@@ -829,6 +834,7 @@ export default function AccessibilityOverlay({
                   }}
                   className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl transition-all active:scale-95 border-2 bg-danger-soft border-danger/20 text-danger hover:bg-danger-soft"
                   title="Stop AI Voice"
+                  aria-label="Stop AI Voice"
                 >
                   <VolumeX className="w-6 h-6" />
                 </button>
@@ -841,6 +847,8 @@ export default function AccessibilityOverlay({
                       ? "bg-rose-500 border-rose-400 text-white animate-pulse"
                       : "bg-slate-900 border-slate-700 text-white hover:bg-slate-800"
                   }`}
+                  title={isListening ? "Stop listening" : "Start listening"}
+                  aria-label={isListening ? "Stop listening" : "Start listening"}
                 >
                   {isListening ? (
                     <MicOff className="w-6 h-6" />

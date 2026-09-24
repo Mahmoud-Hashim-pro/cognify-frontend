@@ -76,6 +76,10 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
   const animFrameRef = useRef<number | null>(null);
   const lastEventTimeRef = useRef<number>(0);
   const consecutiveHighPitchFrames = useRef<number>(0);
+  const prevDbRef = useRef<number>(30);
+  const continuousSpeechFrames = useRef<number>(0);
+  const lastKnockCandidateTimeRef = useRef<number>(0);
+  const consecutiveDoorbellFrames = useRef<number>(0);
 
   const t = (en: string, ar: string, fr?: string) => {
     if (isAr) return ar;
@@ -99,6 +103,10 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
     setIsListening(false);
     setDecibels(0);
     setActiveHazard(null);
+    continuousSpeechFrames.current = 0;
+    lastKnockCandidateTimeRef.current = 0;
+    consecutiveDoorbellFrames.current = 0;
+    prevDbRef.current = 30;
   }, []);
 
   const handleDetectedSound = useCallback((event: Omit<SoundEvent, 'id' | 'timestamp'>) => {
@@ -115,6 +123,19 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
 
     setActiveHazard(fullEvent);
     setSoundHistory((prev) => [fullEvent, ...prev.slice(0, 30)]);
+
+    // Direct device vibration fallback + Haptic Navigation Engine
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        if (event.severity === 'danger') {
+          navigator.vibrate([400, 100, 400, 100, 400]);
+        } else if (event.severity === 'warning') {
+          navigator.vibrate([200, 100, 200]);
+        } else {
+          navigator.vibrate([100]);
+        }
+      } catch {}
+    }
 
     // Screen flash & tactile vibration alert
     if (event.severity === 'danger') {
@@ -179,6 +200,22 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
     const dangerDbThreshold = 78 + threshOffset;
     const warningDbThreshold = 68 + threshOffset;
 
+    // Track acoustic transient rise rate (dB attack delta)
+    const prevDb = prevDbRef.current;
+    prevDbRef.current = clampedDb;
+    const dbDelta = clampedDb - prevDb;
+
+    // Continuous Speech / Vocal Resonance Guard:
+    // Human speech is sustained across frames with broad formant presence (midAvg + highAvg/lowAvg).
+    // If sound is sustaining across frames, it is active room speech — NOT a transient door knock.
+    const isVocalProfile = midAvg > 75 && (highAvg > 45 || lowAvg > 70) && clampedDb >= 55;
+    if (isVocalProfile) {
+      continuousSpeechFrames.current = Math.min(60, continuousSpeechFrames.current + 1);
+    } else if (clampedDb < 50) {
+      continuousSpeechFrames.current = Math.max(0, continuousSpeechFrames.current - 2);
+    }
+    const isOngoingSpeech = continuousSpeechFrames.current >= 4;
+
     // Siren / Smoke Alarm: Continuous high pitch
     if (highAvg > 85 && clampedDb > dangerDbThreshold) {
       consecutiveHighPitchFrames.current++;
@@ -219,25 +256,61 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
       });
     }
 
-    // Doorbell / Knock: Sudden transient spike
-    if (midAvg > 90 && clampedDb > warningDbThreshold && lowAvg > 75) {
-      handleDetectedSound({
-        type: 'doorbell',
-        titleAr: 'جرس الباب أو طرق قوي',
-        titleEn: 'Doorbell or Loud Knock',
-        titleFr: 'Sonnette ou frappe à la porte',
-        descAr: 'تم رصد نقر أو رنين يشبه جرس الباب أو طارقاً بالخارج.',
-        descEn: 'A chime or knock pattern was detected.',
-        descFr: 'Sonnette ou bruit de porte détecté.',
-        db: clampedDb,
-        severity: 'warning',
-        angle: Math.floor(Math.random() * 360),
-        distance: 60,
-      });
+    // Door Knock: Percussive Transient Impulse
+    // Real knock has sharp attack rise (dbDelta >= 15), bass-heavy thump (lowAvg > 85, highAvg < 60),
+    // and is NOT part of ongoing continuous speech.
+    const isKnockImpulse = dbDelta >= 15 && clampedDb > warningDbThreshold && lowAvg > 85 && highAvg < 60 && !isOngoingSpeech;
+    if (isKnockImpulse) {
+      const now = Date.now();
+      const timeSinceLastCandidate = now - lastKnockCandidateTimeRef.current;
+
+      // Confirmed if this is a secondary tap of a rhythmic knock (140ms - 800ms) OR a massive percussive spike
+      if ((timeSinceLastCandidate >= 140 && timeSinceLastCandidate <= 800) || (dbDelta >= 24 && clampedDb >= 78)) {
+        handleDetectedSound({
+          type: 'loud_knock',
+          titleAr: 'طرق على الباب!',
+          titleEn: 'Door Knock Detected!',
+          titleFr: 'Frappe à la porte détectée !',
+          descAr: 'تم رصد طرقات واضحة على الباب بالقرب منك.',
+          descEn: 'Percussive acoustic impulse matching a door knock detected.',
+          descFr: 'Frappe à la porte détectée.',
+          db: clampedDb,
+          severity: 'warning',
+          angle: Math.floor(Math.random() * 360),
+          distance: 55,
+        });
+        lastKnockCandidateTimeRef.current = 0;
+      } else {
+        lastKnockCandidateTimeRef.current = now;
+      }
+    }
+
+    // Doorbell: Electronic Chime Harmonic (Upper-mid resonant chime, low bass)
+    const isDoorbellProfile = midAvg > 105 && highAvg > 75 && lowAvg < 65 && clampedDb > warningDbThreshold && !isOngoingSpeech;
+    if (isDoorbellProfile) {
+      consecutiveDoorbellFrames.current++;
+      if (consecutiveDoorbellFrames.current >= 4) {
+        handleDetectedSound({
+          type: 'doorbell',
+          titleAr: 'جرس الباب!',
+          titleEn: 'Doorbell Chime!',
+          titleFr: 'Sonnette de porte !',
+          descAr: 'تم رصد نغمة رنين تشبه جرس الباب.',
+          descEn: 'Chime resonance matching a doorbell detected.',
+          descFr: 'Tonalité de sonnette détectée.',
+          db: clampedDb,
+          severity: 'warning',
+          angle: Math.floor(Math.random() * 360),
+          distance: 60,
+        });
+        consecutiveDoorbellFrames.current = 0;
+      }
+    } else {
+      consecutiveDoorbellFrames.current = Math.max(0, consecutiveDoorbellFrames.current - 1);
     }
 
     // Baby Crying: Oscillating vocal frequencies
-    if (midAvg > 75 && highAvg > 65 && clampedDb > warningDbThreshold - 3) {
+    if (midAvg > 75 && highAvg > 65 && clampedDb > warningDbThreshold - 3 && !isOngoingSpeech) {
       handleDetectedSound({
         type: 'baby_crying',
         titleAr: 'بكاء طفل أو نداء استغاثة',
@@ -258,6 +331,12 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
 
   const startListening = async () => {
     setMicError('');
+    // Prime device vibration permissions on user gesture
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([40]);
+      } catch {}
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       micStreamRef.current = stream;

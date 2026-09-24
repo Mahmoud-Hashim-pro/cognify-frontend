@@ -27,6 +27,7 @@
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "react": "^19.0.0",
+    "react-aria-components": "^1.21.1",
     "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
     "react-markdown": "^10.1.0",

@@ -2770,65 +2770,10 @@ export default function MotorEuphoniaView({ profile, onSendMessage }: MotorEupho
             )}
           </button>
 
-          {/* Tab: Euphonia Voice Studio */}
-          <button
-            data-aac-id="tab-euphonia-studio"
-            onClick={() => setActiveTab('euphonia-studio')}
-            className={`relative px-2.5 sm:px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition-all ${
-              activeTab === 'euphonia-studio'
-                ? themeClasses.activeTab + ' shadow-md'
-                : 'bg-slate-950 border border-slate-800 text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <Radio className="w-3.5 h-3.5" />
-            <span>{isArabic ? 'استوديو إيفونيا' : 'Euphonia Studio'}</span>
-            {hoveredCardId === 'tab-euphonia-studio' && dwellProgress > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-950 rounded-b-xl overflow-hidden">
-                <div className="h-full bg-amber-400 transition-all duration-75" style={{ width: `${dwellProgress * 100}%` }} />
-              </div>
-            )}
-          </button>
         </div>
 
         {/* 2. Quick Tracking Tuning & Recalibration */}
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-          {/* Tracking Mode Switcher */}
-          <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-xl border border-slate-800 text-[11px]">
-            <button
-              onClick={() => updateHeadConfig({ trackingMode: 'iris' })}
-              className={`px-2 py-1 rounded-lg font-bold transition-all ${
-                (headConfig.trackingMode || 'iris') === 'iris'
-                  ? 'bg-amber-400 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              title={isArabic ? 'بؤبؤ العين' : 'Eye Iris'}
-            >
-              👁️ <span className="hidden md:inline">{isArabic ? 'بؤبؤ' : 'Iris'}</span>
-            </button>
-            <button
-              onClick={() => updateHeadConfig({ trackingMode: 'nose' })}
-              className={`px-2 py-1 rounded-lg font-bold transition-all ${
-                headConfig.trackingMode === 'nose'
-                  ? 'bg-amber-400 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              title={isArabic ? 'الأنف والرأس' : 'Nose Head'}
-            >
-              👤 <span className="hidden md:inline">{isArabic ? 'رأس' : 'Nose'}</span>
-            </button>
-            <button
-              onClick={() => updateHeadConfig({ trackingMode: 'hybrid' })}
-              className={`px-2 py-1 rounded-lg font-bold transition-all ${
-                headConfig.trackingMode === 'hybrid'
-                  ? 'bg-amber-400 text-slate-950 shadow-sm'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              title={isArabic ? 'هجين' : 'Hybrid'}
-            >
-              ⚡ <span className="hidden md:inline">{isArabic ? 'هجين' : 'Hybrid'}</span>
-            </button>
-          </div>
-
           {/* Dwell Time Adjuster */}
           <div className="flex items-center gap-1 bg-slate-950 rounded-xl px-1.5 py-0.5 border border-slate-800 text-[11px]">
             <span className="text-slate-400 hidden sm:inline">{isArabic ? 'تثبيت:' : 'Dwell:'}</span>
@@ -2894,18 +2839,6 @@ export default function MotorEuphoniaView({ profile, onSendMessage }: MotorEupho
             {isAudioEngineActive ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">{isAudioEngineActive ? (isArabic ? 'إيقاف إيفونيا' : 'Stop Euphonia') : (isArabic ? 'أصوات إيفونيا' : 'Vocal Sounds')}</span>
           </button>
-
-          {/* Layout Flexibility Switcher: Docked vs Floating */}
-          <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-0.5">
-            <button
-              onClick={() => setSidebarMode(sidebarMode === 'docked' ? 'floating' : 'docked')}
-              className="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 text-slate-300 hover:text-white"
-              title={sidebarMode === 'docked' ? (isArabic ? 'تحويل إلى كاميرا عائمة' : 'Switch to floating camera') : (isArabic ? 'تثبيت جانبي' : 'Switch to side-by-side')}
-            >
-              {sidebarMode === 'docked' ? <Columns2 className="w-3.5 h-3.5 text-amber-400" /> : <Maximize2 className="w-3.5 h-3.5 text-amber-400" />}
-              <span className="hidden md:inline">{sidebarMode === 'docked' ? (isArabic ? 'جانبي' : 'Docked') : (isArabic ? 'عائم' : 'Floating')}</span>
-            </button>
-          </div>
 
           {/* Motor Language Switcher: Arabic <-> English <-> French */}
           <button

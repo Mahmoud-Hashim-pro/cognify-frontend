@@ -146,6 +146,11 @@ export interface UserProfile {
   linkedParentUid?: string;
   /** Alternative to linkedParentUid: any UID in this list also passes isVerifiedParent. */
   authorizedParentUids?: string[];
+  /** Display info for every approved caregiver (parent/specialist), kept in sync with
+   *  authorizedParentUids so CaregiverHub can list & individually revoke each one
+   *  without an extra lookup. linkedParentUid holds the first ("primary") uid for
+   *  back-compat with any code that still reads only that single field. */
+  linkedCaregivers?: { uid: string; name: string; email: string; linkedAt: number }[];
   /** Alternative: a parent whose verified auth email matches this also passes isVerifiedParent. */
   parentEmail?: string;
   /** Canonical learning/cognitive state snapshot, used by institution & parent dashboards. */

@@ -108,10 +108,22 @@ export default function AccessibilityPassportModal({
 
   const handleSave = async () => {
     setIsSaving(true);
-    const resolvedMode: AccessibilityMode =
-      passport.primaryMode ||
-      (passport.primaryCategory !== 'Multiple' ? passport.primaryCategory : undefined) ||
-      profile.accessibilityMode;
+    let cat = passport.primaryCategory as string;
+    let resolvedMode: AccessibilityMode = profile.accessibilityMode;
+    if (cat === 'Motor') resolvedMode = 'Motor-Euphonia';
+    else if (cat === 'Deaf') resolvedMode = 'Vocal-Deaf';
+    else if (cat === 'Visual') resolvedMode = 'Visual';
+    else if (cat === 'Neurodiversity') resolvedMode = 'Neurodiversity';
+    else if (cat === 'None') resolvedMode = 'None';
+    else if (passport.primaryMode && passport.primaryMode !== 'None') resolvedMode = passport.primaryMode;
+
+    try {
+      const mappedTab = resolvedMode === 'Motor-Euphonia' ? 'motor' :
+                        resolvedMode === 'Neurodiversity' ? 'neurodiversity' :
+                        resolvedMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+      localStorage.setItem('cognify_default_disability_tab', mappedTab);
+    } catch {}
+
     const updatedProfile: UserProfile = {
       ...profile,
       accessibilityPassport: passport,

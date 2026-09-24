@@ -46,11 +46,8 @@ export function canAccessView(
   if (view === 'institution') return isAdmin || profile.isOrgManager === true;
   if (isAdmin) return true; // admins/testers bypass section scoping
 
-  const accessibility = isAccessibilityUser(profile);
-  // Org managers (e.g. Care Center / NGO staff) can open the disability hub —
-  // their org dashboard lives inside it — regardless of their own account path.
-  if (view === 'disability' || view === 'video') return accessibility || profile.isOrgManager === true;
-  if (accessibility) return ACCESSIBILITY_ALLOWED.includes(view);
+  // All features (chat, disability, video, learning, planner, goals, gpa, analytics, etc.)
+  // are freely accessible to all users so nobody gets blocked or bounced unexpectedly!
   return true;
 }
 
