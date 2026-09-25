@@ -268,4 +268,15 @@ Reply with ONLY the JSON array — e.g. ["HELP","WATER"] or [].`;
   async generateRawText(prompt: string): Promise<string> {
     return (await callText(prompt)) || "";
   },
+
+  /** Summarize extracted document/lecture text for the Visual Companion's
+   *  Document Reader. Text-only — the PDF's text is extracted client-side
+   *  first (documentReader.ts), so this never sends raw file bytes. */
+  async summarizeDocument(text: string, language: string = "English"): Promise<string> {
+    const prompt = `Summarize this lecture/document text in clear, spoken-friendly ${language}, as if reading a summary aloud to a student who couldn't read the original themselves. Cover the main points and any key terms or numbers, in a few short paragraphs. Do not use markdown, bullet symbols, or headers — plain spoken sentences only. Reply with ONLY the summary.\n\nDocument text:\n${text}`;
+    const out = await callText(prompt);
+    if (!out) throw new Error("Failed to summarize document");
+    return out;
+  },
 };
+

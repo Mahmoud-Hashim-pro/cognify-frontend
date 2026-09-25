@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/stamp-sw-version.mjs",
     "preview": "vite preview",
     "lint": "npx tsc --noEmit"
   },
@@ -23,6 +23,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "@vitejs/plugin-react": "^5.0.4",
     "clsx": "^2.1.1",
+    "docx": "^9.7.2",
     "firebase": "^12.15.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",

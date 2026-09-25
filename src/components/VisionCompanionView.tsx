@@ -32,6 +32,7 @@ import {
   Users,
   Palette,
   Compass,
+  FileText,
 } from 'lucide-react';
 import { triggerHapticAlert, parseNavGuidance } from '../lib/hapticNavEngine';
 import { doc, setDoc } from 'firebase/firestore';
@@ -41,6 +42,7 @@ import { localize, isArabicLocale } from '../lib/translations';
 import { generateAdaptiveResponse } from '../services/gemini';
 import { speak, cancelSpeech, unlockSpeechSynthesis } from '../lib/tts';
 import { toast } from './Toast';
+import DocumentReaderModal from './DocumentReaderModal';
 import {
   extractSpatialObjectsFromVision,
   recordObservedSpatialObjects,
@@ -295,6 +297,7 @@ export default function VisionCompanionView({ profile, setProfile }: VisionCompa
 
   // Spatial memory drawer state
   const [showSpatialMemory, setShowSpatialMemory] = useState(false);
+  const [showDocumentReader, setShowDocumentReader] = useState(false);
   const [spatialRecords, setSpatialRecords] = useState<SpatialObjectRecord[]>(() =>
     profile?.uid ? getSpatialObjects(profile.uid) : []
   );
@@ -1158,6 +1161,20 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               )}
             </button>
 
+            <button
+              onClick={() => setShowDocumentReader(true)}
+              aria-label={t('Documents', 'مستندات', 'Documents')}
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl bg-black/75 text-white backdrop-blur-xl border border-cyan-500/40 hover:bg-black/90 shadow-lg active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold"
+              title={t(
+                'Documents: read/summarize a PDF and convert it to Word, plus speech-to-text',
+                'مستندات: اقرأ أو لخّص ملف PDF وحوّليه لوورد، وحوّلي الصوت لنص',
+                'Documents : lire/résumer un PDF et le convertir en Word, plus la reconnaissance vocale'
+              )}
+            >
+              <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
+              <span className="hidden xl:inline">{t('Documents', 'مستندات', 'Documents')}</span>
+            </button>
+
             {(status === 'ready' || status === 'analyzing') && (
               <button
                 onClick={flipCamera}
@@ -1853,6 +1870,17 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Document Reader & Speech ⇄ Text — separate full-screen modal */}
+      <AnimatePresence>
+        {showDocumentReader && (
+          <DocumentReaderModal
+            profile={profile}
+            companionLang={companionLang}
+            onClose={() => setShowDocumentReader(false)}
+          />
         )}
       </AnimatePresence>
     </div>
