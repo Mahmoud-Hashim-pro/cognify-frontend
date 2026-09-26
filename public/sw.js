@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cognify-v9-unified-cache';
+const CACHE_NAME = 'cognify-v11-unified-cache';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

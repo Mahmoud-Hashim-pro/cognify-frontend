@@ -64,7 +64,6 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
   const primaryItems = [
     { id: 'chat', label: getTranslation(profile.language, 'chatSession'), icon: MessageSquare },
     { id: 'profile', label: localize(profile.language, 'Learning Profile', 'الملف المعرفي الذكي'), icon: Brain },
-    { id: 'learning', label: localize(profile.language, 'Learning Hub', 'مركز التعلّم الذكي'), icon: Sparkles },
   ] as const;
 
   // Academic sections shown depend on the user's education level (University
@@ -92,12 +91,12 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
 
   // navbtn: obsidian glass styling; active = cyan-to-blue gradient pill with cyan text/icon.
   const navBtn = (active: boolean) =>
-    `flex items-center gap-3 w-full px-3 h-[38px] rounded-xl text-[13px] font-medium text-start transition-all ${
+    `group flex items-center gap-3 w-full px-3 h-[40px] rounded-xl text-[13px] font-medium text-start transition-all relative select-none ${
       active
-        ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 border border-cyan-500/30 text-cyan-400 font-semibold shadow-sm'
-        : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100 border border-transparent'
+        ? 'bg-gradient-to-r from-cyan-500/15 via-blue-500/10 to-transparent border border-cyan-500/35 text-cyan-300 font-semibold shadow-sm shadow-cyan-950/40'
+        : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 border border-transparent hover:border-white/5 active:scale-[0.98]'
     }`;
-  const navIcon = (_active: boolean) => `w-[18px] h-[18px] shrink-0`;
+  const navIcon = (_active: boolean) => `w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110`;
 
   const userInitial = (profile.name || profile.email || 'U').trim().charAt(0).toUpperCase();
 
@@ -105,8 +104,8 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
     <div className="w-[284px] h-full shrink-0 bg-[#0E111D]/95 text-slate-200 border-e border-slate-800/80 backdrop-blur-2xl flex flex-col px-[18px] py-[22px]">
       {/* Brand */}
       <div className="flex items-center gap-3 px-1.5 pb-1">
-        <div className="w-[34px] h-[34px] rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/25" style={{ background: 'linear-gradient(135deg,#06b6d4,#6366f1)' }}>
-          <Logo className="w-[19px] h-[19px]" />
+        <div className="w-[36px] h-[36px] rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/25 ring-1 ring-white/20" style={{ background: 'linear-gradient(135deg,#06b6d4,#6366f1)' }}>
+          <Logo className="w-[20px] h-[20px]" />
         </div>
         <div className="leading-none">
           <div className="font-serif text-[23px] font-bold text-white tracking-tight">Cognify</div>
@@ -118,7 +117,7 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
       {!a11yOnly && (
         <button
           onClick={startNewChat}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all hover:shadow-cyan-500/35 border border-white/15"
         >
           <Plus className="w-[17px] h-[17px]" /> {getTranslation(profile.language, 'newThread')}
         </button>
@@ -298,10 +297,13 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
           </div>
         </div>
 
-        <div className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-2xl border bg-[#121524] transition-all ${currentView === 'profile' || currentView === 'settings' ? 'border-cyan-500/60 shadow-sm shadow-cyan-500/10' : 'border-slate-800'}`}>
+        <div className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-2xl border bg-[#121524]/90 backdrop-blur-md transition-all ${currentView === 'profile' || currentView === 'settings' ? 'border-cyan-500/60 shadow-md shadow-cyan-500/10' : 'border-slate-800/80 hover:border-slate-700'}`}>
           <button onClick={() => setCurrentView('profile')} className="flex items-center gap-2.5 flex-1 min-w-0 text-start group" title={localize(profile.language, 'View Profile', 'الملف الشخصي')}>
-            <div className="w-[34px] h-[34px] rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform" style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
-              {profile.photoURL ? <img src={profile.photoURL} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" /> : userInitial}
+            <div className="relative shrink-0">
+              <div className="w-[36px] h-[36px] rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform ring-1 ring-white/10" style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
+                {profile.photoURL ? <img src={profile.photoURL} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" /> : userInitial}
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0E111D]" />
             </div>
             <div className="leading-tight overflow-hidden flex-1">
               <div className="text-[13px] font-bold text-slate-100 truncate group-hover:text-cyan-300 transition-colors">{profile.name || profile.email?.split('@')[0] || 'User'}</div>
@@ -310,7 +312,7 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
           </button>
           <button
             onClick={() => setCurrentView('settings')}
-            className={`p-2 rounded-xl transition-all shrink-0 ${currentView === 'settings' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60'}`}
+            className={`p-2 rounded-xl transition-all shrink-0 active:scale-95 ${currentView === 'settings' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60'}`}
             title={localize(profile.language, 'Settings', 'الإعدادات')}
             aria-label={localize(profile.language, 'Settings', 'الإعدادات')}
           >

@@ -7,12 +7,12 @@ import {
   SlidersHorizontal, 
   Bell, 
   Vibrate, 
-  Type
+  Type,
+  Sparkles
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { localize, isArabicLocale } from '../lib/translations';
 import { triggerHapticAlert } from '../lib/hapticNavEngine';
-import SignVideoStudio from './SignVideoStudio';
 import AmbientSoundRadar from './AmbientSoundRadar';
 import HumanCommunicationBridge from './HumanCommunicationBridge';
 import type { DisabilityTab } from './DisabilityModeView';
@@ -166,6 +166,16 @@ export default function DeafEcosystemView({
                 <span>{localize(profile.language, 'Sound Sentinel Active', 'المستشعر الصوتي متيقظ')}</span>
               </div>
             )}
+
+            {/* Cross-Disability Bridge Button */}
+            <button
+              onClick={() => onTabChange?.('orchestrator')}
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 hover:text-white transition-all text-xs font-black flex items-center gap-1.5 active:scale-95 shrink-0"
+              title={localize(profile.language, 'Open Peer-to-Peer Cross-Disability Bridge', 'فتح جسر التواصل المباشر مع المكفوفين')}
+            >
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span className="hidden sm:inline">{localize(profile.language, 'Blind ⇄ Deaf Bridge', 'تواصل مع كفيف 👁️')}</span>
+            </button>
 
             <button
               onClick={() => setShowAssistiveSettings(!showAssistiveSettings)}
@@ -350,15 +360,8 @@ export default function DeafEcosystemView({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.15 }}
-              className="w-full h-full min-h-0 overflow-y-auto"
+              className="w-full h-full min-h-0 overflow-hidden flex flex-col"
             >
-              <SignVideoStudio
-                profile={profile}
-                onMenuClick={onMenuClick}
-                isEmbedded={true}
-                onNavigateBack={onNavigateBack}
-              />
-              <div className="border-t-2 border-indigo-500/30 mx-4 my-2" />
               <HumanCommunicationBridge
                 profile={profile}
               />

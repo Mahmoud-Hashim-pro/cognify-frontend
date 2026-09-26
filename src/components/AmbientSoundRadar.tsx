@@ -230,7 +230,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
           descFr: 'Alarme sonore aiguë et continue détectée dans votre environnement.',
           db: clampedDb,
           severity: 'danger',
-          angle: Math.floor(Math.random() * 360),
+          angle: 0,
           distance: 35,
         });
         consecutiveHighPitchFrames.current = 0;
@@ -251,7 +251,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
         descFr: 'Coup de klaxon puissant détecté à proximité.',
         db: clampedDb,
         severity: 'danger',
-        angle: Math.floor(Math.random() * 360),
+        angle: 0,
         distance: 45,
       });
     }
@@ -276,13 +276,31 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
           descFr: 'Frappe à la porte détectée.',
           db: clampedDb,
           severity: 'warning',
-          angle: Math.floor(Math.random() * 360),
+          angle: 0,
           distance: 55,
         });
         lastKnockCandidateTimeRef.current = 0;
       } else {
         lastKnockCandidateTimeRef.current = now;
       }
+    }
+
+    // Dog Bark: High-energy sharp acoustic impulse in lower-mid band (600 - 1400 Hz)
+    const isBarkImpulse = dbDelta >= 13 && clampedDb > warningDbThreshold + 2 && midAvg > 95 && highAvg < 65 && !isOngoingSpeech && !isKnockImpulse;
+    if (isBarkImpulse) {
+      handleDetectedSound({
+        type: 'dog_bark',
+        titleAr: 'نباح كلب قريب!',
+        titleEn: 'Dog Bark Detected!',
+        titleFr: 'Aboiement de chien détecté !',
+        descAr: 'تم رصد نباح كلب أو صوت حاد مفاجئ بالقرب منك.',
+        descEn: 'Acoustic pattern matching a dog bark detected.',
+        descFr: 'Aboiement de chien détecté à proximité.',
+        db: clampedDb,
+        severity: 'warning',
+        angle: 0,
+        distance: 50,
+      });
     }
 
     // Doorbell: Electronic Chime Harmonic (Upper-mid resonant chime, low bass)
@@ -300,7 +318,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
           descFr: 'Tonalité de sonnette détectée.',
           db: clampedDb,
           severity: 'warning',
-          angle: Math.floor(Math.random() * 360),
+          angle: 0,
           distance: 60,
         });
         consecutiveDoorbellFrames.current = 0;
@@ -321,7 +339,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
         descFr: 'Pleurs de bébé ou cri détecté dans la pièce.',
         db: clampedDb,
         severity: 'warning',
-        angle: Math.floor(Math.random() * 360),
+        angle: 0,
         distance: 50,
       });
     }
@@ -430,13 +448,13 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             </div>
             <div>
               <h1 className="font-black text-sm sm:text-base leading-tight flex items-center gap-2">
-                <span>{t('Ambient Sound Radar', 'رادار الأصوات والمخاطر', 'Radar Sonore Intelligent')}</span>
+                <span>{t('Acoustic Hazard Sentinel', 'مستشعر الأخطار الصوتية', 'Sentinelle Acoustique')}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-normal">
                   {t('For the Deaf', 'للصم وضعاف السمع', 'Pour les sourds')}
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400">
-                {t('Real-time acoustic AI hazard detection & visual haptic alerts', 'كشف صوتي فوري لأجراس الأبواب، إنذارات الحريق والسيارات مع اهتزاز لمسي', 'Détection visuelle et haptique des alarmes')}
+                {t('Real-time acoustic DSP hazard detection & visual-haptic alerts', 'كشف صوتي طيفي فوري لأجراس الأبواب، إنذارات الحريق، كلاكسات السيارات، ونباح الكلاب', 'Détection acoustique DSP et alertes visuelles')}
               </p>
             </div>
           </div>
@@ -464,10 +482,22 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             }`}
           >
             {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            <span>{isListening ? t('Stop Radar', 'إيقاف الرادار', 'Arrêter') : t('Start Radar', 'تشغيل الرادار', 'Activer')}</span>
+            <span>{isListening ? t('Stop Sentinel', 'إيقاف المستشعر', 'Arrêter') : t('Start Sentinel', 'تشغيل المستشعر', 'Activer')}</span>
           </button>
         </div>
       </header>
+
+      {/* Honest Technical Transparency Banner */}
+      <div className="bg-slate-900/90 border-b border-slate-800/80 px-4 py-1.5 text-[11px] text-slate-400 flex items-center gap-2">
+        <span className="text-amber-400 font-bold shrink-0">ℹ️</span>
+        <span className="truncate">
+          {isAr
+            ? 'تنبيه تقني: المستشعر يحلل طيف الترددات وشدة الصوت (DSP) لتحذير الصم فورياً. الميكروفون الأحادي يرصد شدة الصوت ونمطه وليس الاتجاه المكاني 3D.'
+            : isFr
+            ? 'Note technique : La sentinelle analyse le spectre et l\'intensité (DSP). Le micro mono détecte le type et le volume, pas la direction 3D.'
+            : 'Technical note: Sentinel analyzes frequency spectrum & decibel intensity (DSP). Mono microphones detect sound signature and volume, not 3D spatial direction.'}
+        </span>
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
@@ -513,26 +543,34 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             )}
           </AnimatePresence>
 
-          {/* Circular Radar Display */}
+          {/* Circular Omnidirectional Sound Field Display */}
           <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-2 border-cyan-500/30 bg-slate-900/90 flex items-center justify-center shadow-2xl shadow-cyan-950/50 overflow-hidden">
-            {/* Concentric Range Rings */}
-            <div className="absolute w-3/4 h-3/4 rounded-full border border-cyan-500/20" />
-            <div className="absolute w-1/2 h-1/2 rounded-full border border-cyan-500/20" />
-            <div className="absolute w-1/4 h-1/4 rounded-full border border-cyan-500/20" />
+            {/* Concentric Intensity Wave Rings */}
+            <motion.div 
+              animate={{ scale: [1, 1.06, 1], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute w-3/4 h-3/4 rounded-full border border-cyan-500/20" 
+            />
+            <motion.div 
+              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute w-1/2 h-1/2 rounded-full border border-cyan-500/30" 
+            />
+            <div className="absolute w-1/4 h-1/4 rounded-full border border-cyan-500/40" />
 
-            {/* Radar Crosshairs */}
-            <div className="absolute w-full h-[1px] bg-cyan-500/20" />
-            <div className="absolute h-full w-[1px] bg-cyan-500/20" />
-
-            {/* Rotating Radar Sweep Line */}
+            {/* Omnidirectional Pulse Ripple when sound is active */}
             {isListening && (
               <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                className="absolute inset-0 origin-center pointer-events-none"
-              >
-                <div className="w-1/2 h-1/2 bg-gradient-to-tr from-cyan-500/40 via-cyan-500/10 to-transparent rounded-tl-full origin-bottom-right" />
-              </motion.div>
+                animate={{ scale: [0.8, 1.4], opacity: [0.6, 0] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+                style={{
+                  width: `${Math.min(90, Math.max(20, (decibels / 120) * 90))}%`,
+                  height: `${Math.min(90, Math.max(20, (decibels / 120) * 90))}%`,
+                }}
+                className={`absolute rounded-full border-2 ${
+                  decibels > 85 ? 'border-red-500 bg-red-500/10' : decibels > 70 ? 'border-amber-400 bg-amber-400/10' : 'border-cyan-400 bg-cyan-400/10'
+                }`}
+              />
             )}
 
             {/* Center Decibel Hub */}
@@ -551,36 +589,6 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
                   : t('Hazardous', 'خطر شديد', 'Dangereux')}
               </div>
             </div>
-
-            {/* Sound Blips on Radar */}
-            {soundHistory.slice(0, 5).map((evt, idx) => {
-              const rad = (evt.angle * Math.PI) / 180;
-              const radiusPercent = evt.distance;
-              const x = Math.cos(rad) * radiusPercent;
-              const y = Math.sin(rad) * radiusPercent;
-
-              return (
-                <motion.div
-                  key={evt.id}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 - idx * 0.18 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  style={{
-                    position: 'absolute',
-                    left: `${50 + x * 0.45}%`,
-                    top: `${50 + y * 0.45}%`,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                  className={`w-5 h-5 rounded-full flex items-center justify-center shadow-lg pointer-events-none ${
-                    evt.severity === 'danger'
-                      ? 'bg-red-500 text-white animate-ping'
-                      : 'bg-amber-500 text-black'
-                  }`}
-                >
-                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                </motion.div>
-              );
-            })}
           </div>
 
           {/* Decibel Level Bar */}

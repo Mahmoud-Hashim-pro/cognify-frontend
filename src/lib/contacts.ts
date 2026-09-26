@@ -152,7 +152,9 @@ export function makePhoneCall(phone: string): boolean {
   if (!isValidContactPhone(phone)) return false;
   const cleanPhone = phone.replace(/[^0-9+]/g, '');
   if (!cleanPhone) return false;
-  window.open(`tel:${cleanPhone}`, '_self');
+  if (typeof window !== 'undefined') {
+    window.open(`tel:${cleanPhone}`, '_self');
+  }
   return true;
 }
 
@@ -163,7 +165,9 @@ export function sendWhatsAppMessage(phone: string, text: string): void {
   const url = cleanPhone
     ? `https://wa.me/${cleanPhone}?text=${encodedText}`
     : `https://wa.me/?text=${encodedText}`;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  if (typeof window !== 'undefined') {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 }
 
 /** Pre-set WhatsApp Assistive Quick Messages */

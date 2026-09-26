@@ -122,13 +122,20 @@ export class SignClassifier {
 
   get ready(): boolean { return this.model !== null; }
 
-  async load(modelUrl = '/models/sign/model.json'): Promise<void> {
-    this.model = await tf.loadLayersModel(modelUrl);
-    // warm-up so the first real frame isn't slow
-    tf.tidy(() => {
-      const out = this.model!.predict(tf.zeros([1, 28, 28, 1])) as tf.Tensor;
-      out.dataSync();
-    });
+  async load(modelUrl = '/models/sign/model.json'): Promise<boolean> {
+    try {
+      this.model = await tf.loadLayersModel(modelUrl);
+      // warm-up so the first real frame isn't slow
+      tf.tidy(() => {
+        const out = this.model!.predict(tf.zeros([1, 28, 28, 1])) as tf.Tensor;
+        out.dataSync();
+      });
+      return true;
+    } catch (err) {
+      console.warn(`[SignClassifier] Static model at ${modelUrl} not found. Local edge classification inactive until weights are bundled.`, err);
+      this.model = null;
+      return false;
+    }
   }
 
   /**

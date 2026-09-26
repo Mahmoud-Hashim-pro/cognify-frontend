@@ -267,6 +267,13 @@ export interface SensoryEmotionLog {
   intensity: number; // 1-5
   sensoryTrigger?: string;
   comfortActivityUsed?: string;
+  dispatchResult?: {
+    success: boolean;
+    message?: string;
+    channels?: string[];
+    fallbackDirectCall?: boolean;
+    details?: any;
+  };
 }
 
 export interface AccessibilityPassport {

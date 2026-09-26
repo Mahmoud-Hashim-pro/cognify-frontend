@@ -4,7 +4,16 @@
  * for blind and visually impaired users.
  */
 
-export type HapticAlertPattern = 'clear' | 'warning' | 'danger' | 'turn-left' | 'turn-right' | 'arrival' | 'single-pulse';
+export type HapticAlertPattern =
+  | 'clear'
+  | 'warning'
+  | 'danger'
+  | 'turn-left'
+  | 'turn-right'
+  | 'arrival'
+  | 'single-pulse'
+  | 'double-pulse'
+  | 'sos';
 
 export interface NavGuidanceResult {
   hazardLevel: 'safe' | 'caution' | 'danger';
@@ -26,6 +35,10 @@ export function triggerHapticAlert(pattern: HapticAlertPattern): boolean {
       case 'clear':
       case 'single-pulse':
         return navigator.vibrate([60]);
+      case 'double-pulse':
+        return navigator.vibrate([80, 60, 80]);
+      case 'sos':
+        return navigator.vibrate([100, 50, 100, 50, 100, 150, 300, 50, 300, 50, 300, 150, 100, 50, 100, 50, 100]);
       case 'warning':
         return navigator.vibrate([150, 80, 150]);
       case 'danger':

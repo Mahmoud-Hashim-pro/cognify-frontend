@@ -777,6 +777,21 @@ export default function SignAvatar3D({ words, playing, onProgress, onDone, class
           Loading 3D engine…
         </div>
       )}
+      {/*
+        HONEST DISCLAIMER — must remain visible until gestures are reviewed by a
+        certified ArSL (Arabic Sign Language) linguist or the Egyptian Association
+        for the Deaf. Current poses use ASL-based fingerspelling approximations,
+        NOT certified ArSL. Removing this disclaimer before professional linguistic
+        review constitutes misrepresentation to the Deaf community.
+      */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-40 px-2.5 py-1 bg-amber-950/80 backdrop-blur-sm border border-amber-500/40 rounded-lg pointer-events-none">
+        <span className="text-[10px] text-amber-300 font-bold leading-tight block text-center">
+          ⚠️ إشارات تجريبية — غير مراجعة من مترجم ArSL معتمد
+        </span>
+        <span className="text-[9px] text-amber-400/70 block text-center">
+          Experimental · Not certified ArSL · Under linguistic review
+        </span>
+      </div>
     </div>
   );
 }

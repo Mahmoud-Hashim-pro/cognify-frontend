@@ -26,12 +26,6 @@
       "url": "/#chat"
     },
     {
-      "name": "Learning Hub",
-      "short_name": "Learn",
-      "description": "Adaptive learning modules and exercises",
-      "url": "/#learning"
-    },
-    {
       "name": "Accessibility Suite",
       "short_name": "Assistive",
       "description": "Eye-gaze, Euphonia, captions, and sign language tools",

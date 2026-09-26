@@ -13,14 +13,18 @@ import { motion, AnimatePresence } from 'motion/react';
 import { doc, setDoc } from 'firebase/firestore';
 import { db, cleanDataForFirestore } from '../lib/firebase';
 import { toast } from './Toast';
-import MotorEuphoniaView from './MotorEuphoniaView';
-import VisionCompanionView from './VisionCompanionView';
-import ChatInterface, { ChatInterfaceRef } from './ChatInterface';
-import OrgDashboard from './OrgDashboard';
-import NeurodiversityHub from './NeurodiversityHub';
-import CaregiverHub from './CaregiverHub';
-import AccessibilityPassportModal from './AccessibilityPassportModal';
-import DeafEcosystemView from './DeafEcosystemView';
+import type { ChatInterfaceRef } from './ChatInterface';
+const MotorEuphoniaView = React.lazy(() => import('./MotorEuphoniaView'));
+const VisionCompanionView = React.lazy(() => import('./VisionCompanionView'));
+const ChatInterface = React.lazy(() => import('./ChatInterface'));
+const OrgDashboard = React.lazy(() => import('./OrgDashboard'));
+const NeurodiversityHub = React.lazy(() => import('./NeurodiversityHub'));
+const CaregiverHub = React.lazy(() => import('./CaregiverHub'));
+const AccessibilityPassportModal = React.lazy(() => import('./AccessibilityPassportModal'));
+const VisualComfortModal = React.lazy(() => import('./VisualComfortModal'));
+const DeafEcosystemView = React.lazy(() => import('./DeafEcosystemView'));
+const CrossDisabilityOrchestrator = React.lazy(() => import('./CrossDisabilityOrchestrator'));
+const LearningHub = React.lazy(() => import('./learning/LearningHub'));
 import { isAccessibilityUser } from '../lib/access';
 import { getTranslation } from '../lib/translations';
 
@@ -35,8 +39,10 @@ export type DisabilityTab =
   | 'vision'
   | 'radar'
   | 'neurodiversity'
+  | 'learning'
   | 'caregiver'
-  | 'deaf';
+  | 'deaf'
+  | 'orchestrator';
 
 export type ModuleCategory = 'all' | 'vision' | 'hearing' | 'motor' | 'neuro' | 'caregiver';
 
@@ -92,7 +98,8 @@ function categoryForTab(tab: DisabilityTab): ModuleCategory {
     case 'vision': return 'vision';
     case 'deaf': return 'hearing';
     case 'motor': return 'motor';
-    case 'neurodiversity': return 'neuro';
+    case 'neurodiversity':
+    case 'learning': return 'neuro';
     case 'caregiver': return 'caregiver';
     default: return 'all';
   }
@@ -112,6 +119,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
 }, ref) {
   const [activeTab, setActiveTab] = useState<DisabilityTab>(() => detectDirectDisabilityTab(profile));
   const [showPassportModal, setShowPassportModal] = useState(false);
+  const [showVisualComfortModal, setShowVisualComfortModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ModuleCategory>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
@@ -341,7 +349,28 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       buttonCls: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 text-white shadow-indigo-500/25',
       matchingMode: 'Sign-Only',
     },
-    // 3. MOTOR & ALS
+    // 3. CROSS-DISABILITY SENSORY BRIDGE (UNIVERSAL MESH)
+    {
+      id: 'orchestrator' as const,
+      category: 'hearing' as const,
+      titleEn: 'Cross-Disability Sensory Bridge (Universal Mesh)',
+      titleAr: 'جسر التواصل التبادلي بين الإعاقات (شبكة الحواس الشاملة)',
+      shortEn: 'Sensory Bridge',
+      shortAr: 'جسر الإعاقات',
+      badgeEn: 'Blind ⇄ Deaf ⇄ Motor ⇄ Deaf-Blind',
+      badgeAr: 'كفيف ⇄ أصم ⇄ شلل ⇄ كفيف-أصم',
+      descEn: 'Direct bilateral peer-to-peer relay connecting blind & deaf students without human interpreters, tactile Morse haptic matrix for deaf-blind, and single-switch autonomic scanner for ALS.',
+      descAr: 'جسر ثنائي مباشر للتواصل بين الكفيف والأصم بدون مترجم بشري، مصفوفة مورس بالاهتزاز اللمسي للصم-المكفوفين، والمسح الذكي بالمفتاح الفردي لمرضى التصلب والشلل ALS.',
+      quickFeaturesAr: ['جسر كفيف ⇄ أصم فوري', 'مصفوفة مورس اللمسية بالاهتزاز', 'مسح المفتاح الفردي لشلل ALS', 'استغاثة SOS شاملة متعددة الحواس'],
+      quickFeaturesEn: ['Blind ⇄ Deaf Bilateral Relay', 'Tactile Morse Haptics', 'Single-Switch ALS Scanner', 'Omni-Sensory SOS Beacon'],
+      Icon: Sparkles,
+      accentColor: 'text-cyan-400',
+      borderGlow: 'hover:border-cyan-500/80 border-cyan-500/40 ring-1 ring-cyan-500/30',
+      bgGlow: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/40',
+      buttonCls: 'bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 text-white shadow-cyan-500/25',
+      matchingMode: 'Multiple',
+    },
+    // 4. MOTOR & ALS
     {
       id: 'motor' as const,
       category: 'motor' as const,
@@ -367,20 +396,41 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       id: 'neurodiversity' as const,
       category: 'neuro' as const,
       titleEn: 'Neurodiversity & Autism Hub',
-      titleAr: 'واحة التوحد وصعوبات التعلم',
-      shortEn: 'Autism & Dyslexia',
-      shortAr: 'التوحد والتعلم',
-      badgeEn: 'Autism, ADHD & Dyslexia',
-      badgeAr: 'التوحد وعسر القراءة',
-      descEn: 'Visual PECS communication cards with speech output, daily visual routine schedules, emotion & sensory regulation meter with 4-7-8 breathing bubble, and dyslexia reading tools.',
-      descAr: 'بطاقات بيكس (PECS) للتواصل البصري المنطوق، جدول الروتين اليومي المنظم، مقياس المشاعر وفقاعة التنفس المهدئة، ومسطرة القراءة لعسر القراءة.',
-      quickFeaturesAr: ['بطاقات PECS ناطقة بنقرة واحدة', 'جدول روتين يومي بصري', 'مقياس المشاعر وفقاعة التنفس 4-7-8', 'مسطرة القراءة لعسر القراءة'],
-      quickFeaturesEn: ['1-Tap Spoken PECS Cards', 'Daily Visual Routine', '4-7-8 Calming Breathing Bubble', 'Dyslexia Reading Ruler'],
+      titleAr: 'واحة التوحد والاضطرابات النمائية',
+      shortEn: 'Autism & Sensory',
+      shortAr: 'التوحد والضبط الحسي',
+      badgeEn: 'Autism Spectrum & Sensory Regulation',
+      badgeAr: 'طيف التوحد والضبط الحسي',
+      descEn: 'Visual PECS communication cards with speech synthesis, predictable daily routine schedules, and sensory regulation meter with automated server-side meltdown alerts.',
+      descAr: 'بطاقات بيكس (PECS) للتواصل البصري المنطوق، جدول الروتين اليومي المنظم لتقليل القلق، ومقياس الضغط الحسي مع إشعار المرافق التلقائي عبر الخادم.',
+      quickFeaturesAr: ['بطاقات PECS ناطقة ومخصصة', 'جدول الروتين اليومي المنظم', 'مقياس المشاعر وفقاعة التنفس 4-4-4', 'إشعار مبكر للأزمات لمقدم الرعاية'],
+      quickFeaturesEn: ['Custom Spoken PECS Cards', 'Daily Predictability Routine', '4-4-4 Calming Breathing Bubble', 'Server Meltdown Caregiver Alert'],
       Icon: Brain,
       accentColor: 'text-purple-400',
       borderGlow: 'hover:border-purple-500/60 border-slate-800',
       bgGlow: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
       buttonCls: 'bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 text-white shadow-purple-500/20',
+      matchingMode: 'Neurodiversity',
+    },
+    // 5. ADAPTIVE LEARNING HUB & CURRICULUM
+    {
+      id: 'learning' as const,
+      category: 'neuro' as const,
+      titleEn: 'Adaptive Learning Hub (Curriculum)',
+      titleAr: 'مركز المناهج والتعلّم التكيّفي',
+      shortEn: 'Learning Hub',
+      shortAr: 'المناهج الميسرة',
+      badgeEn: 'Dyslexia & Learning Support',
+      badgeAr: 'صعوبات التعلّم وعسر القراءة',
+      descEn: 'Interactive multi-sensory curriculum for math, reading, writing, memory, and science with OpenDyslexic font support and parent dashboard.',
+      descAr: 'مناهج تفاعلية متكيفة ومتعددة الحواس: رياضيات، قراءة، كتابة، ذاكرة، وعلوم، مع دعم خط عسر القراءة المخصص وتشجيع صوتي ولوحة متابعة للأهل.',
+      quickFeaturesAr: ['7 مواد تفاعلية مهيأة', 'دعم خط عسر القراءة', 'تكييف الصعوبة الذكي', 'لوحة متابعة تقدم الأهل'],
+      quickFeaturesEn: ['7 Adaptive Subjects', 'OpenDyslexic Font', 'Dynamic Level Adaptation', 'Parent Progress Tracker'],
+      Icon: Sparkles,
+      accentColor: 'text-amber-400',
+      borderGlow: 'hover:border-amber-500/60 border-slate-800',
+      bgGlow: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+      buttonCls: 'bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 text-slate-950 shadow-yellow-500/20',
       matchingMode: 'Neurodiversity',
     },
     // 5. CAREGIVER & UNIVERSAL
@@ -481,7 +531,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
   // Filter modules based on selectedCategory
   const filteredModules = useMemo(() => {
     if (selectedCategory === 'all') return MODULES;
-    return MODULES.filter((m) => m.category === selectedCategory);
+    return MODULES.filter((m) => m.category === selectedCategory || (m.id === 'orchestrator' && (selectedCategory === 'vision' || selectedCategory === 'hearing' || selectedCategory === 'motor')));
   }, [selectedCategory, MODULES]);
 
   // Current active module metadata for sibling bar
@@ -591,8 +641,16 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                 ))}
               </AriaRadioGroup>
             ) : (
-              /* On Hub: show passport button & settings */
+              /* On Hub: show visual comfort button, passport button & settings */
               <div className="flex items-center gap-2">
+                <AriaButton
+                  onPress={() => setShowVisualComfortModal(true)}
+                  aria-label={localize(profile.language, 'Visual Comfort & Dyslexia Tools', 'أدوات الراحة البصرية وتيسير القراءة')}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 cursor-pointer"
+                >
+                  <span>📖</span>
+                  <span>{localize(profile.language, 'Visual Comfort', 'الراحة البصرية')}</span>
+                </AriaButton>
                 <AriaButton
                   onPress={() => setShowPassportModal(true)}
                   aria-label={localize(profile.language, 'Universal Accessibility Passport', 'جواز السفر الميسر الشامل')}
@@ -627,38 +685,49 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
           {activeTab === 'hub' && (
             <motion.div
               key="hub-clean-selector"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center select-none"
             >
-              <div className="max-w-md w-full bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 mx-auto flex items-center justify-center shadow-lg">
-                  <Accessibility className="w-7 h-7" />
+              <div className="max-w-lg w-full bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-2xl space-y-6 relative overflow-hidden">
+                {/* Ambient Decorative Glow */}
+                <div className="absolute -top-24 -left-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500/20 via-indigo-500/15 to-transparent border border-cyan-500/40 text-cyan-300 mx-auto flex items-center justify-center shadow-lg shadow-cyan-950/40">
+                  <Accessibility className="w-8 h-8" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-white">
-                    {localize(profile.language, 'Accessibility Suites', 'منظومة إمكانية الوصول والتيسير')}
+                  <h2 className="text-xl font-black text-white tracking-tight">
+                    {localize(profile.language, 'Accessibility Command Center', 'منظومة إمكانية الوصول والتيسير')}
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {localize(profile.language, 'Select your primary assistive suite for instant direct access', 'اختر منظومة التيسير المناسبة لدخول مباشر وسريع')}
+                  <p className="text-xs text-slate-400 mt-1.5 font-medium max-w-sm mx-auto">
+                    {localize(profile.language, 'Select your assistive suite for instant, distraction-free direct access', 'اختر منظومة التيسير المناسبة لدخول فوري مخصص ومباشر')}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-start">
                   {[
-                    { id: 'vision' as const, labelAr: 'المرافق البصري', labelEn: 'Visual AI', icon: '👁️', descAr: 'قراءة، ملابس وفلوس', descEn: 'Vision companion' },
-                    { id: 'deaf' as const, labelAr: 'منظومة الصم', labelEn: 'Deaf Suite', icon: '🧏', descAr: 'إشارة ورادار أصوات', descEn: '3D Sign & Radar' },
-                    { id: 'motor' as const, labelAr: 'التحكم الحركي', labelEn: 'Motor Euphonia', icon: '🦾', descAr: 'تتبع الرأس والعين', descEn: 'Hands-free control' },
-                    { id: 'neurodiversity' as const, labelAr: 'التنوع العصبي', labelEn: 'Neurodiversity', icon: '🧠', descAr: 'بطاقات PECS وروتين', descEn: 'Sensory & Routine' },
+                    { id: 'vision' as const, labelAr: 'المرافق البصري الذكي', labelEn: 'Visual Companion', icon: '👁️', descAr: 'قراءة النصوص، العملات، الملابس، وسكانر المحاضرات', descEn: 'AI Eyes, currency, colors & lecture scan', glow: 'hover:border-emerald-500/60 hover:shadow-emerald-950/30' },
+                    { id: 'deaf' as const, labelAr: 'منظومة الصم المتكاملة', labelEn: 'Deaf Ecosystem', icon: '🧏', descAr: 'استوديو الإشارة 3D، رادار الأصوات، وجسر التواصل', descEn: '3D Sign Avatar, Sound Sentinel & Live Bridge', glow: 'hover:border-indigo-500/60 hover:shadow-indigo-950/30' },
+                    { id: 'motor' as const, labelAr: 'التحكم الحركي وإيفونيا', labelEn: 'Motor & Euphonia', icon: '🦾', descAr: 'تتبع الرأس والعين، لوحة الرمش، و SOS الطوارئ', descEn: 'Head pointer, eye-blink AAC & 4s GPS SOS', glow: 'hover:border-amber-500/60 hover:shadow-amber-950/30' },
+                    { id: 'neurodiversity' as const, labelAr: 'التنوع العصبي والتوحد', labelEn: 'Neurodiversity Hub', icon: '🧠', descAr: 'بطاقات PECS الناطقة، الروتين، ومسطرة القراءة', descEn: 'Spoken PECS cards, routines & calm bubble', glow: 'hover:border-purple-500/60 hover:shadow-purple-950/30' },
                   ].map((s) => (
                     <button
                       key={s.id}
                       onClick={() => handleSelectTab(s.id)}
-                      className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800 text-start transition-all active:scale-95 shadow-md group"
+                      className={`p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 ${s.glow} hover:bg-slate-800/80 transition-all active:scale-[0.98] shadow-md group flex flex-col justify-between`}
                     >
-                      <span className="text-2xl block mb-2">{s.icon}</span>
-                      <span className="text-xs font-black text-white group-hover:text-cyan-300 block">{localize(profile.language, s.labelEn, s.labelAr)}</span>
-                      <span className="text-[10px] text-slate-400 block mt-0.5">{localize(profile.language, s.descEn, s.descAr)}</span>
+                      <div>
+                        <span className="text-2xl block mb-2">{s.icon}</span>
+                        <span className="text-xs font-black text-white group-hover:text-cyan-300 block transition-colors">{localize(profile.language, s.labelEn, s.labelAr)}</span>
+                        <span className="text-[11px] text-slate-400 block mt-1 leading-relaxed font-normal">{localize(profile.language, s.descEn, s.descAr)}</span>
+                      </div>
+                      <div className="mt-3 flex items-center gap-1 text-[10px] font-bold text-cyan-400 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                        <span>{localize(profile.language, 'Launch Suite', 'دخول المنظومة')}</span>
+                        <ChevronRight className={`w-3 h-3 ${isAr ? 'rotate-180' : ''}`} />
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -677,7 +746,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <MotorEuphoniaView profile={profile} />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <MotorEuphoniaView profile={profile} />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -689,7 +764,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <VisionCompanionView profile={profile} setProfile={setProfile} />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <VisionCompanionView profile={profile} setProfile={setProfile} />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -701,16 +782,22 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <DeafEcosystemView
-                profile={profile}
-                initialTab={activeTab === 'deaf' ? 'bridge' : (activeTab as any)}
-                onNavigateBack={handleNavigateBack}
-                onMenuClick={onMenuClick}
-                onTabChange={(tool) => {
-                  setActiveTab(tool);
-                  onTabChange?.(tool);
-                }}
-              />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <DeafEcosystemView
+                  profile={profile}
+                  initialTab={activeTab === 'deaf' ? 'bridge' : (activeTab as any)}
+                  onNavigateBack={handleNavigateBack}
+                  onMenuClick={onMenuClick}
+                  onTabChange={(tool) => {
+                    setActiveTab(tool);
+                    onTabChange?.(tool);
+                  }}
+                />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -722,7 +809,39 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <NeurodiversityHub profile={profile} onNavigateBack={handleNavigateBack} />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <NeurodiversityHub
+                  profile={profile}
+                  onNavigateBack={handleNavigateBack}
+                  onOpenLearningHub={() => handleSelectTab('learning')}
+                />
+              </React.Suspense>
+            </motion.div>
+          )}
+
+          {activeTab === 'learning' && (
+            <motion.div
+              key="learning-hub-view"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="w-full h-full min-h-0 overflow-y-auto custom-scrollbar"
+            >
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <LearningHub
+                  profile={profile}
+                  onNavigateBack={handleNavigateBack}
+                  onMenuClick={onMenuClick}
+                />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -734,12 +853,40 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <CaregiverHub
-                profile={profile}
-                onNavigateBack={handleNavigateBack}
-                setProfile={setProfile}
-                onOpenPassport={() => setShowPassportModal(true)}
-              />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <CaregiverHub
+                  profile={profile}
+                  onNavigateBack={handleNavigateBack}
+                  setProfile={setProfile}
+                  onOpenPassport={() => setShowPassportModal(true)}
+                />
+              </React.Suspense>
+            </motion.div>
+          )}
+
+          {activeTab === 'orchestrator' && (
+            <motion.div
+              key="orchestrator-view"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="w-full h-full min-h-0"
+            >
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <CrossDisabilityOrchestrator
+                  profile={profile}
+                  onNavigateBack={handleNavigateBack}
+                  onMenuClick={onMenuClick}
+                />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -751,7 +898,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0"
             >
-              <OrgDashboard profile={profile} />
+              <React.Suspense fallback={
+                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              }>
+                <OrgDashboard profile={profile} />
+              </React.Suspense>
             </motion.div>
           )}
 
@@ -764,18 +917,24 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               className="w-full h-full min-h-0 flex flex-col p-3 sm:p-4 md:p-6 lg:p-8 pb-0"
             >
               <div className="flex-1 min-h-0 bg-[#121524] rounded-t-3xl shadow-2xl border border-slate-800 overflow-hidden relative flex flex-col">
-                <ChatInterface
-                  ref={ref}
-                  profile={profile}
-                  onQuestionEvaluated={onQuestionEvaluated || (() => {})}
-                  syncMessages={syncMessages || (() => {})}
-                  onMenuClick={onMenuClick}
-                  externalMessage={externalMessage}
-                  onStreamingUpdate={onStreamingUpdate}
-                  onSTTStateChange={onSTTStateChange}
-                  isEmbedded={true}
-                  setProfile={setProfile}
-                />
+                <React.Suspense fallback={
+                  <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
+                    <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                }>
+                  <ChatInterface
+                    ref={ref}
+                    profile={profile}
+                    onQuestionEvaluated={onQuestionEvaluated || (() => {})}
+                    syncMessages={syncMessages || (() => {})}
+                    onMenuClick={onMenuClick}
+                    externalMessage={externalMessage}
+                    onStreamingUpdate={onStreamingUpdate}
+                    onSTTStateChange={onSTTStateChange}
+                    isEmbedded={true}
+                    setProfile={setProfile}
+                  />
+                </React.Suspense>
               </div>
             </motion.div>
           )}
@@ -909,6 +1068,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
         onClose={() => setShowPassportModal(false)}
         profile={profile}
         setProfile={setProfile}
+      />
+
+      {/* Universal Visual Comfort & Dyslexia Modal */}
+      <VisualComfortModal
+        isOpen={showVisualComfortModal}
+        onClose={() => setShowVisualComfortModal(false)}
+        language={profile.language}
       />
     </div>
   );

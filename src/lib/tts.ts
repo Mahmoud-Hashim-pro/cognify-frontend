@@ -119,17 +119,42 @@ export function buildUtterance(
 ): SpeechSynthesisUtterance {
   const clean = cleanForSpeech(text);
   const utterance = new SpeechSynthesisUtterance(clean);
-  const hasArabic = /[؀-ۿ]/.test(clean);
-  const isFrench =
-    language === "French" ||
-    language === "fr" ||
-    language === "fr-FR" ||
-    (!hasArabic && (
-      /[àâäéèêëîïôöùûüçœæ]/i.test(clean) ||
-      /\b(bonjour|bonsoir|merci|s'il vous plaît|sil vous plait|croissant|gare|métro|metro|madame|monsieur|oui|non|pardon|excusez-moi|combien|où est|ou est|je voudrais|l'addition|chambre|hôtel|pharmacie)\b/i.test(clean)
-    ));
+  
+  const isExplicitEnglish = language === "English" || language === "en" || language === "en-US";
+  const isExplicitFrench = language === "French" || language === "fr" || language === "fr-FR";
+  const isExplicitArabic = language === "Arabic" || language === "Egyptian Ammiya" || language === "ar" || language === "ar-SA" || language === "ar-EG";
 
-  if (hasArabic) {
+  const hasArabicChars = /[؀-ۿ]/.test(clean);
+  const hasFrenchChars =
+    /[àâäéèêëîïôöùûüçœæ]/i.test(clean) ||
+    /\b(bonjour|bonsoir|merci|s'il vous plaît|sil vous plait|croissant|gare|métro|metro|madame|monsieur|oui|non|pardon|excusez-moi|combien|où est|ou est|je voudrais|l'addition|chambre|hôtel|pharmacie)\b/i.test(clean);
+
+  if (isExplicitFrench || (!isExplicitArabic && !isExplicitEnglish && hasFrenchChars && !hasArabicChars)) {
+    const defaultLang = "fr-FR";
+    utterance.lang = defaultLang;
+    const voice = pickVoice("fr-FR") || pickVoice("fr") || pickVoice("fr-CA") || pickVoice("fr-BE");
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+    } else {
+      utterance.lang = "fr-FR";
+    }
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+  } else if (isExplicitEnglish || (!isExplicitArabic && !hasArabicChars)) {
+    const defaultLang = "en-US";
+    utterance.lang = defaultLang;
+    const voice = pickVoice("en-US") || pickVoice("en-GB") || pickVoice("en");
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+    } else {
+      utterance.lang = "en-US";
+    }
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+  } else {
+    // Arabic
     const isEgyptian =
       language === "Egyptian Ammiya" ||
       clean.includes("يا باشا") ||
@@ -147,26 +172,6 @@ export function buildUtterance(
     }
     utterance.rate = 0.92;
     utterance.pitch = 1.0;
-  } else if (isFrench) {
-    const defaultLang = "fr-FR";
-    utterance.lang = defaultLang;
-    const voice = pickVoice(defaultLang) || pickVoice("fr");
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang;
-    } else {
-      utterance.lang = "fr-FR";
-    }
-    utterance.rate = 0.95; // Fluid, natural French speed
-    utterance.pitch = 1.0;
-  } else {
-    const defaultLang = LANG_MAP[language || "English"] || "en-US";
-    utterance.lang = defaultLang;
-    const voice = pickVoice(defaultLang);
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang;
-    }
   }
 
   return utterance;
@@ -178,6 +183,9 @@ export interface SpeakCallbacks {
   /** err carries a short machine-readable reason when known: 'unsupported' |
    *  'empty' | 'synth-error' | 'silent-fail' (speak() never actually started). */
   onError?: (err?: string) => void;
+  rate?: number;
+  pitch?: number;
+  volume?: number;
 }
 
 /** True if the platform's speechSynthesis has at least one Arabic voice installed. */
@@ -220,6 +228,16 @@ export function speak(
   if (!utterance.text) {
     cb?.onError?.("empty");
     return;
+  }
+
+  if (typeof cb?.rate === "number") {
+    utterance.rate = cb.rate;
+  }
+  if (typeof cb?.pitch === "number") {
+    utterance.pitch = cb.pitch;
+  }
+  if (typeof cb?.volume === "number") {
+    utterance.volume = cb.volume;
   }
 
   activeUtterances.add(utterance);

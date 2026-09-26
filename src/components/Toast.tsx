@@ -106,28 +106,24 @@ export function ToastContainer({ rtl = false }: ToastContainerProps) {
       <AnimatePresence>
         {toasts.map(item => {
           let Icon = Info;
-          let bgColor = "bg-white dark:bg-slate-900 border-blue-500 shadow-blue-500/10";
-          let iconColor = "text-blue-500";
-          let alertRing = "focus:ring-blue-500";
+          let borderAccent = "border-s-4 border-s-cyan-400 border-white/10 shadow-cyan-950/40";
+          let iconColor = "text-cyan-400";
 
           switch (item.type) {
             case "success":
               Icon = CheckCircle2;
-              bgColor = "bg-white dark:bg-slate-900 border-emerald-500 shadow-emerald-500/10";
-              iconColor = "text-emerald-500";
-              alertRing = "focus:ring-emerald-500";
+              borderAccent = "border-s-4 border-s-emerald-400 border-white/10 shadow-emerald-950/40";
+              iconColor = "text-emerald-400";
               break;
             case "error":
               Icon = AlertCircle;
-              bgColor = "bg-white dark:bg-slate-900 border-rose-500 shadow-rose-500/10";
-              iconColor = "text-rose-500";
-              alertRing = "focus:ring-rose-500";
+              borderAccent = "border-s-4 border-s-rose-500 border-white/10 shadow-rose-950/40";
+              iconColor = "text-rose-400";
               break;
             case "warning":
               Icon = AlertTriangle;
-              bgColor = "bg-white dark:bg-slate-900 border-amber-500 shadow-amber-500/10";
-              iconColor = "text-amber-500";
-              alertRing = "focus:ring-amber-500";
+              borderAccent = "border-s-4 border-s-amber-400 border-white/10 shadow-amber-950/40";
+              iconColor = "text-amber-400";
               break;
           }
 
@@ -139,9 +135,9 @@ export function ToastContainer({ rtl = false }: ToastContainerProps) {
               aria-live={item.type === "error" ? "assertive" : "polite"}
               initial={{ opacity: 0, y: -20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className={`pointer-events-auto flex w-full border-l-4 rounded-xl shadow-xl p-4 transition-all duration-300 hover:shadow-2xl ${bgColor}`}
+              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              className={`pointer-events-auto flex w-full rounded-2xl shadow-2xl p-4 bg-slate-900/95 border backdrop-blur-2xl transition-all duration-300 hover:shadow-cyan-500/10 ${borderAccent}`}
             >
               <div className="flex gap-3 w-full">
                 <div className="flex-shrink-0 mt-0.5">

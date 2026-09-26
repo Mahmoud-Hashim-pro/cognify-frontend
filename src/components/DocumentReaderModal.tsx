@@ -33,12 +33,15 @@ import {
   Type,
   RefreshCw,
   Sparkles,
+  History,
+  Trash2,
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { generateAdaptiveResponse } from '../services/gemini';
 import { speak, cancelSpeech } from '../lib/tts';
 import { isArabicLocale } from '../lib/translations';
 import { toast } from './Toast';
+import { DocHistoryEntry, loadDocHistory, saveDocHistoryEntry, deleteDocHistoryEntry } from '../lib/docHistory';
 
 interface DocumentReaderModalProps {
   profile: UserProfile;
@@ -47,7 +50,7 @@ interface DocumentReaderModalProps {
 }
 
 type DocTool = 'document' | 'speech';
-type DocAction = 'summarize' | 'read';
+type DocAction = 'summarize' | 'read' | 'translate';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — same cap ChatInterface.tsx already uses for PDFs
 
@@ -73,9 +76,25 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingAction, setProcessingAction] = useState<DocAction | null>(null);
   const [resultText, setResultText] = useState('');
+  // The language resultText is actually written in — usually companionLang,
+  // but after a translate action it's whatever target language was picked,
+  // which may differ from companionLang. Drives TTS voice + docx direction
+  // for the result, independent of the UI's own language.
+  const [resultLang, setResultLang] = useState<'ar' | 'en' | 'fr'>('en');
+  // Target language for the "Translate" action specifically — lets someone
+  // read/summarize in one language but translate the same document into a
+  // different one (e.g. upload an English PDF, translate the summary to
+  // Arabic) without changing the whole UI's language.
+  const [translateTarget, setTranslateTarget] = useState<'ar' | 'en' | 'fr'>(
+    () => (companionLang === 'ar' ? 'en' : 'ar') // sensible default: translate to the "other" language
+  );
   const [isSpeakingResult, setIsSpeakingResult] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // --- History / archive state ---
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState<DocHistoryEntry[]>(() => loadDocHistory(profile.uid));
 
   // --- Speech <-> Text state ---
   const [ttsInput, setTtsInput] = useState('');
@@ -97,6 +116,7 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
     setFileMime('');
     setFileData('');
     setResultText('');
+    setResultLang(companionLang);
     cancelSpeech();
     setIsSpeakingResult(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -163,12 +183,23 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
         : companionLang === 'fr'
         ? "Ce fichier est un cours ou un document d'étude. Résumez les points et idées principaux clairement, dans un style parlé naturel, sans titres ni markdown."
         : 'This file is a lecture or study document. Summarize the key points and main ideas clearly, in a natural spoken style as if explaining it to me, with no headings or markdown asterisks. Focus on what matters for studying it.';
-    } else {
+    } else if (action === 'read') {
       prompt = companionLang === 'ar'
         ? 'اقرأ كل النص المكتوب في هذا المستند بالكامل وبالترتيب، كلمة بكلمة، من غير أي تلخيص أو حذف أو تعليق، ومن غير عناوين أو ماركداون.'
         : companionLang === 'fr'
         ? "Lisez tout le texte de ce document dans l'ordre, mot pour mot, sans résumer, sans titres ni markdown."
         : 'Read out all the text in this document in order, word for word, with no summarizing, no omissions, and no headings or markdown.';
+    } else {
+      // translate: read the WHOLE document (whatever language it's actually
+      // written in) and translate it in full into translateTarget — this is
+      // deliberately not the same as summarize+translate, so nothing in the
+      // source document is dropped.
+      const targetName = geminiLangName(translateTarget);
+      prompt = translateTarget === 'ar'
+        ? `اقرأ كل النص المكتوب في هذا المستند، أيًا كانت لغته الأصلية، وترجمه بالكامل إلى العربية بأسلوب واضح وطبيعي، من غير حذف أو تلخيص، ومن غير عناوين أو ماركداون.`
+        : translateTarget === 'fr'
+        ? `Lisez tout le texte de ce document, quelle que soit sa langue d'origine, et traduisez-le intégralement en français, sans rien omettre, sans titres ni markdown.`
+        : `Read all the text in this document, regardless of its original language, and translate it in full into English, without omitting or summarizing anything, and without headings or markdown.`;
     }
 
     try {
@@ -178,10 +209,20 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
         [],
         [{ name: fileName || 'document', type: fileMime, data: fileData }],
       );
+      const outLang = action === 'translate' ? translateTarget : companionLang;
       setResultText(result || '');
+      setResultLang(outLang);
       if (result) {
+        setHistory(
+          saveDocHistoryEntry(profile.uid, {
+            fileName: fileName || (isArabicLocale(profile.language) ? 'مستند' : 'Document'),
+            action,
+            lang: outLang,
+            resultText: result,
+          })
+        );
         setIsSpeakingResult(true);
-        speak(result, ttsLangName(companionLang), {
+        speak(result, ttsLangName(outLang), {
           onEnd: () => setIsSpeakingResult(false),
           onError: () => setIsSpeakingResult(false),
         });
@@ -206,7 +247,7 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
     }
     if (!resultText) return;
     setIsSpeakingResult(true);
-    speak(resultText, ttsLangName(companionLang), {
+    speak(resultText, ttsLangName(resultLang), {
       onEnd: () => setIsSpeakingResult(false),
       onError: () => setIsSpeakingResult(false),
     });
@@ -220,7 +261,7 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
       // actually presses this button, so it never slows down the rest of
       // the Visual Companion feature.
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
-      const isAr = companionLang === 'ar';
+      const isAr = resultLang === 'ar';
       const paragraphs = resultText
         .split(/\n+/)
         .filter((line) => line.trim().length > 0)
@@ -350,6 +391,28 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
     } catch { /* clipboard unavailable */ }
   };
 
+  const openHistoryEntry = (entry: DocHistoryEntry) => {
+    cancelSpeech();
+    setIsSpeakingResult(false);
+    setFileName(entry.fileName);
+    setFileMime('');
+    setFileData(''); // intentionally not restored — see docHistory.ts header comment
+    setResultText(entry.resultText);
+    setResultLang(entry.lang);
+    setShowHistory(false);
+  };
+
+  const handleDeleteHistoryEntry = (id: string) => {
+    setHistory(deleteDocHistoryEntry(profile.uid, id));
+  };
+
+  const actionLabel = (action: DocHistoryEntry['action']) =>
+    action === 'summarize'
+      ? t('Summary', 'تلخيص', 'Résumé')
+      : action === 'translate'
+      ? t('Translation', 'ترجمة', 'Traduction')
+      : t('Full read', 'قراءة كاملة', 'Lecture complète');
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -385,28 +448,75 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
         </div>
 
         {/* Tool switcher */}
-        <div className="flex items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-xl shrink-0">
-          <button
-            onClick={() => setTool('document')}
-            aria-pressed={tool === 'document'}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
-              tool === 'document' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5" />
-            {t('Document Reader', 'قارئ المستندات', 'Lecteur de documents')}
-          </button>
-          <button
-            onClick={() => setTool('speech')}
-            aria-pressed={tool === 'speech'}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
-              tool === 'speech' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Type className="w-3.5 h-3.5" />
-            {t('Speech ⇄ Text', 'نص ⇄ صوت', 'Texte ⇄ Voix')}
-          </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-xl flex-1">
+            <button
+              onClick={() => setTool('document')}
+              aria-pressed={tool === 'document'}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                tool === 'document' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              {t('Document Reader', 'قارئ المستندات', 'Lecteur de documents')}
+            </button>
+            <button
+              onClick={() => setTool('speech')}
+              aria-pressed={tool === 'speech'}
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                tool === 'speech' ? 'bg-teal-500 text-slate-950' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Type className="w-3.5 h-3.5" />
+              {t('Speech ⇄ Text', 'نص ⇄ صوت', 'Texte ⇄ Voix')}
+            </button>
+          </div>
+          {tool === 'document' && (
+            <button
+              onClick={() => setShowHistory((v) => !v)}
+              aria-pressed={showHistory}
+              aria-label={t('Document history', 'أرشيف المستندات', 'Historique des documents')}
+              className={`shrink-0 p-2.5 rounded-xl border transition-all ${
+                showHistory
+                  ? 'bg-teal-500 border-teal-500 text-slate-950'
+                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+              }`}
+            >
+              <History className="w-4 h-4" />
+            </button>
+          )}
         </div>
+
+        {showHistory && tool === 'document' && (
+          <div className="space-y-2 shrink-0 max-h-48 overflow-y-auto p-1">
+            {history.length === 0 ? (
+              <p className="text-xs text-slate-500 text-center py-4">
+                {t('No documents read yet.', 'لسه معملتيش أي مستند.', 'Aucun document pour le moment.')}
+              </p>
+            ) : (
+              history.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800"
+                >
+                  <button onClick={() => openHistoryEntry(entry)} className="flex-1 min-w-0 text-start">
+                    <div className="text-xs font-bold text-slate-100 truncate">{entry.fileName}</div>
+                    <div className="text-[10px] text-slate-500">
+                      {actionLabel(entry.action)} · {new Date(entry.createdAt).toLocaleDateString()}
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => handleDeleteHistoryEntry(entry.id)}
+                    aria-label={t('Delete', 'حذف', 'Supprimer')}
+                    className="shrink-0 p-1.5 rounded-lg hover:bg-red-500/20 text-slate-500 hover:text-red-300"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
         <div className="overflow-y-auto flex-1 space-y-4 pr-0.5">
           {tool === 'document' ? (
@@ -446,6 +556,8 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
                     </button>
                   </div>
 
+                  {fileData && (
+                  <>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => runDocumentAction('summarize')}
@@ -472,6 +584,48 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
                       {t('Read Full Text', 'قراءة كاملة', 'Lecture complète')}
                     </button>
                   </div>
+
+                  {/* Translate: read the document in whatever language it's
+                      actually written in and translate the whole thing into
+                      a chosen target — independent from companionLang, so
+                      e.g. an English PDF can come out as an Arabic summary
+                      without switching the whole panel's language. */}
+                  <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950 border border-slate-800">
+                    <select
+                      value={translateTarget}
+                      onChange={(e) => setTranslateTarget(e.target.value as 'ar' | 'en' | 'fr')}
+                      aria-label={t('Translate to', 'ترجمة إلى', 'Traduire vers')}
+                      className="bg-slate-900 border border-slate-700 rounded-lg text-xs font-bold text-white px-2 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                    >
+                      <option value="ar">{t('Arabic', 'العربية', 'Arabe')}</option>
+                      <option value="en">{t('English', 'الإنجليزية', 'Anglais')}</option>
+                      <option value="fr">{t('French', 'الفرنسية', 'Français')}</option>
+                    </select>
+                    <button
+                      onClick={() => runDocumentAction('translate')}
+                      disabled={isProcessing}
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs disabled:opacity-50 transition-all active:scale-95"
+                    >
+                      {isProcessing && processingAction === 'translate' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4" />
+                      )}
+                      {t('Translate Document', 'ترجمة المستند', 'Traduire le document')}
+                    </button>
+                  </div>
+                  </>
+                  )}
+
+                  {!fileData && fileName && (
+                    <p className="text-[11px] text-slate-500 px-1">
+                      {t(
+                        'Loaded from history — upload the file again to re-run or translate it differently.',
+                        'اتحمّل من الأرشيف — لازم ترفعي الملف تاني عشان تعملي عليه إجراء جديد أو ترجمة مختلفة.',
+                        "Chargé depuis l'historique — reteleversez le fichier pour relancer une action."
+                      )}
+                    </p>
+                  )}
 
                   {resultText && (
                     <div className="space-y-2">

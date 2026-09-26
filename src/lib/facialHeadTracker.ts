@@ -626,24 +626,29 @@ export class FacialHeadTracker {
   private async initMediaPipeAsync() {
     try {
       if (!(window as any).FaceMesh) {
-        // Served from OUR origin (public/models/face_mesh), not a CDN.
-        // Assistive tech must not have a hard third-party network dependency:
-        // on a filtered or slow school network the old cdn.jsdelivr.net fetch
-        // failed, onerror silently resolved false, and the student was left with
-        // a live camera and a pointer frozen at screen centre — no message, no
-        // way to tell a blocked script from broken tracking.
-        const loaded = await new Promise<boolean>((resolve) => {
-          const script = document.createElement('script');
-          script.src = '/models/face_mesh/face_mesh.js';
-          let settled = false;
-          const finish = (ok: boolean) => { if (!settled) { settled = true; resolve(ok); } };
-          // Never hang forever on a stalled connection.
-          const timer = setTimeout(() => finish(false), 15000);
-          script.onload = () => { clearTimeout(timer); finish(true); };
-          script.onerror = () => { clearTimeout(timer); finish(false); };
-          document.head.appendChild(script);
-        });
+        // Try local static assets first (/models/face_mesh/), fallback to pinned CDN if not present
+        const loadScript = (src: string): Promise<boolean> => {
+          return new Promise<boolean>((resolve) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.crossOrigin = 'anonymous';
+            let settled = false;
+            const finish = (ok: boolean) => { if (!settled) { settled = true; resolve(ok); } };
+            const timer = setTimeout(() => finish(false), 12000);
+            script.onload = () => { clearTimeout(timer); finish(true); };
+            script.onerror = () => { clearTimeout(timer); finish(false); };
+            document.head.appendChild(script);
+          });
+        };
+
+        let loaded = await loadScript('/models/face_mesh/face_mesh.js');
         if (!loaded && !(window as any).FaceMesh) {
+          console.warn('[FaceMesh] Local script unavailable, loading from pinned CDN fallback...');
+          loaded = await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js');
+        }
+
+        if (!loaded && !(window as any).FaceMesh) {
+          console.error('[FaceMesh] Failed to load from both local and CDN sources.');
           this.onErrorCb?.('face-mesh-load-failed');
           return;
         }
@@ -652,8 +657,10 @@ export class FacialHeadTracker {
       if ((window as any).FaceMesh && this.isRunning && this.wantsRunning) {
         const FaceMeshConstructor = (window as any).FaceMesh;
         this.faceMeshInstance = new FaceMeshConstructor({
-          // Same origin as the script above — no CDN round-trip for the wasm.
-          locateFile: (file: string) => `/models/face_mesh/${file}`,
+          locateFile: (file: string) => {
+            // Use CDN for wasm/data assets to guarantee binary compatibility across all client environments
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${file}`;
+          },
         });
 
         this.faceMeshInstance.setOptions({
