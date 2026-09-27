@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { lookupArslSign, hamnosysToThreePose } from "../lib/arslDictionary";
 
 /**
  * SignAvatar3D — procedural 3D signing avatar for Cognify.
@@ -709,34 +710,65 @@ export default function SignAvatar3D({ words, playing, onProgress, onDone, class
         // fall through to fingerspelling, then do the same for "سمحت" —
         // the phrase gesture was unreachable in every case.
         let consumed = 1;
-        let alias: string | undefined;
+        let arslEntry = null;
+
+        // 1. Check if two words form an authenticated ArSL dictionary sign
         if (i + 1 < words.length) {
-          const twoWord = `${raw} ${clean(words[i + 1])}`.toLowerCase();
-          if (WORD_ALIASES[twoWord]) {
-            alias = WORD_ALIASES[twoWord];
+          const twoWord = `${raw} ${clean(words[i + 1])}`;
+          arslEntry = lookupArslSign(twoWord);
+          if (arslEntry) {
             consumed = 2;
           }
         }
-        if (!alias) {
-          alias = WORD_ALIASES[raw.toLowerCase()];
+        // 2. Check if single word is an authenticated ArSL dictionary sign
+        if (!arslEntry) {
+          arslEntry = lookupArslSign(raw);
         }
-        const gesture = alias ? WORD_SIGNS[alias] : undefined;
 
-        if (gesture) {
+        if (arslEntry) {
           setGlyph("");
-          for (const step of gesture.steps) {
-            if (cancelled) return;
-            applyPose(step);
-            await wait(step.hold ?? 500);
-          }
+          const threePose = hamnosysToThreePose(arslEntry.hamnosys);
+          applyPose({
+            f: threePose.f,
+            out: threePose.out,
+            spread: threePose.spread,
+            pos: threePose.pos,
+            wrist: threePose.wrist,
+            motion: (arslEntry.hamnosys.movement === 'shake' ? 'wave' : arslEntry.hamnosys.movement === 'nod' ? 'nod' : arslEntry.hamnosys.movement === 'tap' ? 'tap' : null),
+            hold: arslEntry.hamnosys.holdMs || 650,
+          });
+          await wait(arslEntry.hamnosys.holdMs || 650);
         } else {
-          for (const ch of Array.from(raw)) {
-            if (cancelled) return;
-            const key = normalizeChar(ch);
-            if (!key) continue;
-            applyPose({ ...NEUTRAL, ...LETTER_POSES[key], pos: HAND_HOME });
-            setGlyph(key);
-            await wait(360);
+          // Fall back to legacy aliases or letter fingerspelling
+          let alias: string | undefined;
+          if (i + 1 < words.length) {
+            const twoWord = `${raw} ${clean(words[i + 1])}`.toLowerCase();
+            if (WORD_ALIASES[twoWord]) {
+              alias = WORD_ALIASES[twoWord];
+              consumed = 2;
+            }
+          }
+          if (!alias) {
+            alias = WORD_ALIASES[raw.toLowerCase()];
+          }
+          const gesture = alias ? WORD_SIGNS[alias] : undefined;
+
+          if (gesture) {
+            setGlyph("");
+            for (const step of gesture.steps) {
+              if (cancelled) return;
+              applyPose(step);
+              await wait(step.hold ?? 500);
+            }
+          } else {
+            for (const ch of Array.from(raw)) {
+              if (cancelled) return;
+              const key = normalizeChar(ch);
+              if (!key) continue;
+              applyPose({ ...NEUTRAL, ...LETTER_POSES[key], pos: HAND_HOME });
+              setGlyph(key);
+              await wait(360);
+            }
           }
         }
         applyPose(NEUTRAL);

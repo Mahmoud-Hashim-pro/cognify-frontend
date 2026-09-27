@@ -94,16 +94,66 @@ export default function App() {
   const [user, loading, authError] = useAuthState(auth);
   const chatRef = useRef<any>(null);
   
+  const isGuestPreview = typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability';
+
   // Seed from the URL hash so deep links and F5 land on the right screen.
   const [currentView, setCurrentView] = useState<AppView>(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability') {
+      return 'disability';
+    }
     const h = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
     if (!h || h === 'video' || h === 'disability') return 'chat';
     if (h === 'intelligence') return 'profile';
     return (VALID_VIEWS as readonly string[]).includes(h) ? (h as any) : 'chat';
   });
   
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability') {
+      const mode = (localStorage.getItem('preLoginAccessibilityMode') as AccessibilityMode) || 'Visual';
+      const disLabel = localStorage.getItem('preLoginDisability') || 'Visual Impairment';
+      return {
+        uid: 'guest-explorer',
+        email: 'guest@cognify.demo',
+        name: 'مستكشف المنظومة (Guest Explorer)',
+        displayName: 'مستكشف المنظومة (Guest Explorer)',
+        photoURL: null,
+        role: 'Student',
+        accountPath: 'Special Needs',
+        disability: disLabel,
+        disabilityType: disLabel,
+        accessibilityMode: mode,
+        points: 250,
+        level: 'Intermediate',
+        streak: 3,
+        learningStyle: 'Visual',
+        educationLevel: 'University',
+        field: 'General',
+        questionScore: 100,
+        questionHistory: [],
+        onboardingComplete: true,
+        history: [],
+        savedNotes: [],
+        customFields: {},
+        preferences: {
+          theme: 'dark',
+          highContrast: false,
+          fontSize: 'medium',
+          motionReduced: false,
+          screenReaderOptimized: true,
+          soundEnabled: true,
+          hapticFeedback: false,
+          language: 'ar',
+          ttsSpeed: 1,
+          captionSize: 'medium',
+          signLanguageSpeed: 1,
+          motorAssistance: 'none',
+          colorBlindMode: 'none',
+        } as any
+      };
+    }
+    return null;
+  });
+  const [profileLoading, setProfileLoading] = useState(!isGuestPreview);
   // True once a profile snapshot has actually been applied for the current user.
   // Guards the "ignore our own pending writes" rule so it can only skip AFTER we
   // have real data — otherwise the very first snapshot can be skipped and the
@@ -251,6 +301,29 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Universal Accessibility Settings Sync (Font Scale, High Contrast, Reduced Motion)
+  useEffect(() => {
+    try {
+      const savedPassport = profile?.accessibilityPassport;
+      const root = document.documentElement;
+
+      // Font size scaling
+      const fontScale = savedPassport?.fontSizeScale || (localStorage.getItem('cognify_font_scale') as any) || 'normal';
+      root.classList.remove('font-scale-normal', 'font-scale-medium', 'font-scale-large', 'font-scale-extra-large');
+      root.classList.add(`font-scale-${fontScale}`);
+
+      // High contrast mode
+      const isHighContrast = Boolean(savedPassport?.highContrast || localStorage.getItem('cognify_high_contrast') === 'true');
+      root.classList.toggle('high-contrast', isHighContrast);
+
+      // Reduce motion
+      const isReduceMotion = Boolean(savedPassport?.reduceMotion || localStorage.getItem('cognify_reduce_motion') === 'true');
+      root.classList.toggle('reduce-motion', isReduceMotion);
+    } catch (e) {
+      console.warn('Failed to apply global accessibility attributes:', e);
+    }
+  }, [profile?.accessibilityPassport]);
 
   // Handle manual theme toggle
   const toggleTheme = () => {
@@ -781,7 +854,7 @@ export default function App() {
     );
   }
 
-  if (!user) {
+  if (!user && !isGuestPreview) {
     return <Login />;
   }
 
@@ -789,7 +862,7 @@ export default function App() {
   // Onboarding here: its Special-Needs branch auto-submits on mount and would
   // overwrite a real profile's points/level/history with defaults. Offer a
   // retry (and a way out) instead — the data is safe on the server.
-  if (profileSyncFailed && !profile) {
+  if (profileSyncFailed && !profile && !isGuestPreview) {
     // The profile never loaded, so we don't know the user's language — show both.
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
@@ -814,7 +887,7 @@ export default function App() {
   }
 
   // If user exists but no profile, show Onboarding
-  if (!profile || !profile.onboardingComplete) {
+  if ((!profile && !isGuestPreview) || (!profile?.onboardingComplete && !isGuestPreview)) {
     return <Onboarding user={user} onComplete={handleOnboardingComplete} />;
   }
 
@@ -874,6 +947,8 @@ export default function App() {
           onSTTStateChange={setIsSTTActive}
           onTabChange={setDisabilityTab}
           setProfile={setProfile}
+          isDarkMode={isDarkMode}
+          toggleTheme={toggleTheme}
         />;
       case 'memory':
         return (
@@ -1226,14 +1301,43 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      {isGuestPreview && (
+        <div className="fixed top-0 left-0 right-0 h-9 bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#2D0B16] border-b border-[#E5A93C]/40 px-4 flex items-center justify-between text-xs text-[#E5A93C] z-[99999] shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-black text-[#E5A93C] bg-[#E5A93C]/20 px-1.5 py-0.5 rounded text-[11px] border border-[#E5A93C]/40">[N|]</span>
+            <span className="font-bold text-white text-[11px] sm:text-xs">
+              معاينة حية: منظومة ذوي الهمم (هوية البورجندي والذهب) · Royal Burgundy Constellation
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              sessionStorage.removeItem('cognify_guest_preview');
+              window.location.hash = '';
+              window.location.reload();
+            }}
+            className="px-2.5 py-1 rounded-lg bg-[#E5A93C] text-slate-950 font-black text-[10px] sm:text-[11px] hover:brightness-110 transition-all shadow-sm active:scale-95"
+          >
+            تسجيل الدخول / خروج من المعاينة
+          </button>
+        </div>
+      )}
 
       <div
-        className={`flex w-full h-[100dvh] bg-bg-main font-sans overflow-hidden selection:bg-primary/30 transition-all duration-500 ${
+        className={`flex w-full h-[100dvh] bg-bg-main font-sans overflow-hidden selection:bg-primary/30 transition-all duration-500 ${isGuestPreview ? 'pt-9' : ''} ${
           profile?.accessibilityMode === 'Visual' ? 'text-lg contrast-125' : ''
         }`}
         dir={direction}
       >
         <ToastContainer rtl={direction === 'rtl'} />
+
+        {/* WCAG 2.4.1 Skip to main content link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-amber-500 focus:text-slate-950 focus:font-black focus:rounded-2xl focus:shadow-2xl focus:ring-4 focus:ring-amber-300 transition-all text-xs"
+        >
+          {localize(profile?.language, 'Skip to main content', 'الانتقال إلى المحتوى الرئيسي')}
+        </a>
+
         <PwaInstallPrompt language={profile?.language} />
         <ReadAloudSelection language={profile?.language} />
 
@@ -1300,7 +1404,7 @@ export default function App() {
         </div>
 
 
-        <main className="flex-1 relative overflow-hidden flex flex-col md:flex-row">
+        <main id="main-content" tabIndex={-1} className="flex-1 relative overflow-hidden flex flex-col md:flex-row focus:outline-none">
           <Suspense
             fallback={
               <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-950">

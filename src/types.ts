@@ -282,6 +282,8 @@ export interface AccessibilityPassport {
   primaryCategory?: AccessibilityMode | 'Multiple';
   highContrast: boolean;
   dyslexiaFont: boolean;
+  fontSizeScale?: 'normal' | 'medium' | 'large' | 'extra-large';
+  reduceMotion?: boolean;
   hapticFeedback: boolean;
   autoSpeak: boolean;
   audioSpeed: number; // 0.75 - 1.5

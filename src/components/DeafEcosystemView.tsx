@@ -8,16 +8,18 @@ import {
   Bell, 
   Vibrate, 
   Type,
-  Sparkles
+  Sparkles,
+  Brain
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { localize, isArabicLocale } from '../lib/translations';
 import { triggerHapticAlert } from '../lib/hapticNavEngine';
 import AmbientSoundRadar from './AmbientSoundRadar';
 import HumanCommunicationBridge from './HumanCommunicationBridge';
+import ArSLTrainingStudio from './ArSLTrainingStudio';
 import type { DisabilityTab } from './DisabilityModeView';
 
-export type DeafTool = 'bridge' | 'radar';
+export type DeafTool = 'bridge' | 'studio' | 'radar';
 
 interface DeafEcosystemViewProps {
   profile: UserProfile;
@@ -45,7 +47,7 @@ export default function DeafEcosystemView({
 
   // Synchronize initialTab if parent changes it
   useEffect(() => {
-    if (initialTab && (initialTab === 'bridge' || initialTab === 'radar')) {
+    if (initialTab && (initialTab === 'bridge' || initialTab === 'studio' || initialTab === 'radar')) {
       setActiveTool(initialTab);
     }
   }, [initialTab]);
@@ -76,6 +78,9 @@ export default function DeafEcosystemView({
         handleSelectTool('bridge');
       } else if (e.key === '2') {
         e.preventDefault();
+        handleSelectTool('studio');
+      } else if (e.key === '3') {
+        e.preventDefault();
         handleSelectTool('radar');
       } else if (e.key === 'Escape') {
         onNavigateBack();
@@ -100,8 +105,20 @@ export default function DeafEcosystemView({
       gradient: 'from-indigo-500 via-purple-500 to-indigo-600',
     },
     {
-      id: 'radar' as const,
+      id: 'studio' as const,
       shortcut: '2',
+      titleEn: 'ArSL AI Studio & 24 Lectures',
+      titleAr: 'استوديو تعلّم وتدريب الإشارة (24 محاضرة)',
+      subtitleEn: 'HamNoSys, 24 Lectures & Temporal ML Recognizer',
+      subtitleAr: 'ترميز HamNoSys، منهج الـ 24 محاضرة ونموذج ML الزمني',
+      icon: Brain,
+      color: 'text-purple-400',
+      activeBg: 'bg-purple-500/20 text-purple-200 border-purple-400 shadow-purple-500/20',
+      gradient: 'from-purple-500 via-indigo-500 to-pink-500',
+    },
+    {
+      id: 'radar' as const,
+      shortcut: '3',
       titleEn: 'Ambient Sound Radar',
       titleAr: 'رادار الأصوات والمخاطر',
       subtitleEn: 'Acoustic AI sirens, smoke alarms & car horns',
@@ -196,7 +213,7 @@ export default function DeafEcosystemView({
         <div 
           role="tablist"
           aria-label={localize(profile.language, 'Deaf feature switcher', 'مبدل أدوات الصم')}
-          className="grid grid-cols-2 gap-1.5 sm:gap-2 p-1 bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-inner"
+          className="grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-2 p-1 bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-inner"
         >
           {DEAF_TOOLS.map((tool) => {
             const isSelected = activeTool === tool.id;
@@ -363,6 +380,21 @@ export default function DeafEcosystemView({
               className="w-full h-full min-h-0 overflow-hidden flex flex-col"
             >
               <HumanCommunicationBridge
+                profile={profile}
+              />
+            </motion.div>
+          )}
+
+          {activeTool === 'studio' && (
+            <motion.div
+              key="deaf-tool-studio"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.15 }}
+              className="w-full h-full min-h-0 overflow-hidden flex flex-col"
+            >
+              <ArSLTrainingStudio
                 profile={profile}
               />
             </motion.div>

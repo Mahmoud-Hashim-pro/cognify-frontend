@@ -31,6 +31,24 @@
   --color-faint: #9090A0;
   --color-border: #E6E6EB;
   --color-border-2: #D8D8DF;
+
+  /* Overwrite low-contrast default slate tokens to guarantee WCAG AA (>= 4.5:1 on dark) */
+  --color-slate-500: #94A3B8; /* Contrast 6.96:1 - Pass WCAG AA */
+  --color-slate-600: #CBD5E1; /* High contrast pass (WCAG AAA) */
+
+  /* Dignified Accessible Brand Palette for People of Determination */
+  --color-brand-warm: #111622;
+  --color-brand-surface: #171E2E;
+  --color-brand-accent: #F59E0B;
+  --color-brand-accent-glow: #FDE68A;
+  --color-brand-calm: #10B981;
+
+  /* Royal Burgundy & Gold Identity (Cognify Inclusion Mesh) */
+  --color-brand-burgundy: #2D0B16;
+  --color-brand-wine: #4A1224;
+  --color-brand-ruby: #831843;
+  --color-brand-gold: #E5A93C;
+  --color-brand-gold-glow: #FDE68A;
 }
 
 @layer base {
@@ -63,6 +81,13 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cognify-burgundy-hero {
+  position: relative;
+  background: radial-gradient(circle at 50% 15%, rgba(131, 24, 67, 0.45) 0%, rgba(45, 11, 22, 0.95) 45%, rgba(14, 4, 8, 0.98) 100%);
+  border: 1px solid rgba(229, 169, 60, 0.25);
+  box-shadow: 0 30px 60px -15px rgba(45, 11, 22, 0.6), inset 0 1px 0 rgba(229, 169, 60, 0.25);
 }
 
 .aurora-card-glow:hover {
@@ -108,10 +133,72 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Accessible High-Contrast Focus Rings */
-:focus-visible {
-  outline: 2px solid #38bdf8 !important;
-  outline-offset: 2px !important;
+/* Universal WCAG 2.4.7 Interactive Focus Visible Indicator */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #38bdf8 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 5px rgba(56, 189, 248, 0.45) !important;
+  z-index: 50 !important;
+}
+
+/* Universal WCAG 2.3.3 Reduced Motion (System Preference + In-App Setting) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Universal Font Scaling System */
+html.font-scale-normal { font-size: 16px; }
+html.font-scale-medium { font-size: 18px; }
+html.font-scale-large { font-size: 20px; }
+html.font-scale-extra-large { font-size: 23px; }
+
+/* Universal High-Contrast Mode */
+html.high-contrast body,
+html.high-contrast .bg-slate-900,
+html.high-contrast .bg-slate-950,
+html.high-contrast .bg-\[\#0A0C14\],
+html.high-contrast .bg-\[\#121524\] {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+}
+html.high-contrast p,
+html.high-contrast span,
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4,
+html.high-contrast label {
+  color: #FFFFFF !important;
+}
+html.high-contrast a:focus-visible,
+html.high-contrast button:focus-visible {
+  outline: 4px solid #FFFF00 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 6px rgba(255, 255, 0, 0.6) !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

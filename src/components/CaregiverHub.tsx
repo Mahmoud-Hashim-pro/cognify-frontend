@@ -27,7 +27,8 @@ import {
   Lightbulb,
   TrendingUp,
   BarChart2,
-  Printer
+  Printer,
+  ShieldCheck
 } from 'lucide-react';
 import { UserProfile, SensoryEmotionLog } from '../types';
 import { EmergencyContact } from '../lib/contacts';
@@ -427,7 +428,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
   const latestSensory = sensoryLogs[0];
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-950 text-white overflow-y-auto p-4 sm:p-6" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="flex-1 flex flex-col h-full bg-[#111622] text-white overflow-y-auto p-4 sm:p-6" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header */}
       <header className="pb-4 border-b border-slate-800 flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div className="flex items-center gap-2.5">
@@ -435,17 +436,17 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             <button
               onClick={onNavigateBack}
               aria-label={t('Back', 'رجوع', 'Retour')}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all"
+              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-[#171E2E] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/60 transition-all flex items-center justify-center cursor-pointer"
             >
               <ArrowLeft className={`w-5 h-5 ${isAr ? 'rotate-180' : ''}`} />
             </button>
           )}
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-2xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-rose-400 shadow-lg shadow-rose-950/50">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-lg shadow-amber-950/40">
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="font-black text-sm sm:text-base leading-tight">
+              <h1 className="font-black text-sm sm:text-base leading-tight text-white">
                 {t('Caregiver & Specialist Command Hub', 'لوحة تحكم المرافق والمختص الطبي', 'Centre Accompagnant & Spécialiste')}
               </h1>
               <p className="text-[11px] text-slate-400">
@@ -458,9 +459,9 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         {onOpenPassport && (
           <button
             onClick={onOpenPassport}
-            className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all"
+            className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-950/40 active:scale-95 transition-all cursor-pointer"
           >
-            <span>🛂</span>
+            <ShieldCheck className="w-4 h-4 text-slate-950" />
             <span>{t('Accessibility Passport', 'جواز السفر الميسر', 'Passeport Accessibilité')}</span>
           </button>
         )}
@@ -480,7 +481,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             {pendingLinkRequests.map((req) => (
               <div
                 key={req.parentUid}
-                className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-3"
+                className="p-3.5 rounded-2xl bg-[#171E2E] border border-slate-700/60 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
                   <div className="font-bold text-sm text-white truncate">{req.parentName}</div>
@@ -496,13 +497,13 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => handleRejectLink(req.parentUid)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-300 text-xs font-bold transition-colors"
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-300 text-xs font-bold transition-colors cursor-pointer"
                   >
                     {t('Decline', 'رفض', 'Refuser')}
                   </button>
                   <button
                     onClick={() => handleApproveLink(req)}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors"
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors cursor-pointer"
                   >
                     {t('Approve', 'موافقة', 'Approuver')}
                   </button>
@@ -514,22 +515,22 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
 
         {/* Linked Caregivers */}
         {linkedCaregivers.length > 0 && (
-          <div className="p-4 rounded-3xl bg-slate-900/60 border border-slate-800 shadow-lg space-y-3">
+          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 shadow-lg space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-slate-200 font-bold text-sm">
-                <Users className="w-5 h-5 text-cyan-400" />
+                <Users className="w-5 h-5 text-amber-400" />
                 <span>
                   {t('Linked caregivers & specialists', 'المرافقين والمختصين المرتبطين', 'Accompagnants et spécialistes liés')}
                 </span>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-300 border border-amber-500/30">
                 {linkedCaregivers.length}
               </span>
             </div>
             {linkedCaregivers.map((c) => (
               <div
                 key={c.uid}
-                className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3"
+                className="p-3.5 rounded-2xl bg-[#111622] border border-slate-800 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
                   <div className="font-bold text-sm text-white truncate">{c.name}</div>
@@ -540,7 +541,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
                 </div>
                 <button
                   onClick={() => handleRevokeCaregiver(c.uid)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-300 text-xs font-bold transition-colors shrink-0"
+                  className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-300 text-xs font-bold transition-colors shrink-0 cursor-pointer"
                 >
                   {t('Remove access', 'إلغاء الوصول', 'Retirer')}
                 </button>
@@ -552,7 +553,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         {/* Status Telemetry Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Vision Telemetry */}
-          <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Eye className="w-6 h-6" />
             </div>
@@ -563,7 +564,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           </div>
 
           {/* Euphonia Telemetry */}
-          <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
               <Mic className="w-6 h-6" />
             </div>
@@ -574,7 +575,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           </div>
 
           {/* Sensory Regulation Telemetry */}
-          <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
               <Activity className="w-6 h-6" />
             </div>
@@ -590,7 +591,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           </div>
 
           {/* Contacts Telemetry */}
-          <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
               <Phone className="w-6 h-6" />
             </div>
@@ -602,16 +603,16 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* ── CLINICAL ABA & OT SENSORY PATTERN ANALYTICS ── */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-5 shadow-2xl">
+        <div className="p-5 sm:p-6 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-5 shadow-2xl">
           <div className="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
+              <div className="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-md">
                 <BarChart2 className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="font-black text-base text-white flex items-center gap-2">
                   <span>{t('Clinical Sensory & Meltdown Analytics (ABA / OT)', 'التحليل السريري للأنماط ونوبات الضغط الحسي (ABA / OT)')}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-950 border border-purple-500/40 text-purple-300 font-normal">
+                  <span className="text-[10px] px-2.5 py-1 rounded-full bg-purple-950 border border-purple-500/40 text-purple-300 font-normal">
                     {patternAnalysis.totalMeltdowns} {t('Episodes Tracked', 'نوبة مرصودة')}
                   </span>
                 </h3>
@@ -623,12 +624,12 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
 
             <div className="flex items-center gap-3 text-xs font-mono text-slate-400 flex-wrap">
               <div className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-indigo-400" />
+                <Clock className="w-4 h-4 text-amber-400" />
                 <span>{t('Peak Overload Window:', 'ذروة نوبات الضغط:')} <strong className="text-amber-300 font-bold">{isAr ? patternAnalysis.peakTimeWindow : patternAnalysis.peakTimeWindowEn}</strong></span>
               </div>
               <button
                 onClick={handlePrintWeeklyClinicalReport}
-                className="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+                className="min-h-[40px] px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-white border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
                 title={t('Print Clinical Summary for SLP / ABA Therapist', 'طباعة التقرير السريري لأخصائي التخاطب والسلوك')}
               >
                 <Printer className="w-3.5 h-3.5" />
@@ -653,7 +654,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           {/* Distribution & Triggers Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Time of Day Distribution */}
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#111622] border border-slate-800 space-y-3">
               <h4 className="font-bold text-xs text-slate-300 flex items-center justify-between">
                 <span>{t('Meltdown Time-of-Day Distribution:', 'توزيع النوبات خلال ساعات اليوم:')}</span>
                 <span className="text-[10px] text-slate-400 font-normal">{patternAnalysis.totalMeltdowns} {t('Total', 'إجمالي')}</span>
@@ -683,7 +684,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             </div>
 
             {/* Top Triggers */}
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#111622] border border-slate-800 space-y-3">
               <h4 className="font-bold text-xs text-slate-300 flex items-center justify-between">
                 <span>{t('Most Frequent Sensory Triggers:', 'أبرز المثيرات الحسية المتكررة:')}</span>
                 <span className="text-[10px] text-slate-400 font-normal">{patternAnalysis.topTriggers.length} {t('Identified', 'محددة')}</span>
@@ -713,10 +714,10 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* Safety & SOS Testing Section */}
-        <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+        <div className="p-5 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-4 shadow-xl">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 className="font-black text-base flex items-center gap-2">
+              <h3 className="font-black text-base flex items-center gap-2 text-white">
                 <AlertCircle className="w-5 h-5 text-rose-400" />
                 <span>{t('Safety & Emergency SOS Verification', 'فحص واختبار أمان نداء الاستغاثة والطوارئ')}</span>
               </h3>
@@ -727,7 +728,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
 
             <button
               onClick={handleTestSOS}
-              className={`px-4 py-2.5 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all ${
+              className={`min-h-[44px] px-5 py-2.5 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer ${
                 testSent ? 'bg-emerald-600 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50'
               }`}
             >
@@ -739,7 +740,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           {/* Registered Emergency Contacts List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-2">
             {contacts.map((c) => (
-              <div key={c.id} className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+              <div key={c.id} className="p-3.5 rounded-2xl bg-[#111622] border border-slate-800 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-xs text-white flex items-center gap-1.5">
                     <span>{isAr ? (c.nameAr || c.nameEn) : c.nameEn}</span>
@@ -750,8 +751,9 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
                 {c.phone && (
                   <button
                     onClick={() => sendWhatsAppMessage(c.phone, t('Test message from Cognify Caregiver Hub', 'رسالة تجربة من لوحة مرافق Cognify'))}
-                    className="p-2 rounded-xl bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 transition-all"
+                    className="min-w-[40px] min-h-[40px] p-2.5 rounded-xl bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 transition-all flex items-center justify-center cursor-pointer"
                     title="WhatsApp"
+                    aria-label="WhatsApp"
                   >
                     <MessageCircle className="w-4 h-4" />
                   </button>
@@ -762,10 +764,10 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* Configuration Backup & Migration */}
-        <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+        <div className="p-5 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-4 shadow-xl">
           <div>
-            <h3 className="font-black text-base flex items-center gap-2">
-              <FileJson className="w-5 h-5 text-indigo-400" />
+            <h3 className="font-black text-base flex items-center gap-2 text-white">
+              <FileJson className="w-5 h-5 text-amber-400" />
               <span>{t('Configuration Backup & Clinical Export', 'النسخ الاحتياطي وتصدير التقرير للمختص')}</span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -776,14 +778,14 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           <div className="flex flex-wrap gap-2.5">
             <button
               onClick={handleExportConfig}
-              className="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all"
+              className="min-h-[44px] px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>{t('Download JSON Backup', 'تحميل نسخة احتياطية (JSON)')}</span>
             </button>
             <button
               onClick={handlePrintWeeklyClinicalReport}
-              className="px-4 py-2.5 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all"
+              className="min-h-[44px] px-5 py-2.5 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-bold text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>{t('Print Weekly Clinical Report (ABA/SLP)', 'طباعة التقرير السريري الأسبوعي (ABA/SLP)')}</span>

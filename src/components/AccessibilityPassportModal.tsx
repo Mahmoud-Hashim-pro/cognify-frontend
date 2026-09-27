@@ -13,7 +13,11 @@ import {
   Radio,
   BookOpen,
   Compass,
-  AlertCircle
+  AlertCircle,
+  Type,
+  Sliders,
+  Contrast,
+  Minimize2
 } from 'lucide-react';
 import { UserProfile, AccessibilityPassport, AccessibilityMode } from '../types';
 import { doc, setDoc } from 'firebase/firestore';
@@ -43,6 +47,8 @@ export default function AccessibilityPassportModal({
     primaryCategory: profile.accessibilityMode || 'Multiple',
     highContrast: false,
     dyslexiaFont: false,
+    fontSizeScale: 'normal',
+    reduceMotion: false,
     hapticFeedback: true,
     autoSpeak: true,
     audioSpeed: 1,
@@ -83,6 +89,8 @@ export default function AccessibilityPassportModal({
           primaryCategory: profile.accessibilityMode || 'Multiple',
           highContrast: false,
           dyslexiaFont: false,
+          fontSizeScale: 'normal',
+          reduceMotion: false,
           hapticFeedback: true,
           autoSpeak: true,
           audioSpeed: 1,
@@ -98,7 +106,8 @@ export default function AccessibilityPassportModal({
         }
       );
     }
-  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+ // eslint-disable-line react-hooks/exhaustive-deps
 
   const t = (en: string, ar: string, fr?: string) => {
     if (isAr) return ar;
@@ -122,6 +131,9 @@ export default function AccessibilityPassportModal({
                         resolvedMode === 'Neurodiversity' ? 'neurodiversity' :
                         resolvedMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
       localStorage.setItem('cognify_default_disability_tab', mappedTab);
+      localStorage.setItem('cognify_font_scale', passport.fontSizeScale || 'normal');
+      localStorage.setItem('cognify_high_contrast', String(passport.highContrast || false));
+      localStorage.setItem('cognify_reduce_motion', String(passport.reduceMotion || false));
     } catch {}
 
     const updatedProfile: UserProfile = {
@@ -221,6 +233,92 @@ export default function AccessibilityPassportModal({
                   <span className="text-xs leading-tight">{item.label}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Universal System-Wide Accommodations (Font Scaling, High Contrast, Motion Reduction) */}
+          <div className="p-4 rounded-3xl bg-slate-950 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 font-bold text-xs text-amber-400">
+              <Sliders className="w-4 h-4" />
+              <span>{t('Universal Display & Sensory Settings', 'إعدادات العرض والحواس الشاملة للمنظومة')}</span>
+            </div>
+
+            {/* Font Size Scaling */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-slate-300 font-bold flex items-center gap-1.5">
+                <Type className="w-3.5 h-3.5 text-purple-400" />
+                <span>{t('System-Wide Font Size Scale:', 'حجم الخط العام لجميع الشاشات:')}</span>
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { id: 'normal', label: t('100% Normal', '100% عادي') },
+                  { id: 'medium', label: t('115% Large', '115% كبير') },
+                  { id: 'large', label: t('130% X-Large', '130% كبير جداً') },
+                  { id: 'extra-large', label: t('150% Max', '150% أقصى حجم') },
+                ].map((s) => {
+                  const isCurrent = (passport.fontSizeScale || 'normal') === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        const newScale = s.id as any;
+                        setPassport({ ...passport, fontSizeScale: newScale });
+                        const root = document.documentElement;
+                        root.classList.remove('font-scale-normal', 'font-scale-medium', 'font-scale-large', 'font-scale-extra-large');
+                        root.classList.add(`font-scale-${newScale}`);
+                        try { localStorage.setItem('cognify_font_scale', newScale); } catch {}
+                      }}
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        isCurrent
+                          ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-md font-black'
+                          : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* High Contrast & Reduce Motion Toggles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                <input
+                  type="checkbox"
+                  checked={passport.highContrast ?? false}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setPassport({ ...passport, highContrast: checked });
+                    document.documentElement.classList.toggle('high-contrast', checked);
+                    try { localStorage.setItem('cognify_high_contrast', String(checked)); } catch {}
+                  }}
+                  className="rounded text-amber-500 w-4 h-4"
+                />
+                <div className="flex items-center gap-1.5 font-bold">
+                  <Contrast className="w-4 h-4 text-amber-400" />
+                  <span>{t('High Contrast Mode (WCAG AAA)', 'وضع التباين العالي الفائق')}</span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                <input
+                  type="checkbox"
+                  checked={passport.reduceMotion ?? false}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setPassport({ ...passport, reduceMotion: checked });
+                    document.documentElement.classList.toggle('reduce-motion', checked);
+                    try { localStorage.setItem('cognify_reduce_motion', String(checked)); } catch {}
+                  }}
+                  className="rounded text-amber-500 w-4 h-4"
+                />
+                <div className="flex items-center gap-1.5 font-bold">
+                  <Minimize2 className="w-4 h-4 text-cyan-400" />
+                  <span>{t('Reduce Motion & Flashing', 'تقليل الحركة والوميض الحسي')}</span>
+                </div>
+              </label>
             </div>
           </div>
 

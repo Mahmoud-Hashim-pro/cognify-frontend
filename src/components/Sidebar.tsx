@@ -89,19 +89,20 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
   const academicIds = academicItems.map((i) => i.id) as readonly string[];
   const [academicsOpen, setAcademicsOpen] = useState(academicIds.includes(currentView));
 
-  // navbtn: obsidian glass styling; active = cyan-to-blue gradient pill with cyan text/icon.
+  // navbtn: warm obsidian glass styling; active = cyan-to-amber highlight with clear contrast.
+  // min-h-[44px] guarantees compliance with WCAG 2.5.5 / 2.5.8 Target Size.
   const navBtn = (active: boolean) =>
-    `group flex items-center gap-3 w-full px-3 h-[40px] rounded-xl text-[13px] font-medium text-start transition-all relative select-none ${
+    `group flex items-center gap-3 w-full px-3 min-h-[44px] py-2 rounded-xl text-[13px] font-medium text-start transition-all relative select-none ${
       active
-        ? 'bg-gradient-to-r from-cyan-500/15 via-blue-500/10 to-transparent border border-cyan-500/35 text-cyan-300 font-semibold shadow-sm shadow-cyan-950/40'
-        : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 border border-transparent hover:border-white/5 active:scale-[0.98]'
+        ? 'bg-gradient-to-r from-amber-500/15 via-cyan-500/10 to-transparent border border-amber-500/40 text-amber-300 font-semibold shadow-sm shadow-amber-950/40'
+        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white border border-transparent hover:border-white/5 active:scale-[0.98]'
     }`;
-  const navIcon = (_active: boolean) => `w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110`;
+  const navIcon = (_active: boolean) => `w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 group-focus-visible:scale-110`;
 
   const userInitial = (profile.name || profile.email || 'U').trim().charAt(0).toUpperCase();
 
   return (
-    <div className="w-[284px] h-full shrink-0 bg-[#0E111D]/95 text-slate-200 border-e border-slate-800/80 backdrop-blur-2xl flex flex-col px-[18px] py-[22px]">
+    <div className="w-[284px] h-full shrink-0 bg-[#111622]/95 text-slate-200 border-e border-slate-800/80 backdrop-blur-2xl flex flex-col px-[18px] py-[22px]">
       {/* Brand */}
       <div className="flex items-center gap-3 px-1.5 pb-1">
         <div className="w-[36px] h-[36px] rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-cyan-500/25 ring-1 ring-white/20" style={{ background: 'linear-gradient(135deg,#06b6d4,#6366f1)' }}>
@@ -132,7 +133,12 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
         {!a11yOnly && primaryItems.map((item) => {
           const active = currentView === item.id;
           return (
-            <button key={item.id} onClick={() => setCurrentView(item.id as any)} className={navBtn(active)}>
+            <button
+              key={item.id}
+              onClick={() => setCurrentView(item.id as any)}
+              className={navBtn(active)}
+              aria-current={active ? 'page' : undefined}
+            >
               <item.icon className={navIcon(active)} /> {item.label}
             </button>
           );
@@ -144,6 +150,7 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
             <button
               onClick={() => setAcademicsOpen((v) => !v)}
               className={navBtn(academicIds.includes(currentView) && !academicsOpen) + ' justify-between'}
+              aria-expanded={academicsOpen}
             >
               <span className="flex items-center gap-3"><GraduationCap className={navIcon(false)} /> {localize(profile.language, 'Academics', 'الأكاديميات')}</span>
               <ChevronRight className={`w-4 h-4 transition-transform ${academicsOpen ? 'rotate-90' : (localize(profile.language, '', 'rotate-180'))}`} />
@@ -153,7 +160,12 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
                 {academicItems.map((item) => {
                   const active = currentView === item.id;
                   return (
-                    <button key={item.id} onClick={() => setCurrentView(item.id as any)} className={navBtn(active)}>
+                    <button
+                      key={item.id}
+                      onClick={() => setCurrentView(item.id as any)}
+                      className={navBtn(active)}
+                      aria-current={active ? 'page' : undefined}
+                    >
                       <item.icon className={navIcon(active)} /> {item.label}
                     </button>
                   );
@@ -164,19 +176,31 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
         )}
 
         {/* Cognify Memory */}
-        <button onClick={() => setCurrentView('memory')} className={navBtn(currentView === 'memory')}>
+        <button
+          onClick={() => setCurrentView('memory')}
+          className={navBtn(currentView === 'memory')}
+          aria-current={currentView === 'memory' ? 'page' : undefined}
+        >
           <Brain className={navIcon(currentView === 'memory')} />
           {localize(profile.language, 'Cognify Memory', 'ذاكرة كوجنيفي')}
         </button>
 
         {/* Phase 4: Cognitive Gym */}
-        <button onClick={() => setCurrentView('gym')} className={navBtn(currentView === 'gym')}>
+        <button
+          onClick={() => setCurrentView('gym')}
+          className={navBtn(currentView === 'gym')}
+          aria-current={currentView === 'gym' ? 'page' : undefined}
+        >
           <Flame className={navIcon(currentView === 'gym')} />
           {localize(profile.language, 'Cognitive Gym', 'الجيم المعرفي')}
         </button>
 
         {/* France Travel & Voice Assistant */}
-        <button onClick={() => setCurrentView('france')} className={navBtn(currentView === 'france') + ' relative'}>
+        <button
+          onClick={() => setCurrentView('france')}
+          className={navBtn(currentView === 'france') + ' relative'}
+          aria-current={currentView === 'france' ? 'page' : undefined}
+        >
           <span className="w-[18px] h-[18px] shrink-0 flex items-center justify-center text-sm leading-none">🇫🇷</span>
           {localize(profile.language, 'France Travel Voice', 'مساعد السفر لفرنسا')}
           <span className="ms-auto text-[10px] font-bold text-amber-400 bg-amber-500/15 border border-amber-500/30 px-[7px] py-[2px] rounded-full">FR</span>
@@ -184,7 +208,11 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
 
         {/* Phase 7: Institution Cohorts Hub */}
         {(isAdmin || profile.isOrgManager === true) && (
-          <button onClick={() => setCurrentView('institution')} className={navBtn(currentView === 'institution')}>
+          <button
+            onClick={() => setCurrentView('institution')}
+            className={navBtn(currentView === 'institution')}
+            aria-current={currentView === 'institution' ? 'page' : undefined}
+          >
             <Building2 className={navIcon(currentView === 'institution')} />
             {localize(profile.language, 'Institution Cohorts', 'شؤون المؤسسة')}
           </button>
@@ -192,25 +220,39 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
 
         {/* Accessibility — for accessibility users, admins, and org managers */}
         {(isAccessibilityUser(profile) || isAdmin || profile.isOrgManager === true) && (
-          <button onClick={() => setCurrentView('disability')} className={navBtn(currentView === 'disability') + ' relative'}>
-            <Accessibility className={navIcon(currentView === 'disability')} />
-            {localize(profile.language, 'Accessibility', 'الإتاحة')}
-            <span className="ms-auto text-[10px] font-bold text-cyan-400 bg-cyan-500/15 border border-cyan-500/30 px-[7px] py-[2px] rounded-full">{localize(profile.language, 'Live', 'مباشر')}</span>
+          <button
+            onClick={() => setCurrentView('disability')}
+            className={navBtn(currentView === 'disability') + ' relative'}
+            aria-current={currentView === 'disability' ? 'page' : undefined}
+          >
+            <Accessibility className={`${navIcon(currentView === 'disability')} text-amber-400`} />
+            <span className="font-semibold">{localize(profile.language, 'Accessibility Suite', 'منظومة ذوي الهمم')}</span>
+            <span className="ms-auto text-[10px] font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-[7px] py-[2px] rounded-full">
+              {localize(profile.language, 'Live', 'مباشر')}
+            </span>
           </button>
         )}
 
         {/* Support */}
-        <button onClick={() => setCurrentView('support')} className={navBtn(currentView === 'support')}>
+        <button
+          onClick={() => setCurrentView('support')}
+          className={navBtn(currentView === 'support')}
+          aria-current={currentView === 'support' ? 'page' : undefined}
+        >
           <LifeBuoy className={navIcon(currentView === 'support')} />
           {localize(profile.language, 'Support', 'الدعم')}
         </button>
 
         {/* Admin */}
         {isAdmin && (
-          <button onClick={() => setCurrentView('admin')} className={navBtn(currentView === 'admin') + ' relative'}>
+          <button
+            onClick={() => setCurrentView('admin')}
+            className={navBtn(currentView === 'admin') + ' relative'}
+            aria-current={currentView === 'admin' ? 'page' : undefined}
+          >
             <AlertCircle className={navIcon(currentView === 'admin')} />
             {localize(profile.language, 'Admin', 'الأدمن')}
-            <span className="ms-auto text-[10px] font-bold text-slate-400 bg-[#121524] border border-slate-800 px-[7px] py-[2px] rounded-full">{localize(profile.language, 'Staff', 'مقيّد')}</span>
+            <span className="ms-auto text-[10px] font-bold text-slate-300 bg-[#171E2E] border border-slate-700/80 px-[7px] py-[2px] rounded-full">{localize(profile.language, 'Staff', 'مقيّد')}</span>
           </button>
         )}
 
@@ -235,10 +277,14 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
             {profile.chatThreads?.slice().reverse().map((t) => {
               const active = profile.activeThreadId === t.id;
               return (
-                <div key={t.id} className={`group flex items-center gap-1 rounded-xl transition-all ${active ? 'bg-[#181C2E] border border-slate-700/80' : 'hover:bg-slate-800/40 border border-transparent'}`}>
-                  <button onClick={() => switchThread(t.id)} className="flex flex-col flex-1 items-start gap-0.5 px-3 py-[9px] text-start overflow-hidden min-w-0">
+                <div key={t.id} className={`group flex items-center gap-1 rounded-xl transition-all ${active ? 'bg-[#171E2E] border border-slate-700/80' : 'hover:bg-slate-800/40 border border-transparent'}`}>
+                  <button
+                    onClick={() => switchThread(t.id)}
+                    className="flex flex-col flex-1 items-start justify-center gap-0.5 px-3 min-h-[44px] py-1.5 text-start overflow-hidden min-w-0"
+                    aria-current={active ? 'true' : undefined}
+                  >
                     <span className="text-[13px] font-semibold text-slate-200 truncate w-full max-w-[200px]">{t.title}</span>
-                    <span className="text-[11px] text-slate-500 truncate w-full max-w-[200px]">{t.lastMessageSnippet || (localize(profile.language, 'No messages yet', 'لا رسائل بعد'))}</span>
+                    <span className="text-[11px] text-slate-400 truncate w-full max-w-[200px]">{t.lastMessageSnippet || (localize(profile.language, 'No messages yet', 'لا رسائل بعد'))}</span>
                   </button>
                   <button
                     onClick={(e) => {
@@ -250,11 +296,11 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
                       setProfile({ ...profile, chatThreads: updated, activeThreadId: nextActive });
                       if (profile.uid) deleteDoc(doc(db, `users/${profile.uid}/threads/${t.id}`)).catch((er) => console.error(er));
                     }}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 me-1 text-slate-500 hover:text-rose-400 rounded-md transition-all"
+                    className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 min-w-[36px] min-h-[36px] flex items-center justify-center p-2 me-1 text-slate-400 hover:text-rose-400 focus-visible:text-rose-400 rounded-lg transition-all"
                     title={localize(profile.language, 'Delete chat', 'حذف المحادثة')}
                     aria-label={localize(profile.language, 'Delete chat', 'حذف المحادثة')}
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               );
@@ -268,10 +314,10 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
         <div className="flex flex-col gap-2 pb-3 border-t border-slate-800/80 pt-3">
           <div className="flex gap-1.5">
             {(['Basic', 'Intermediate', 'Advanced'] as CognitiveLevel[]).map((l) => (
-              <button key={l} onClick={() => handleChange('level', l)} className={`flex-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${profile.level === l ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 font-bold' : 'bg-[#121524] border-slate-800 text-slate-400 hover:border-slate-700'}`}>{l[0]}</button>
+              <button key={l} onClick={() => handleChange('level', l)} className={`flex-1 px-2 min-h-[40px] rounded-xl text-[11px] font-semibold border transition-all ${profile.level === l ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 font-bold' : 'bg-[#171E2E] border-slate-800 text-slate-300 hover:border-slate-700'}`}>{l[0]}</button>
             ))}
             {(['Student', 'Professional'] as UserRole[]).map((r) => (
-              <button key={r} onClick={() => handleChange('role', r)} className={`flex-1 px-2 py-1.5 rounded-xl text-[11px] font-semibold border transition-all ${profile.role === r ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 font-bold' : 'bg-[#121524] border-slate-800 text-slate-400 hover:border-slate-700'}`}>{r[0]}</button>
+              <button key={r} onClick={() => handleChange('role', r)} className={`flex-1 px-2 min-h-[40px] rounded-xl text-[11px] font-semibold border transition-all ${profile.role === r ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 font-bold' : 'bg-[#171E2E] border-slate-800 text-slate-300 hover:border-slate-700'}`}>{r[0]}</button>
             ))}
           </div>
         </div>
@@ -280,15 +326,16 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
       {/* Footer: theme + language, profile chip, captions + logout */}
       <div className="border-t border-slate-800/80 pt-3 flex flex-col gap-2">
         <div className="flex gap-[7px]">
-          <button onClick={toggleTheme} className="flex-1 flex items-center justify-center gap-[7px] py-2 rounded-xl border border-slate-800 bg-[#121524] text-slate-300 hover:text-white hover:bg-slate-800/60 text-xs font-semibold transition-all">
-            {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-400" />}
+          <button onClick={toggleTheme} className="flex-1 flex items-center justify-center gap-[7px] min-h-[44px] py-2.5 rounded-xl border border-slate-800 bg-[#171E2E] text-slate-200 hover:text-white hover:bg-slate-800/80 text-xs font-semibold transition-all">
+            {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-300" />}
             {isDarkMode ? (localize(profile.language, 'Light', 'فاتح')) : (localize(profile.language, 'Dark', 'داكن'))}
           </button>
           <div className="flex-1 relative">
             <select
               value={profile.language || 'English'}
               onChange={(e) => handleChange('language', e.target.value)}
-              className="w-full h-full appearance-none cursor-pointer text-center py-2 rounded-xl border border-slate-800 bg-[#121524] text-slate-200 text-xs font-semibold hover:border-slate-700 transition-all outline-none focus:border-cyan-500 [color-scheme:dark]"
+              className="w-full h-full min-h-[44px] appearance-none cursor-pointer text-center py-2.5 px-2 rounded-xl border border-slate-800 bg-[#171E2E] text-slate-200 text-xs font-semibold hover:border-slate-700 transition-all outline-none focus:border-amber-500 [color-scheme:dark]"
+              aria-label={localize(profile.language, 'Select Language', 'اختر اللغة')}
             >
               {['English', 'Arabic', 'Egyptian Ammiya', 'French', 'Spanish'].map((l) => (
                 <option key={l} value={l}>{l}</option>
@@ -297,22 +344,22 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
           </div>
         </div>
 
-        <div className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-2xl border bg-[#121524]/90 backdrop-blur-md transition-all ${currentView === 'profile' || currentView === 'settings' ? 'border-cyan-500/60 shadow-md shadow-cyan-500/10' : 'border-slate-800/80 hover:border-slate-700'}`}>
-          <button onClick={() => setCurrentView('profile')} className="flex items-center gap-2.5 flex-1 min-w-0 text-start group" title={localize(profile.language, 'View Profile', 'الملف الشخصي')}>
+        <div className={`flex items-center gap-2.5 w-full px-2.5 min-h-[50px] py-1.5 rounded-2xl border bg-[#171E2E]/90 backdrop-blur-md transition-all ${currentView === 'profile' || currentView === 'settings' ? 'border-amber-500/60 shadow-md shadow-amber-500/10' : 'border-slate-800/80 hover:border-slate-700'}`}>
+          <button onClick={() => setCurrentView('profile')} className="flex items-center gap-2.5 flex-1 min-w-0 min-h-[44px] text-start group" title={localize(profile.language, 'View Profile', 'الملف الشخصي')}>
             <div className="relative shrink-0">
               <div className="w-[36px] h-[36px] rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform ring-1 ring-white/10" style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
                 {profile.photoURL ? <img src={profile.photoURL} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" /> : userInitial}
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#0E111D]" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#111622]" />
             </div>
             <div className="leading-tight overflow-hidden flex-1">
-              <div className="text-[13px] font-bold text-slate-100 truncate group-hover:text-cyan-300 transition-colors">{profile.name || profile.email?.split('@')[0] || 'User'}</div>
+              <div className="text-[13px] font-bold text-slate-100 truncate group-hover:text-amber-300 transition-colors">{profile.name || profile.email?.split('@')[0] || 'User'}</div>
               <div className="text-[11px] text-slate-400 truncate">{profile.role === 'Student' ? (profile.university || 'Student') : (profile.work || 'Professional')}</div>
             </div>
           </button>
           <button
             onClick={() => setCurrentView('settings')}
-            className={`p-2 rounded-xl transition-all shrink-0 active:scale-95 ${currentView === 'settings' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60'}`}
+            className={`min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-xl transition-all shrink-0 active:scale-95 ${currentView === 'settings' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'text-slate-300 hover:text-amber-300 hover:bg-slate-800/60'}`}
             title={localize(profile.language, 'Settings', 'الإعدادات')}
             aria-label={localize(profile.language, 'Settings', 'الإعدادات')}
           >
@@ -321,11 +368,11 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
         </div>
 
         <div className="flex gap-[7px]">
-          <button onClick={openLiveCaptions} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-slate-800 bg-[#121524] text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/40 text-xs font-semibold transition-all">
-            <Mic className="w-3.5 h-3.5" /> {localize(profile.language, 'Captions', 'الكابشن')}
+          <button onClick={openLiveCaptions} className="flex-1 flex items-center justify-center gap-2 min-h-[44px] py-2.5 rounded-xl border border-slate-800 bg-[#171E2E] text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/40 text-xs font-semibold transition-all">
+            <Mic className="w-4 h-4" /> {localize(profile.language, 'Captions', 'الكابشن')}
           </button>
-          <button onClick={() => logout()} className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-slate-800 bg-[#121524] text-rose-400 hover:bg-rose-950/30 hover:border-rose-800/60 text-xs font-semibold transition-all" title={getTranslation(profile.language, 'logout')} aria-label={getTranslation(profile.language, 'logout')}>
-            <LogOut className="w-3.5 h-3.5" />
+          <button onClick={() => logout()} className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-800 bg-[#171E2E] text-rose-400 hover:bg-rose-950/30 hover:border-rose-800/60 text-xs font-semibold transition-all" title={getTranslation(profile.language, 'logout')} aria-label={getTranslation(profile.language, 'logout')}>
+            <LogOut className="w-4 h-4" />
           </button>
         </div>
       </div>

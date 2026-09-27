@@ -30,7 +30,17 @@ import {
   Send,
   MessageSquareWarning,
   Activity,
-  PhoneCall
+  PhoneCall,
+  Droplets,
+  Apple,
+  Coffee,
+  Utensils,
+  Footprints,
+  Moon,
+  Bed,
+  Gamepad2,
+  DoorClosed,
+  HelpCircle
 } from 'lucide-react';
 import { UserProfile, PECSCard, SensoryEmotionLog } from '../types';
 import { speak } from '../lib/tts';
@@ -58,6 +68,32 @@ interface NeurodiversityHubProps {
   profile: UserProfile;
   onNavigateBack?: () => void;
   onOpenLearningHub?: () => void;
+}
+
+function RenderAccessibleCardIcon({ icon, className = "w-6 h-6" }: { icon?: string; className?: string }) {
+  if (!icon) return <Sparkles className={className} />;
+  switch (icon) {
+    case '💧': return <Droplets className={className} />;
+    case '🍎': return <Apple className={className} />;
+    case '🚻': return <DoorClosed className={className} />;
+    case '😊': return <Smile className={className} />;
+    case '😢': return <Frown className={className} />;
+    case '🎧': return <VolumeX className={className} />;
+    case '🛏️': return <Bed className={className} />;
+    case '🧩': return <Gamepad2 className={className} />;
+    case '🫂': return <Heart className={className} />;
+    case '🤝': return <HelpCircle className={className} />;
+    case '🩹': return <Activity className={className} />;
+    case '🌳': return <Footprints className={className} />;
+    case '🪥': return <Sparkles className={className} />;
+    case '🥣': return <Coffee className={className} />;
+    case '📚': return <BookOpen className={className} />;
+    case '🍲': return <Utensils className={className} />;
+    case '🎨': return <Palette className={className} />;
+    case '🌙': return <Moon className={className} />;
+    default:
+      return <span className="text-xl leading-none">{icon}</span>;
+  }
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -526,7 +562,9 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                       </button>
                     )}
 
-                    <span className="text-4xl sm:text-5xl mt-1">{card.icon}</span>
+                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-white shrink-0 mt-1 shadow-inner">
+                      <RenderAccessibleCardIcon icon={card.icon} className="w-7 h-7" />
+                    </div>
                     <div>
                       <h3 className="font-black text-sm sm:text-base leading-tight">
                         {isAr ? card.labelAr : isFr && card.labelFr ? card.labelFr : card.labelEn}
@@ -585,7 +623,9 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{item.icon}</span>
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 shrink-0">
+                      <RenderAccessibleCardIcon icon={item.icon} className="w-5 h-5" />
+                    </div>
                     <div>
                       <div className="text-[10px] font-mono font-bold text-indigo-400">{item.time}</div>
                       <div className={`font-bold text-sm ${item.done ? 'line-through text-slate-400' : 'text-white'}`}>

@@ -219,6 +219,20 @@ export default function Login() {
     setMode('email-login');
   };
 
+  const handleDirectPreview = () => {
+    try {
+      sessionStorage.setItem('cognify_guest_preview', 'disability');
+      localStorage.setItem('preLoginAccountPath', 'Special Needs');
+      localStorage.setItem('preLoginAccessibilityMode', DISABILITY_MODE_MAP[selectedDisability] || 'Visual');
+      localStorage.setItem('preLoginDisability', DISABILITY_LABEL_MAP[selectedDisability] || 'Visual Impairment');
+      localStorage.setItem('cognify_default_disability_tab', 'hub');
+      window.location.hash = '#disability';
+      window.location.reload();
+    } catch (err) {
+      console.warn("Direct preview error:", err);
+    }
+  };
+
   const validateUniversityEmail = (e: string) => {
     return !!e && /^[^\s@]+@[^\s@]+\.edu(\.[^\s@]+)?$/i.test(e.trim());
   };
@@ -414,32 +428,32 @@ export default function Login() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto w-full z-10 space-y-6">
+      <main className="max-w-5xl mx-auto w-full z-10 space-y-4">
         <AnimatePresence mode="wait">
           {mode === 'path-selection' ? (
             <motion.div
               key="path-selection"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              className="space-y-6"
+              className="space-y-4"
             >
               {/* Hero Title Header */}
-              <div className="space-y-2.5 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-teal-500/15 border border-amber-500/30 text-amber-300 shadow-sm">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/15 via-[#831843]/20 to-teal-500/15 border border-[#E5A93C]/40 text-amber-300 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5A93C]" />
                   <span>{t("Personalized Calibration · One Platform, Three Experiences", "معايرة تكيّفية مخصصة · منصة واحدة، ثلاث تجارب")}</span>
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.15]">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
                   {isRtl ? (
-                    <>سؤال واحد. <span className="text-amber-400">ثلاثة</span> <span className="text-rose-400">طرق</span> <span className="text-cyan-400">لسماع</span> الإجابة.</>
+                    <>سؤال واحد. <span className="text-amber-400">ثلاثة</span> <span className="text-[#E5A93C]">طرق</span> <span className="text-cyan-400">لسماع</span> الإجابة.</>
                   ) : (
-                    <>One question. <span className="text-amber-400">Three</span> <span className="text-rose-400">ways</span> <span className="text-cyan-400">to</span> hear the answer.</>
+                    <>One question. <span className="text-amber-400">Three</span> <span className="text-[#E5A93C]">ways</span> <span className="text-cyan-400">to</span> hear the answer.</>
                   )}
                 </h1>
 
-                <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-300 font-medium leading-relaxed">
                   {t(
                     "Cognify doesn't just change its tone — it transforms its entire capabilities. Select a path below to see live capabilities and continue.",
                     "كوجنيفاي لا يغير نبرته فقط — بل يغير إمكانياته ومميزاته بالكامل. اختر مساراً لمشاهدة قدراته المباشرة والمتابعة فوراً."
@@ -448,17 +462,17 @@ export default function Login() {
               </div>
 
               {/* Main Interactive Comparison Card - Split View */}
-              <div className="bg-[#0D1122]/95 border border-slate-700/70 rounded-[32px] overflow-hidden shadow-2xl backdrop-blur-2xl ring-1 ring-white/5">
+              <div className="bg-[#0D1122]/95 border border-slate-700/70 rounded-[28px] overflow-hidden shadow-2xl backdrop-blur-2xl ring-1 ring-white/5">
                 {/* Top Tri-Color Strip */}
                 <div className="grid grid-cols-3 h-1.5 w-full">
                   <div className="bg-gradient-to-r from-amber-400 to-amber-500" />
                   <div className="bg-gradient-to-r from-teal-400 to-emerald-500" />
-                  <div className="bg-gradient-to-r from-rose-500 to-pink-500" />
+                  <div className="bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C]" />
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 p-5 sm:p-7 md:p-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 p-4 sm:p-5 lg:p-6">
                   {/* Left Column: LIVE MODE OVERVIEW / معاينة إمكانيات ومميزات الوضع */}
-                  <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+                  <div className="lg:col-span-7 flex flex-col justify-between space-y-3">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -472,16 +486,16 @@ export default function Login() {
                             ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
                             : activePreviewPath === 'Graduation Project'
                             ? 'bg-teal-500/10 text-teal-300 border-teal-500/30'
-                            : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                            : 'bg-[#4A1224]/80 text-[#E5A93C] border-[#E5A93C]/40 shadow-sm'
                         }`}>
                           {activePreviewPath === 'Normal' && t('Standard Path', 'المسار القياسي')}
                           {activePreviewPath === 'Graduation Project' && t('Academic Path · Coming Soon', 'المسار الأكاديمي · قريباً')}
-                          {activePreviewPath === 'Special Needs' && t('Accessible Path', 'مسار الإتاحة')}
+                          {activePreviewPath === 'Special Needs' && t('Royal Burgundy Constellation', 'منظومة الأبراج الملكية')}
                         </span>
                       </div>
 
                       {/* Dynamic Summary Card */}
-                      <div className="bg-[#181C2E]/95 border border-slate-700/50 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl backdrop-blur-md">
+                      <div className="bg-[#181C2E]/95 border border-slate-700/50 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xl backdrop-blur-md">
                         <AnimatePresence mode="wait">
                           <motion.div
                             key={activePreviewPath}
@@ -489,23 +503,25 @@ export default function Login() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -6 }}
                             transition={{ duration: 0.2 }}
-                            className="space-y-4"
+                            className="space-y-3"
                           >
                             {/* Mode Title & Header Badge */}
                             <div className="flex items-start gap-3">
-                              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-all shadow-md ${
+                              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all shadow-md ${
                                 activePreviewPath === 'Normal'
                                   ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-amber-500/20'
                                   : activePreviewPath === 'Graduation Project'
                                   ? 'bg-gradient-to-br from-teal-400 to-emerald-600 text-slate-950 shadow-teal-500/20'
-                                  : 'bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-rose-500/25'
+                                  : 'bg-gradient-to-br from-[#4A1224] via-[#831843] to-[#2D0B16] text-[#E5A93C] border border-[#E5A93C]/50 shadow-rose-950/40'
                               }`}>
                                 {activePreviewPath === 'Normal' && <Brain className="w-5 h-5" />}
                                 {activePreviewPath === 'Graduation Project' && <GraduationCap className="w-5 h-5" />}
-                                {activePreviewPath === 'Special Needs' && <Heart className="w-5 h-5" />}
+                                {activePreviewPath === 'Special Needs' && (
+                                  <span className="font-mono font-black text-xs sm:text-sm tracking-tighter text-[#E5A93C]">[N|]</span>
+                                )}
                               </div>
 
-                              <div className="flex-1">
+                              <div className="flex-1 min-w-0">
                                 <h3 className="text-sm sm:text-base font-black text-white tracking-tight leading-snug">
                                   {activePreviewPath === 'Normal' && t("Personalized AI Cognitive Mentor", "المساعد المعرفي الذكي المخصص")}
                                   {activePreviewPath === 'Graduation Project' && (
@@ -518,17 +534,14 @@ export default function Login() {
                                   )}
                                   {activePreviewPath === 'Special Needs' && (
                                     <span className="flex items-center gap-2 flex-wrap">
-                                      <span>{t("All-in-One Multi-Modal Accessibility Hub", "مركز الإتاحة الشامل ومتعدد الوسائط")}</span>
-                                      {/* Matches the real "All Suites" count inside the app (DisabilityModeView's
-                                          MODULES minus the admin-only Org Hub) — keep this number in sync if a
-                                          suite is ever added/removed there. */}
-                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/30 shrink-0">
-                                        {t(`${SPECIAL_NEEDS_FEATURES.length} Suites`, `${SPECIAL_NEEDS_FEATURES.length} أدوات`)}
+                                      <span>{t("People of Determination · Constellation Hub", "منظومة ذوي الهمم · مركز الأبراج التكيّفية")}</span>
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-[#E5A93C]/20 text-[#E5A93C] border border-[#E5A93C]/40 shrink-0">
+                                        {t("5 Sensory Stars", "5 كوكبات حسية")}
                                       </span>
                                     </span>
                                   )}
                                 </h3>
-                                <p className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                <p className="text-[11px] sm:text-xs text-slate-300 font-medium mt-0.5 leading-relaxed">
                                   {activePreviewPath === 'Normal' && t(
                                     "Calibrated dynamically to your cognitive pace. Explains concepts with 4 teaching styles, tracks goals, and calculates your GPA in real time.",
                                     "معاير بدقة لسرعة استيعابك. يشرح بـ 4 أساليب تدريس، يتابع أهدافك، ويحسب معدلك التراكمي لحظة بلحظة."
@@ -538,8 +551,8 @@ export default function Login() {
                                     "ذكاء اصطناعي يفهم مقررات كليتك وتخصصك بدقة. يدعم صياغة الرسالة، توثيق المراجع، ومتابعة تسليمات مشروعك."
                                   )}
                                   {activePreviewPath === 'Special Needs' && t(
-                                    "Assistive multi-modal suite for visual, hearing, motor, and cognitive needs with 3D sign avatar, live camera OCR reader, and vocal controls.",
-                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية والحركية والإدراكية مع أفاتار لغة إشارة 3D، كاميرا ذكية، وأوامر صوتية."
+                                    "Assistive multi-modal constellation for visual, hearing, motor, and neurodiversity needs with 3D sign avatar, Vision OCR, and vocal controls.",
+                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية والحركية والتوحد مع أفاتار 3D، كاميرا ذكية، وأوامر صوتية."
                                   )}
                                 </p>
                               </div>
@@ -639,30 +652,30 @@ export default function Login() {
 
                               {activePreviewPath === 'Special Needs' && (
                                 <>
-                                  {getSpecialNeedsFeatures(selectedDisability, t).map((feature) => (
+                                  {getSpecialNeedsFeatures(selectedDisability, t).slice(0, 4).map((feature) => (
                                     <div
                                       key={feature.key}
-                                      className={`p-3 rounded-2xl border flex items-start gap-3 transition-all shadow-md ${
+                                      className={`p-2.5 sm:p-3 rounded-xl border flex items-start gap-2.5 transition-all shadow-md ${
                                         feature.isPrimary
-                                          ? 'bg-rose-500/15 border-rose-500/50 ring-1 ring-rose-500/30'
-                                          : 'bg-slate-900/80 border-slate-700/70 hover:border-slate-600'
+                                          ? 'bg-[#2D0B16]/80 border-[#E5A93C]/50 ring-1 ring-[#E5A93C]/30'
+                                          : 'bg-slate-900/80 border-slate-700/70 hover:border-[#E5A93C]/30'
                                       }`}
                                     >
-                                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                                        feature.isPrimary ? 'bg-rose-500/25 border border-rose-400/50' : 'bg-slate-800 border border-slate-700'
+                                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                                        feature.isPrimary ? 'bg-[#4A1224] border border-[#E5A93C]/60 text-[#E5A93C]' : 'bg-slate-800 border border-slate-700 text-amber-400/80'
                                       }`}>
-                                        <feature.Icon className={`w-4 h-4 ${feature.isPrimary ? 'text-rose-300' : 'text-rose-400'}`} />
+                                        <feature.Icon className="w-3.5 h-3.5" />
                                       </div>
                                       <div className="min-w-0">
                                         <div className="text-xs font-bold text-white flex items-center gap-1.5 leading-snug">
                                           <span className="truncate">{feature.title}</span>
                                           {feature.isPrimary && (
-                                            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black tracking-wider bg-rose-500/30 text-rose-200 border border-rose-400/50 shrink-0">
+                                            <span className="px-1.5 py-0.2 rounded-full text-[8px] font-black tracking-wider bg-[#E5A93C]/20 text-[#E5A93C] border border-[#E5A93C]/40 shrink-0">
                                               {t('FOCUS', 'محدد')}
                                             </span>
                                           )}
                                         </div>
-                                        <div className="text-[11px] text-slate-300 leading-tight mt-1">{feature.description}</div>
+                                        <div className="text-[10px] sm:text-[11px] text-slate-300 leading-tight mt-0.5 line-clamp-2">{feature.description}</div>
                                       </div>
                                     </div>
                                   ))}
@@ -675,30 +688,30 @@ export default function Login() {
                     </div>
 
                     {/* Bottom Feature Pill Indicator */}
-                    <div className="space-y-2 pt-0.5">
+                    <div className="space-y-1.5 pt-0.5">
                       <div className="flex items-center gap-2 text-xs font-bold">
                         <span className={`inline-flex items-center gap-1.5 ${
-                          activePreviewPath === 'Normal' ? 'text-amber-400' : activePreviewPath === 'Graduation Project' ? 'text-teal-400' : 'text-rose-400'
+                          activePreviewPath === 'Normal' ? 'text-amber-400' : activePreviewPath === 'Graduation Project' ? 'text-teal-400' : 'text-[#E5A93C]'
                         }`}>
-                          <Check className="w-4 h-4" /> {t("Mode Unlocks:", "المميزات المفتوحة:")}
+                          <Check className="w-3.5 h-3.5" /> {t("Mode Unlocks:", "المميزات المفتوحة:")}
                         </span>
-                        <span className="text-slate-300 font-semibold text-xs">
+                        <span className="text-slate-300 font-semibold text-[11px] sm:text-xs">
                           {activePreviewPath === 'Normal' && t("Adaptive AI Chat · GPA Engine · Spaced Retention · Cognitive Tests", "دردشة تكيّفية · حاسبة GPA · تكرار متباعد · اختبارات ذهنية")}
                           {activePreviewPath === 'Graduation Project' && t("All Normal Features + Faculty Context + Thesis AI + Citations", "كل مميزات العادي + ربط الكلية + إرشاد الرسالة + توثيق المراجع")}
-                          {activePreviewPath === 'Special Needs' && t("All Normal Features + Vision AI + 3D Sign Language + Hearing Bridge + Motor Mode", "كل مميزات العادي + كاميرا الرؤية + لغة إشارة 3D + جسر السمع + تحكم صوتي")}
+                          {activePreviewPath === 'Special Needs' && t("All Normal Features + 3D Sign Language + Vision AI Eyes + Motor Euphonia + Autism Oasis", "كل مميزات العادي + لغة إشارة 3D + رفيق بصري + تحكم حركي + واحة التوحد")}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Column: CHOOSE YOUR PATH */}
-                  <div className="lg:col-span-5 flex flex-col justify-between space-y-5 lg:border-s lg:border-slate-800/80 lg:ps-7">
-                    <div className="space-y-3.5">
+                  <div className="lg:col-span-5 flex flex-col justify-between space-y-4 lg:border-s lg:border-slate-800/80 lg:ps-6">
+                    <div className="space-y-3">
                       <div>
-                        <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                        <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
                           {t("Choose your path", "اختر مسارك")}
                         </h2>
-                        <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
                           {t("You can change this later in settings.", "يمكنك تغيير هذا المسار لاحقاً من الإعدادات.")}
                         </p>
                       </div>
@@ -708,7 +721,7 @@ export default function Login() {
                         value={accountPath}
                         onChange={(val) => setAccountPath(val as AccountPath)}
                         aria-label={t("Choose your path", "اختر مسارك")}
-                        className="space-y-3 relative outline-none"
+                        className="space-y-2.5 relative outline-none"
                       >
                         {/* 1. Normal Path */}
                         <Radio
@@ -716,7 +729,7 @@ export default function Login() {
                           onMouseEnter={() => setHoveredPath('Normal')}
                           onMouseLeave={() => setHoveredPath(null)}
                           className={({ isSelected, isFocusVisible }) =>
-                            `relative z-10 w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                            `relative z-10 w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                               isSelected
                                 ? 'bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-slate-900/90 border-amber-500 shadow-xl shadow-amber-500/15 ring-1 ring-amber-400/40 scale-[1.01]'
                                 : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
@@ -725,19 +738,19 @@ export default function Login() {
                         >
                           {({ isSelected }) => (
                             <>
-                              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                 isSelected
                                   ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30'
                                   : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
                               }`}>
-                                <Brain className="w-5 h-5" />
+                                <Brain className="w-4 h-4 sm:w-5 sm:h-5" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-amber-300' : 'text-white'}`}>
+                                <div className="flex items-center justify-between gap-1.5">
+                                  <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-amber-300' : 'text-white'}`}>
                                     {t("Normal Path", "المسار القياسي (عام)")}
                                   </span>
-                                  <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
+                                  <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
                                     isSelected
                                       ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
                                       : 'bg-slate-800 text-slate-400 border-slate-700'
@@ -745,11 +758,11 @@ export default function Login() {
                                     {t("Active · Ready", "جاهز للبدء")}
                                   </span>
                                 </div>
-                                <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                <p className="text-[11px] text-slate-300 font-medium mt-0.5 leading-snug">
                                   {t("Adaptive AI mentor, Socratic explanations, GPA forecasting & spaced retention flashcards.", "مساعد معرفي ذكي يتكيف مع استيعابك، حاسبة GPA، وتكرار متباعد لحفظ المعلومات.")}
                                 </p>
                               </div>
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                              <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                 isSelected
                                   ? 'bg-amber-400 text-slate-950 shadow-sm ring-4 ring-amber-400/20'
                                   : 'border border-slate-700 bg-slate-800/50'
@@ -761,13 +774,13 @@ export default function Login() {
                         </Radio>
 
                         {/* 2. Graduation Project */}
-                        <div className="relative z-10 space-y-2">
+                        <div className="relative z-10 space-y-1.5">
                           <Radio
                             value="Graduation Project"
                             onMouseEnter={() => setHoveredPath('Graduation Project')}
                             onMouseLeave={() => setHoveredPath(null)}
                             className={({ isSelected, isFocusVisible }) =>
-                              `w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                              `w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                                 isSelected
                                   ? 'bg-gradient-to-r from-teal-500/20 via-teal-500/10 to-slate-900/90 border-teal-500 shadow-xl shadow-teal-500/15 ring-1 ring-teal-400/40 scale-[1.01]'
                                   : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
@@ -776,27 +789,27 @@ export default function Login() {
                           >
                             {({ isSelected }) => (
                               <>
-                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                   isSelected
                                     ? 'bg-gradient-to-br from-teal-400 to-emerald-600 text-slate-950 shadow-md shadow-teal-500/30'
                                     : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
                                 }`}>
-                                  <GraduationCap className="w-5 h-5" />
+                                  <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-2">
-                                    <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-teal-300' : 'text-white'}`}>
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-teal-300' : 'text-white'}`}>
                                       {t("Graduation Project", "مشروع التخرج")}
                                     </span>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 animate-pulse">
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 animate-pulse">
                                       {t("Coming Soon", "قريباً")}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
+                                  <p className="text-[11px] text-slate-300 font-medium mt-0.5 leading-snug">
                                     {t("Anchored to your faculty, department, courses & thesis formatting standards.", "مرتبط بكليتك وتخصصك ومقرراتك الأكاديمية وصياغة الرسائل العلمية.")}
                                   </p>
                                 </div>
-                                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                   isSelected
                                     ? 'bg-teal-400 text-slate-950 shadow-sm ring-4 ring-teal-400/20'
                                     : 'border border-slate-700 bg-slate-800/50'
@@ -812,16 +825,16 @@ export default function Login() {
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-semibold leading-relaxed space-y-1.5 ms-4"
+                              className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-semibold leading-relaxed space-y-1 ms-3"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="flex items-center gap-1.5 font-black text-amber-300">
-                                <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                              <div className="flex items-center gap-1.5 font-black text-amber-300 text-xs">
+                                <Sparkles className="w-3 h-3 shrink-0" />
                                 <span>{t("Feature Coming Soon", "الميزة قادمة قريباً")}</span>
                               </div>
                               <p className="text-[11px] text-amber-200/90 font-medium">
                                 {t(
-                                  "The Graduation Project pathway is under active development. Please select 'Normal' or 'Special Needs' to continue and unlock all active tools today.",
+                                  "The Graduation Project pathway is under active development. Please select 'Normal' or 'People of Determination' to continue.",
                                   "مسار مشروع التخرج قيد التجهيز وسيتم إطلاقه قريباً. يرجى اختيار المسار 'العادي' أو 'ذوي الهمم' للمتابعة الآن."
                                 )}
                               </p>
@@ -829,45 +842,49 @@ export default function Login() {
                           )}
                         </div>
 
-                        {/* 3. Special Needs */}
+                        {/* 3. Special Needs / People of Determination - Royal Burgundy Constellation */}
                         <div className="relative z-10 space-y-2">
                           <Radio
                             value="Special Needs"
                             onMouseEnter={() => setHoveredPath('Special Needs')}
                             onMouseLeave={() => setHoveredPath(null)}
                             className={({ isSelected, isFocusVisible }) =>
-                              `w-full flex items-start gap-3.5 p-4 rounded-2xl cursor-pointer border transition-all duration-200 outline-none ${
+                              `w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                                 isSelected
-                                  ? 'bg-gradient-to-r from-rose-500/20 via-pink-500/10 to-slate-900/90 border-rose-500 shadow-xl shadow-rose-500/15 ring-1 ring-rose-400/40 scale-[1.01]'
-                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
-                              } ${isFocusVisible ? 'ring-2 ring-rose-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                                  ? 'bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#1F0812] border-[#E5A93C] shadow-xl shadow-rose-950/40 ring-1 ring-[#E5A93C]/50 scale-[1.01]'
+                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-[#2D0B16]/30 hover:border-[#E5A93C]/40 shadow-sm'
+                              } ${isFocusVisible ? 'ring-2 ring-[#E5A93C] ring-offset-2 ring-offset-slate-950' : ''}`
                             }
                           >
                             {({ isSelected }) => (
                               <>
-                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-all ${
+                                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                   isSelected
-                                    ? 'bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-md shadow-rose-500/30'
-                                    : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                                    ? 'bg-gradient-to-br from-[#831843] via-[#4A1224] to-[#2D0B16] text-[#E5A93C] border border-[#E5A93C]/60 shadow-md shadow-rose-950/50'
+                                    : 'bg-slate-800/90 text-[#E5A93C] border border-slate-700/80'
                                 }`}>
-                                  <Heart className="w-5 h-5" />
+                                  <span className="font-mono font-black text-xs sm:text-sm tracking-tighter text-[#E5A93C]">[N|]</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-2">
-                                    <span className={`text-sm sm:text-base font-black transition-colors ${isSelected ? 'text-rose-300' : 'text-white'}`}>
-                                      {t("Special Needs (Accessibility)", "مسار ذوي الهمم والإتاحة")}
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-[#E5A93C]' : 'text-white'}`}>
+                                      {t("People of Determination (Burgundy Constellation)", "مسار ذوي الهمم (منظومة الأبراج البورجندي)")}
                                     </span>
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 shrink-0">
-                                      {t("4 Modalities", "4 أنظمة")}
+                                    <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
+                                      isSelected
+                                        ? 'bg-[#E5A93C]/20 text-[#E5A93C] border-[#E5A93C]/40'
+                                        : 'bg-slate-800 text-slate-400 border-slate-700'
+                                    }`}>
+                                      {t("5 Stars · Gold", "5 كوكبات · ذهب")}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
-                                    {t("Assistive multi-modal hub: 3D sign avatar, audio camera eyes, motor & neuro tools.", "منظومة إتاحة شاملة: لغة إشارة 3D، رفيق بصري ذكي، تحكم حركي، وأدوات توحد.")}
+                                  <p className="text-[11px] text-slate-300 font-medium mt-0.5 leading-snug">
+                                    {t("Assistive constellation: 3D sign avatar, Vision eyes, vocal motor & neuro tools.", "منظومة الأبراج التكيّفية: لغة إشارة 3D، رفيق بصري، تحكم حركي، وأدوات توحد.")}
                                   </p>
                                 </div>
-                                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                                <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                   isSelected
-                                    ? 'bg-rose-500 text-white shadow-sm ring-4 ring-rose-500/20'
+                                    ? 'bg-[#E5A93C] text-slate-950 shadow-sm ring-4 ring-[#E5A93C]/20'
                                     : 'border border-slate-700 bg-slate-800/50'
                                 }`}>
                                   {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
@@ -876,53 +893,50 @@ export default function Login() {
                             )}
                           </Radio>
 
-                          {/* Focus Chips: independent React Aria RadioGroup */}
+                          {/* Focus Chips: Compact inline selector */}
                           {accountPath === 'Special Needs' && (
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="pt-2 ps-2"
+                              className="pt-1 ps-1 space-y-1.5"
                               onClick={(e) => e.stopPropagation()}
                             >
+                              <div className="flex items-center justify-between text-[10px] font-bold text-[#E5A93C]">
+                                <span className="flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3" />
+                                  {t("Focus Modality:", "نظام التركيز الأساسي:")}
+                                </span>
+                                <span className="text-slate-400 font-normal text-[9px]">
+                                  {t("All 5 suites active", "كافة الأنظمة متاحة")}
+                                </span>
+                              </div>
                               <RadioGroup
                                 value={selectedDisability}
                                 onChange={(val) => setSelectedDisability(val as DisabilityOption)}
                                 aria-label={t("Accessibility focus", "نوع الإتاحة المطلوب")}
                                 orientation="horizontal"
-                                className="space-y-2.5 outline-none p-3.5 rounded-2xl bg-[#090C16]/95 border border-rose-500/30 shadow-inner"
+                                className="grid grid-cols-4 gap-1 outline-none"
                               >
-                                <div className="flex items-center justify-between">
-                                  <span className="text-[11px] font-black uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
-                                    <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-                                    {t("Select Primary Focus Suite:", "اختر نظام التركيز الأساسي:")}
-                                  </span>
-                                  <span className="text-[10px] text-slate-400 font-medium">
-                                    {t("All tools remain unlocked", "جميع الأدوات تظل متاحة")}
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                  {[
-                                    { id: 'Visual' as const, icon: Eye, labelEn: 'Visual (AI Eyes)', labelAr: 'الرفيق البصري (كاميرا)' },
-                                    { id: 'Hearing' as const, icon: Ear, labelEn: 'Deaf & Hearing (3D)', labelAr: 'الصم وضعاف السمع (إشارة)' },
-                                    { id: 'Motor' as const, icon: Activity, labelEn: 'Motor & Voice Control', labelAr: 'التحكم الحركي وإيفونيا' },
-                                    { id: 'Cognitive' as const, icon: Brain, labelEn: 'Neurodiversity & Autism', labelAr: 'التوحد وصعوبات التعلم' },
-                                  ].map((item) => (
-                                    <Radio
-                                      key={item.id}
-                                      value={item.id}
-                                      className={({ isSelected, isFocusVisible }) =>
-                                        `flex items-center gap-2.5 p-2.5 rounded-xl cursor-pointer transition-all outline-none border ${
-                                          isSelected
-                                            ? 'bg-rose-500/25 border-rose-400 text-white shadow-md shadow-rose-500/20 font-black'
-                                            : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-slate-800/60 font-semibold'
-                                        } ${isFocusVisible ? 'ring-2 ring-rose-400 ring-offset-1 ring-offset-slate-900' : ''}`
-                                      }
-                                    >
-                                      <item.icon className="w-4 h-4 shrink-0 text-rose-400" />
-                                      <span className="text-xs truncate">{t(item.labelEn, item.labelAr)}</span>
-                                    </Radio>
-                                  ))}
-                                </div>
+                                {[
+                                  { id: 'Visual' as const, label: t('Visual', 'بصري') },
+                                  { id: 'Hearing' as const, label: t('Sign 3D', 'إشارة 3D') },
+                                  { id: 'Motor' as const, label: t('Motor', 'حركي') },
+                                  { id: 'Cognitive' as const, label: t('Autism', 'توحد') },
+                                ].map((item) => (
+                                  <Radio
+                                    key={item.id}
+                                    value={item.id}
+                                    className={({ isSelected }) =>
+                                      `flex items-center justify-center py-1 px-1.5 rounded-lg cursor-pointer transition-all outline-none border text-[10px] font-bold text-center ${
+                                        isSelected
+                                          ? 'bg-[#E5A93C] text-slate-950 border-[#E5A93C] shadow-sm'
+                                          : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-[#E5A93C]/40'
+                                      }`
+                                    }
+                                  >
+                                    <span className="truncate">{item.label}</span>
+                                  </Radio>
+                                ))}
                               </RadioGroup>
                             </motion.div>
                           )}
@@ -930,34 +944,42 @@ export default function Login() {
                       </RadioGroup>
                     </div>
 
-                    {/* Continue Button */}
-                    <AriaButton
-                      onPress={handleContinuePath}
-                      isDisabled={accountPath === 'Graduation Project'}
-                      className={`w-full py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
-                        accountPath === 'Normal'
-                          ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-500 text-slate-950 hover:brightness-110 shadow-amber-500/25 ring-1 ring-amber-300/30'
-                          : accountPath === 'Graduation Project'
-                          ? 'bg-slate-800 text-slate-400 border border-slate-700/80 shadow-none'
-                          : 'bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 text-white hover:brightness-110 shadow-rose-500/30 ring-1 ring-rose-300/30'
-                      }`}
-                    >
-                      <span className="text-xs sm:text-sm font-black">
-                        {accountPath === 'Graduation Project'
-                          ? t("Choose Another Path to Continue", "يرجى اختيار مسار آخر للمتابعة")
-                          : accountPath === 'Normal'
-                          ? t("Continue with Normal Path", "المتابعة بالمسار القياسي")
-                          : (() => {
-                              const primaryFeature = getSpecialNeedsFeatures(selectedDisability, t).find((f) => f.isPrimary);
-                              return primaryFeature
-                                ? t(`Continue to ${primaryFeature.title}`, `المتابعة إلى ${primaryFeature.title}`)
-                                : t("Continue with Special Needs Path", "المتابعة بمسار ذوي الهمم");
-                            })()}
-                      </span>
-                      {accountPath !== 'Graduation Project' && (
-                        <ArrowRight className={`w-4 h-4 shrink-0 transition-transform ${isRtl ? 'rotate-180' : ''}`} />
+                    {/* Action Buttons Row */}
+                    <div className="space-y-2 pt-1">
+                      {accountPath === 'Special Needs' && (
+                        <button
+                          type="button"
+                          onClick={handleDirectPreview}
+                          className="w-full py-2.5 px-4 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#2D0B16] text-[#E5A93C] border border-[#E5A93C]/50 hover:brightness-125 shadow-lg active:scale-[0.98] transition-all"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-[#E5A93C] animate-pulse" />
+                          <span>{t("Direct Hub Preview (No Sign-In Needed) ✦", "استكشاف المنظومة كزائر (بدون تسجيل) ✦")}</span>
+                        </button>
                       )}
-                    </AriaButton>
+
+                      <AriaButton
+                        onPress={handleContinuePath}
+                        isDisabled={accountPath === 'Graduation Project'}
+                        className={`w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed outline-none ${
+                          accountPath === 'Normal'
+                            ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-500 text-slate-950 hover:brightness-110 shadow-amber-500/25 ring-1 ring-amber-300/30'
+                            : accountPath === 'Graduation Project'
+                            ? 'bg-slate-800 text-slate-400 border border-slate-700/80 shadow-none'
+                            : 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 hover:brightness-110 shadow-amber-500/20 ring-1 ring-[#E5A93C]/40'
+                        }`}
+                      >
+                        <span>
+                          {accountPath === 'Graduation Project'
+                            ? t("Choose Another Path to Continue", "يرجى اختيار مسار آخر للمتابعة")
+                            : accountPath === 'Normal'
+                            ? t("Continue with Normal Path", "المتابعة بالمسار القياسي")
+                            : t("Continue with People of Determination Path", "المتابعة بمسار ذوي الهمم (تسجيل/دخول)")}
+                        </span>
+                        {accountPath !== 'Graduation Project' && (
+                          <ArrowRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isRtl ? 'rotate-180' : ''}`} />
+                        )}
+                      </AriaButton>
+                    </div>
                   </div>
                 </div>
               </div>

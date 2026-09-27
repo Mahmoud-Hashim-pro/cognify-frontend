@@ -260,6 +260,7 @@ export default function DocumentReaderModal({ profile, companionLang, onClose }:
       // Lazy-loaded: the ~400KB docx package is only fetched once someone
       // actually presses this button, so it never slows down the rest of
       // the Visual Companion feature.
+      // @ts-ignore
       const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
       const isAr = resultLang === 'ar';
       const paragraphs = resultText
