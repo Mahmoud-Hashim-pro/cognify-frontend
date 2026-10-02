@@ -38,6 +38,9 @@ export function cleanVisionDescription(raw: string, lang: 'ar' | 'en' | 'fr' = '
     .replace(/(Résumé du cours|Résumé|Points clés):/gi, '')
     // Spoken symbol artifacts
     .replace(/(?:^|\s+)(asterisk|استريك|نجمة|بوليت)(?=\s+|$)/giu, ' ')
+    // Technical HTTP status codes & error numbers (never utter status codes via TTS)
+    .replace(/\(?رمز\s*401\)?/gi, '')
+    .replace(/\(?(Status|Code):\s*401\)?/gi, '')
     // Markdown formatting (*, #, _, `, ~, [], (), <>)
     .replace(/[*+#_`~\[\]()<>]/g, '')
     // Bullet dashes

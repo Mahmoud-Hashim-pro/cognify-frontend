@@ -63,12 +63,12 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex-1 h-screen overflow-y-auto bg-[#0A0C14] text-slate-100 relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden font-sans flex flex-col custom-scrollbar">
+    <div className="flex-1 h-screen overflow-y-auto bg-[#080409] text-slate-100 relative selection:bg-[#4A1224]/30 selection:text-[#E5A93C] overflow-x-hidden font-sans flex flex-col custom-scrollbar">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/10 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/15 rounded-full blur-[140px]" />
       </div>
 
       {/* Header */}
@@ -78,7 +78,7 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
             {onNavigateBack && (
               <button
                 onClick={onNavigateBack}
-                className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md"
+                className="p-2.5 mt-1 text-slate-300 hover:text-[#E5A93C] bg-[#0E0610]/90 hover:bg-[#1A0C1D] border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md"
                 title={localize(profile.language, 'Back to Assistant', 'العودة للمساعد')}
               >
                 <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -88,7 +88,7 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
             {onMenuClick && (
               <button
                 onClick={onMenuClick}
-                className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all shrink-0 shadow-md"
+                className="p-2.5 mt-1 text-slate-300 hover:text-[#E5A93C] bg-[#0E0610]/90 hover:bg-[#1A0C1D] border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-xl active:scale-95 transition-all shrink-0 shadow-md"
                 aria-label={localize(profile.language, 'Toggle menu', 'القائمة')}
                 title={localize(profile.language, 'Open Menu', 'فتح القائمة')}
               >
@@ -97,7 +97,7 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
             )}
             <div>
               <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight uppercase flex items-center gap-3">
-                <span className="p-2 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <span className="p-2 rounded-2xl bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30 shadow-md shadow-[#4A1224]/20">
                   <Target className="w-7 h-7" />
                 </span>
                 {localize(profile.language, 'Goal Tracker', 'متتبع الأهداف')}
@@ -110,9 +110,9 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
 
           <button
             onClick={() => setAddOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-cyan-500/20 active:scale-95 whitespace-nowrap"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:brightness-110 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-[#E5A93C]/20 active:scale-95 whitespace-nowrap"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-slate-950" />
             {localize(profile.language, 'New Goal', 'هدف جديد')}
           </button>
         </div>
@@ -125,13 +125,13 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
         {/* Goals list */}
         {loading ? (
           <div className="flex items-center justify-center py-20 gap-3 text-slate-400 font-bold text-xs uppercase tracking-widest">
-            <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#E5A93C]" />
             <span>{localize(profile.language, 'Loading goals...', 'جاري تحميل الأهداف...')}</span>
           </div>
         ) : goals.length === 0 ? (
           /* Empty state */
-          <div className="flex flex-col items-center justify-center py-24 gap-6 border-2 border-dashed border-slate-800 rounded-[36px] bg-[#121524]/40">
-            <div className="p-5 bg-slate-900 border border-slate-800 rounded-[28px] text-cyan-400">
+          <div className="flex flex-col items-center justify-center py-24 gap-6 border-2 border-dashed border-[#4A1224]/60 rounded-[36px] bg-[#0E0610]/80 ring-1 ring-[#E5A93C]/10">
+            <div className="p-5 bg-[#150917] border border-[#4A1224]/50 rounded-[28px] text-[#E5A93C] shadow-lg shadow-[#4A1224]/20">
               <Target className="w-10 h-10" />
             </div>
             <div className="text-center space-y-2">
@@ -144,9 +144,9 @@ export default function GoalTracker({ profile, onMenuClick, onNavigateBack }: Go
             </div>
             <button
               onClick={() => setAddOpen(true)}
-              className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/20 active:scale-95"
+              className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:brightness-110 text-slate-950 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-[#E5A93C]/20 active:scale-95"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 text-slate-950" />
               {localize(profile.language, 'Add Your First Goal', 'أضف هدفك الأول')}
             </button>
           </div>

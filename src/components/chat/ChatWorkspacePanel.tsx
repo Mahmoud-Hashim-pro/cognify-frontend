@@ -28,23 +28,23 @@ interface ChatWorkspacePanelProps {
 
 const DEFAULT_SUBJECTS_BY_FIELD: Record<string, StudySubject[]> = {
   Engineering: [
-    { id: 'sub-1', name: 'Neural Networks & Deep Learning', icon: 'brain', progress: 0, color: 'from-cyan-500 to-indigo-600' },
-    { id: 'sub-2', name: 'Linear Algebra & Matrices', icon: 'math', progress: 0, color: 'from-blue-500 to-cyan-500' },
+    { id: 'sub-1', name: 'Neural Networks & Deep Learning', icon: 'brain', progress: 0, color: 'from-amber-400 to-indigo-600' },
+    { id: 'sub-2', name: 'Linear Algebra & Matrices', icon: 'math', progress: 0, color: 'from-blue-500 to-rose-600' },
     { id: 'sub-3', name: 'Operating Systems & Concurrency', icon: 'cpu', progress: 0, color: 'from-indigo-500 to-purple-600' },
   ],
   Medicine: [
-    { id: 'sub-1', name: 'Clinical Neuroanatomy', icon: 'brain', progress: 0, color: 'from-cyan-500 to-blue-600' },
+    { id: 'sub-1', name: 'Clinical Neuroanatomy', icon: 'brain', progress: 0, color: 'from-amber-400 via-[#E5A93C] to-rose-600' },
     { id: 'sub-2', name: 'Cardiovascular Physiology', icon: 'sparkles', progress: 0, color: 'from-rose-500 to-amber-500' },
-    { id: 'sub-3', name: 'Pharmacokinetics & Dosage', icon: 'book', progress: 0, color: 'from-emerald-500 to-cyan-500' },
+    { id: 'sub-3', name: 'Pharmacokinetics & Dosage', icon: 'book', progress: 0, color: 'from-emerald-500 to-rose-600' },
   ],
   Business: [
-    { id: 'sub-1', name: 'Corporate Financial Modeling', icon: 'math', progress: 0, color: 'from-emerald-500 to-cyan-600' },
-    { id: 'sub-2', name: 'Strategic Market Analytics', icon: 'sparkles', progress: 0, color: 'from-indigo-500 to-cyan-500' },
+    { id: 'sub-1', name: 'Corporate Financial Modeling', icon: 'math', progress: 0, color: 'from-emerald-500 to-rose-600' },
+    { id: 'sub-2', name: 'Strategic Market Analytics', icon: 'sparkles', progress: 0, color: 'from-indigo-500 to-rose-600' },
     { id: 'sub-3', name: 'Microeconomic Principles', icon: 'book', progress: 0, color: 'from-blue-500 to-indigo-600' },
   ],
   General: [
-    { id: 'sub-1', name: 'Neural Networks & AI Basics', icon: 'brain', progress: 0, color: 'from-cyan-500 to-indigo-600' },
-    { id: 'sub-2', name: 'Linear Algebra & Calculus', icon: 'math', progress: 0, color: 'from-blue-500 to-cyan-500' },
+    { id: 'sub-1', name: 'Neural Networks & AI Basics', icon: 'brain', progress: 0, color: 'from-amber-400 to-indigo-600' },
+    { id: 'sub-2', name: 'Linear Algebra & Calculus', icon: 'math', progress: 0, color: 'from-blue-500 to-rose-600' },
     { id: 'sub-3', name: 'Algorithms & Problem Solving', icon: 'cpu', progress: 0, color: 'from-indigo-500 to-purple-600' },
   ],
 };
@@ -118,7 +118,7 @@ export default function ChatWorkspacePanel({
       name: newSubjectName.trim(),
       icon: 'sparkles',
       progress: 0,
-      color: 'from-cyan-500 to-blue-600',
+      color: 'from-amber-400 via-[#E5A93C] to-rose-600',
     };
     const updated = [...subjects, newSub];
     setSubjects(updated);
@@ -135,12 +135,12 @@ export default function ChatWorkspacePanel({
 
   const getSubjectIcon = (icon: StudySubject['icon']) => {
     switch (icon) {
-      case 'brain': return <Brain className="w-4 h-4 text-cyan-400" />;
+      case 'brain': return <Brain className="w-4 h-4 text-[#E5A93C]" />;
       case 'math': return <Sigma className="w-4 h-4 text-blue-400" />;
       case 'cpu': return <Cpu className="w-4 h-4 text-indigo-400" />;
       case 'book': return <BookOpen className="w-4 h-4 text-emerald-400" />;
       case 'sparkles': return <Sparkles className="w-4 h-4 text-amber-400" />;
-      default: return <Brain className="w-4 h-4 text-cyan-400" />;
+      default: return <Brain className="w-4 h-4 text-[#E5A93C]" />;
     }
   };
 
@@ -163,7 +163,7 @@ export default function ChatWorkspacePanel({
   return (
     <aside 
       aria-label="Workspace & Study Intelligence"
-      className="w-72 lg:w-80 shrink-0 h-full bg-[#0A0C14]/95 border-r border-slate-800/80 backdrop-blur-2xl flex flex-col justify-between p-4 z-20 transition-all select-none overflow-y-auto custom-scrollbar relative"
+      className="w-72 lg:w-80 shrink-0 h-full bg-[#0E0610]/95 border-r border-[#4A1224]/70 backdrop-blur-2xl flex flex-col justify-between p-4 z-20 transition-all select-none overflow-y-auto custom-scrollbar relative"
     >
       {/* Collapsible Edge Arrow Button Pinned to Border */}
       {onClose && (
@@ -172,7 +172,7 @@ export default function ChatWorkspacePanel({
           onClick={onClose}
           aria-label="Collapse Workspace"
           title={localize(profile.language, 'Collapse Workspace', 'طي مساحة العمل')}
-          className="hidden xl:flex absolute -end-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-12 bg-[#121524] border border-slate-700/80 hover:border-cyan-500/50 rounded-e-xl items-center justify-center text-slate-400 hover:text-cyan-300 shadow-xl transition-all active:scale-95 group cursor-pointer"
+          className="hidden xl:flex absolute -end-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-12 bg-[#150917] border border-[#4A1224]/70 hover:border-[#E5A93C]/50 rounded-e-xl items-center justify-center text-slate-400 hover:text-[#E5A93C] shadow-xl transition-all active:scale-95 group cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
         </button>
@@ -180,17 +180,17 @@ export default function ChatWorkspacePanel({
 
       <div className="space-y-4">
         {/* Workspace Header */}
-        <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+        <div className="flex items-center justify-between pb-2 border-b border-[#4A1224]/50">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-sm">
+            <div className="p-1.5 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 text-[#E5A93C] shadow-sm">
               <FolderGit2 className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 flex items-center gap-1.5">
                 {localize(profile.language, 'Workspace', 'مساحة العمل')}
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E5A93C] animate-pulse" />
               </h3>
-              <p className="text-[10px] text-slate-500 font-semibold truncate max-w-[120px]">
+              <p className="text-[10px] text-[#E5A93C]/80 font-semibold truncate max-w-[120px]">
                 {profile.faculty || profile.field || 'Curriculum'}
               </p>
             </div>
@@ -199,7 +199,7 @@ export default function ChatWorkspacePanel({
             <button
               onClick={() => setIsAdding(!isAdding)}
               title={localize(profile.language, 'Add study subject', 'إضافة مادة دراسية')}
-              className="p-1.5 text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 rounded-lg transition-all"
+              className="p-1.5 text-slate-400 hover:text-[#E5A93C] hover:bg-[#4A1224]/30 rounded-lg transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -208,7 +208,7 @@ export default function ChatWorkspacePanel({
                 onClick={onClose}
                 aria-label="Collapse Workspace"
                 title={localize(profile.language, 'Collapse Workspace', 'طي مساحة العمل')}
-                className="p-1.5 text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 rounded-lg transition-all"
+                className="p-1.5 text-slate-400 hover:text-[#E5A93C] hover:bg-[#4A1224]/30 rounded-lg transition-all"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -218,13 +218,13 @@ export default function ChatWorkspacePanel({
 
         {/* New Subject Input Form */}
         {isAdding && (
-          <form onSubmit={handleAddSubject} className="p-2.5 bg-[#121524] border border-cyan-500/40 rounded-2xl space-y-2 animate-in fade-in duration-150">
+          <form onSubmit={handleAddSubject} className="p-2.5 bg-[#150917] border border-[#4A1224]/70 rounded-2xl space-y-2 ring-1 ring-[#E5A93C]/20 animate-in fade-in duration-150">
             <input
               type="text"
               value={newSubjectName}
               onChange={(e) => setNewSubjectName(e.target.value)}
               placeholder={localize(profile.language, 'Subject name (e.g. Algorithms)', 'اسم المادة (مثل الخوارزميات)')}
-              className="w-full bg-[#0A0C14] border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-cyan-500"
+              className="w-full bg-[#0E0610] border border-[#4A1224]/50 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-[#E5A93C]"
               autoFocus
             />
             <div className="flex items-center justify-end gap-2">
@@ -238,7 +238,7 @@ export default function ChatWorkspacePanel({
               <button
                 type="submit"
                 disabled={!newSubjectName.trim()}
-                className="px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg text-[11px] font-bold disabled:opacity-40 transition-all shadow-md shadow-cyan-500/20"
+                className="px-3 py-1 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 font-bold rounded-lg text-[11px] disabled:opacity-40 transition-all shadow-md shadow-[#4A1224]/20"
               >
                 {localize(profile.language, 'Add', 'إضافة')}
               </button>
@@ -250,7 +250,7 @@ export default function ChatWorkspacePanel({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400 px-1">
             <span>{localize(profile.language, 'Active Focus Modules', 'الوحدات الدراسية')}</span>
-            <span className="font-mono text-cyan-400">{subjects.length}</span>
+            <span className="font-mono text-[#E5A93C]">{subjects.length}</span>
           </div>
 
           {subjects.map((sub) => {
@@ -262,13 +262,13 @@ export default function ChatWorkspacePanel({
                 onClick={() => onSelectSubject(sub)}
                 className={`w-full text-start p-3 rounded-2xl border transition-all cursor-pointer group relative ${
                   isActive
-                    ? 'bg-gradient-to-r from-cyan-950/40 via-[#121524] to-[#121524] border-cyan-500/50 shadow-lg shadow-cyan-500/10'
-                    : 'bg-[#121524]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#15192c]'
+                    ? 'bg-gradient-to-r from-[#4A1224]/50 via-[#150917] to-[#150917] border-[#E5A93C]/60 shadow-lg shadow-[#4A1224]/20'
+                    : 'bg-[#150917]/80 border-[#4A1224]/50 hover:border-[#E5A93C]/40 hover:bg-[#1C0B1E]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 shrink-0">
+                    <div className="p-1.5 rounded-lg bg-[#0E0610] border border-[#4A1224]/50 shrink-0">
                       {getSubjectIcon(sub.icon)}
                     </div>
                     <span className="text-xs font-bold text-slate-200 group-hover:text-white truncate">
@@ -276,7 +276,7 @@ export default function ChatWorkspacePanel({
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[11px] font-mono font-bold text-cyan-400">
+                    <span className="text-[11px] font-mono font-bold text-[#E5A93C]">
                       {progress}%
                     </span>
                     {subjects.length > 1 && (
@@ -293,9 +293,9 @@ export default function ChatWorkspacePanel({
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-slate-800/80">
+                <div className="w-full bg-[#0E0610] rounded-full h-1.5 overflow-hidden border border-[#4A1224]/50">
                   <div 
-                    className={`h-full bg-gradient-to-r ${sub.color} rounded-full transition-all duration-500`}
+                    className="h-full bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C] rounded-full transition-all duration-500"
                     style={{ width: `${Math.max(progress, 2)}%` }}
                   />
                 </div>
@@ -306,20 +306,20 @@ export default function ChatWorkspacePanel({
       </div>
 
       {/* Bottom Study Session Intelligence Card */}
-      <div className="mt-4 pt-4 border-t border-slate-800/80">
-        <div className="bg-[#121524]/90 border border-slate-800/90 rounded-2xl p-3.5 shadow-xl backdrop-blur-xl space-y-3">
+      <div className="mt-4 pt-4 border-t border-[#4A1224]/50">
+        <div className="bg-[#150917]/90 border border-[#4A1224]/60 rounded-2xl p-3.5 shadow-xl backdrop-blur-xl space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
+              <Clock className="w-3.5 h-3.5 text-[#E5A93C]" />
               {localize(profile.language, 'Current Study Session', 'جلسة المذاكرة الحالية')}
             </span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black bg-[#4A1224]/50 text-[#E5A93C] border border-[#831843]/60">
               {studyMinutes}m
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-            <div className="bg-[#0A0C14] border border-slate-800/80 rounded-xl p-2">
+            <div className="bg-[#0E0610] border border-[#4A1224]/50 rounded-xl p-2">
               <div className="text-[9px] font-bold text-slate-400 uppercase">
                 {localize(profile.language, 'Focus', 'التركيز')}
               </div>
@@ -328,20 +328,20 @@ export default function ChatWorkspacePanel({
               </div>
             </div>
 
-            <div className="bg-[#0A0C14] border border-slate-800/80 rounded-xl p-2">
+            <div className="bg-[#0E0610] border border-[#4A1224]/50 rounded-xl p-2">
               <div className="text-[9px] font-bold text-slate-400 uppercase">
                 {localize(profile.language, 'Pace', 'السرعة')}
               </div>
-              <div className="text-xs font-black text-cyan-400 font-mono mt-0.5">
+              <div className="text-xs font-black text-[#E5A93C] font-mono mt-0.5">
                 {realPace}
               </div>
             </div>
 
-            <div className="bg-[#0A0C14] border border-slate-800/80 rounded-xl p-2">
+            <div className="bg-[#0E0610] border border-[#4A1224]/50 rounded-xl p-2">
               <div className="text-[9px] font-bold text-slate-400 uppercase">
                 {localize(profile.language, 'Mastery', 'الإتقان')}
               </div>
-              <div className="text-xs font-black text-indigo-400 font-mono mt-0.5">
+              <div className="text-xs font-black text-amber-300 font-mono mt-0.5">
                 {realMastery}%
               </div>
             </div>

@@ -15,15 +15,24 @@
  */
 
 const SHIELD_PREFIX = 'enc:v1:';
-const MASTER_SEED = 'cognify_crypto_shield_v1_9a8b7c6d5e';
+const DEFAULT_SEED = 'cognify_crypto_shield_v1_9a8b7c6d5e';
+
+// Dynamically augment master seed from environment configuration when available
+const ENV_SECRET =
+  (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.VITE_CRYPTO_SHIELD_SECRET) ||
+  (typeof process !== 'undefined' && process.env?.VITE_CRYPTO_SHIELD_SECRET) ||
+  (typeof process !== 'undefined' && process.env?.CRYPTO_SHIELD_SECRET) ||
+  '';
+
+const MASTER_SEED = ENV_SECRET ? `${DEFAULT_SEED}:${ENV_SECRET}` : DEFAULT_SEED;
 const inMemoryKeyCache = new Map<string, string>();
 
 /**
  * Derives a dynamic entropy seed combining environment variables,
  * host origin, user agent, and salt.
  */
-function deriveEntropySeed(salt: string): number[] {
-  let entropy = MASTER_SEED + ':' + salt;
+function deriveEntropySeed(salt: string, baseSeed: string = MASTER_SEED): number[] {
+  let entropy = baseSeed + ':' + salt;
   if (typeof window !== 'undefined') {
     entropy += ':' + (window.location?.host || 'localhost');
     if (typeof navigator !== 'undefined') {
@@ -121,30 +130,10 @@ export function encryptSecretSync(plainText: string): string {
   return `${SHIELD_PREFIX}sync:${salt}:${checksum}:${cipherHex}`;
 }
 
-/**
- * Decrypts an encrypted string synchronously.
- * Returns empty string on corruption or failure.
- * If input is plaintext (unencrypted), returns it as-is for backward compatibility.
- */
-export function decryptSecretSync(cipherText: string): string {
-  if (!cipherText || typeof cipherText !== 'string') return '';
-  if (!cipherText.startsWith(SHIELD_PREFIX)) {
-    return cipherText; // Legacy plaintext
-  }
-
-  const parts = cipherText.split(':');
-  // Format: enc:v1:sync:<salt>:<checksum>:<cipherHex>
-  if (parts.length < 6 || parts[2] !== 'sync') {
-    return '';
-  }
-
-  const salt = parts[3];
-  const expectedChecksum = parts[4];
-  const cipherHex = parts[5];
-
+function decryptWithSeed(cipherHex: string, salt: string, expectedChecksum: string, seedStr: string): string {
   if (!cipherHex || cipherHex.length % 2 !== 0) return '';
 
-  const seed = deriveEntropySeed(salt);
+  const seed = deriveEntropySeed(salt, seedStr);
   const cipherBytes: number[] = [];
   for (let i = 0; i < cipherHex.length; i += 2) {
     cipherBytes.push(parseInt(cipherHex.substring(i, i + 2), 16));
@@ -188,13 +177,42 @@ export function decryptSecretSync(cipherText: string): string {
 }
 
 /**
- * Derives a CryptoKey for AES-GCM using PBKDF2 from MASTER_SEED and salt.
+ * Decrypts an encrypted string synchronously.
+ * Returns empty string on corruption or failure.
+ * If input is plaintext (unencrypted), returns it as-is for backward compatibility.
  */
-async function deriveWebCryptoKey(salt: Uint8Array): Promise<CryptoKey> {
+export function decryptSecretSync(cipherText: string): string {
+  if (!cipherText || typeof cipherText !== 'string') return '';
+  if (!cipherText.startsWith(SHIELD_PREFIX)) {
+    return cipherText; // Legacy plaintext
+  }
+
+  const parts = cipherText.split(':');
+  // Format: enc:v1:sync:<salt>:<checksum>:<cipherHex>
+  if (parts.length < 6 || parts[2] !== 'sync') {
+    return '';
+  }
+
+  const salt = parts[3];
+  const expectedChecksum = parts[4];
+  const cipherHex = parts[5];
+
+  let result = decryptWithSeed(cipherHex, salt, expectedChecksum, MASTER_SEED);
+  if (!result && MASTER_SEED !== DEFAULT_SEED) {
+    result = decryptWithSeed(cipherHex, salt, expectedChecksum, DEFAULT_SEED);
+  }
+
+  return result;
+}
+
+/**
+ * Derives a CryptoKey for AES-GCM using PBKDF2 from MASTER_SEED (or fallback seed) and salt.
+ */
+async function deriveWebCryptoKey(salt: Uint8Array, seedStr: string = MASTER_SEED): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
-    enc.encode(MASTER_SEED),
+    enc.encode(seedStr),
     { name: 'PBKDF2' },
     false,
     ['deriveKey']
@@ -269,14 +287,26 @@ export async function decryptSecret(cipherText: string): Promise<string> {
       const iv = new Uint8Array(ivHex.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []);
       const cipherBytes = new Uint8Array(cipherHex.match(/.{1,2}/g)?.map(byte => parseInt(byte, 16)) || []);
 
-      const key = await deriveWebCryptoKey(saltBytes);
-      const decryptedBuffer = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        cipherBytes
-      );
+      const decryptWithKey = async (s: string) => {
+        const key = await deriveWebCryptoKey(saltBytes, s);
+        const decryptedBuffer = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv },
+          key,
+          cipherBytes
+        );
+        return new TextDecoder().decode(decryptedBuffer);
+      };
 
-      return new TextDecoder().decode(decryptedBuffer);
+      try {
+        return await decryptWithKey(MASTER_SEED);
+      } catch {
+        if (MASTER_SEED !== DEFAULT_SEED) {
+          try {
+            return await decryptWithKey(DEFAULT_SEED);
+          } catch {}
+        }
+        return '';
+      }
     } catch {
       return '';
     }

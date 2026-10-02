@@ -199,32 +199,32 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
   const isBenchmarkDataset = !studentCohortsByDept || Object.keys(studentCohortsByDept).length === 0;
 
   return (
-    <div className="min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#4A1224]/30 rounded-full blur-3xl" />
         <div className="absolute bottom-1/3 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-6">
         {/* Header Banner */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-4">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2.5 rounded-2xl bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 transition"
+                className="p-2.5 rounded-2xl bg-[#150917]/70 hover:bg-slate-700/60 text-slate-300 transition"
                 aria-label="Back"
               >
                 <ArrowRight className={`w-5 h-5 ${isAr ? '' : 'rotate-180'}`} />
               </button>
             )}
-            <div className="p-3.5 rounded-2xl bg-gradient-to-tr from-cyan-600 to-indigo-600 text-white shadow-lg shadow-cyan-500/20">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-tr from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20">
               <Building2 className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30">
                   {institutionId}
                 </span>
                 <span className="text-xs font-medium text-slate-400">
@@ -249,14 +249,14 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                 {isAr ? 'بيانات حية متصلة [Live Connected Data]' : '[Live Connected Data]'}
               </span>
             )}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
-              <Users className="w-4 h-4 text-cyan-400" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
+              <Users className="w-4 h-4 text-[#E5A93C]" />
               <span className="text-sm font-semibold text-white">
                 {dashboardData.departments.reduce((acc, d) => acc + d.enrolledStudentsCount, 0)}
               </span>
               <span className="text-xs text-slate-400">{isAr ? 'طالباً مسجلاً' : 'Students'}</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span className="text-sm font-semibold text-emerald-300">k ≥ 5</span>
               <span className="text-xs text-slate-400">{isAr ? 'حماية الهوية' : 'Anonymized'}</span>
@@ -265,16 +265,16 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
         </div>
 
         {/* k-Anonymity Audit Alert Banner */}
-        <div className="bg-indigo-950/30 border border-indigo-500/30 rounded-3xl p-4 sm:p-5 flex items-start sm:items-center gap-3.5 backdrop-blur-md">
-          <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shrink-0">
+        <div className="bg-[#2D0B16] border border-[#4A1224]/60 rounded-3xl p-4 sm:p-5 flex items-start sm:items-center gap-3.5 backdrop-blur-md">
+          <div className="p-2.5 rounded-2xl bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60 shrink-0">
             <Lock className="w-5 h-5" />
           </div>
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
                 {isAr ? 'درع عدم كشف الهوية (k-Anonymity Protection): مفعل' : 'Strict k-Anonymity (k >= 5) Protection Active'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#4A1224]/40 text-[#E5A93C]">
                 FERPA & GDPR Compliant
               </span>
             </div>
@@ -287,13 +287,13 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#121524] border border-slate-800/80 w-full sm:w-fit overflow-x-auto">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('departments')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'departments'
-                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -307,8 +307,8 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
             onClick={() => setActiveTab('bottlenecks')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'bottlenecks'
-                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <AlertTriangle className="w-4 h-4" />
@@ -322,8 +322,8 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
             onClick={() => setActiveTab('radar')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'radar'
-                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -334,8 +334,8 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
             onClick={() => setActiveTab('accreditation')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'accreditation'
-                ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <FileCheck className="w-4 h-4" />
@@ -349,11 +349,11 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
             {dashboardData.departments.map((dept) => (
               <div
                 key={dept.departmentId}
-                className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
+                className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                    <span className="text-xs uppercase tracking-wider text-[#E5A93C] font-semibold">
                       {dept.departmentId.toUpperCase()}
                     </span>
                     <h3 className="text-xl font-bold text-white mt-1">
@@ -393,7 +393,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                <div className="pt-3 border-t border-[#4A1224]/60 flex items-center justify-between text-xs text-slate-400">
                   <span>{isAr ? 'نسبة الاستبقاء والنجاح' : 'Retention Rate'}:</span>
                   <span className="font-bold text-white">{Math.round(dept.retentionRate * 100)}%</span>
                 </div>
@@ -421,7 +421,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                 return (
                   <div
                     key={b.conceptId}
-                    className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4 flex flex-col justify-between"
+                    className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4 flex flex-col justify-between"
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-3">
@@ -465,7 +465,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                           {b.downstreamImpactCourses.map((crs) => (
                             <span
                               key={crs}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300"
+                              className="text-xs px-2.5 py-1 rounded-lg bg-[#150917]/80 border border-[#4A1224]/50 text-slate-300"
                             >
                               {crs}
                             </span>
@@ -491,7 +491,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                 return (
                   <div
                     key={item.riskCohortId}
-                    className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4 flex flex-col justify-between"
+                    className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4 flex flex-col justify-between"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -501,13 +501,13 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                               ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                               : isHigh
                               ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                              : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                              : 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
                           }`}
                         >
                           {item.riskLevel.toUpperCase()}
                         </span>
                         {item.isSuppressed && (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60 flex items-center gap-1">
                             <Lock className="w-2.5 h-2.5" /> k &lt; 5
                           </span>
                         )}
@@ -521,7 +521,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                         <span className="font-semibold text-slate-300">
                           {isAr ? 'الإجراء المؤسسي الموصى به:' : 'Recommended Action:'}
                         </span>
-                        <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <p className="text-xs text-slate-300 leading-relaxed bg-[#0E0610]/70 p-2.5 rounded-xl border border-[#4A1224]/60">
                           {isAr ? item.recommendedInstitutionalActionAr : item.recommendedInstitutionalActionEn}
                         </p>
                       </div>
@@ -536,8 +536,8 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
         {/* Tab 4: Accreditation Report */}
         {activeTab === 'accreditation' && (
           <div className="space-y-6">
-            <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#4A1224]/60 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -554,7 +554,7 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
 
                 <button
                   onClick={() => alert(isAr ? 'جاري تصدير التقرير الأكاديمي...' : 'Exporting Accreditation PDF...')}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 text-white text-sm font-semibold hover:opacity-90 transition w-fit"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white text-sm font-semibold hover:opacity-90 transition w-fit"
                 >
                   <Download className="w-4 h-4" />
                   <span>{isAr ? 'تصدير التقرير الأكاديمي' : 'Export ABET Dossier'}</span>
@@ -566,22 +566,31 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
                 {dashboardData.accreditation.outcomesAttainment.map((so) => (
                   <div
                     key={so.outcomeId}
-                    className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-cyan-400">{so.outcomeId}</span>
+                        <span className="text-xs font-bold text-[#E5A93C]">{so.outcomeId}</span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             so.status === 'exceeds_standard'
                               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                               : so.status === 'meets_standard'
-                              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                              ? 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
                               : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                           }`}
                         >
                           {so.status.replace('_', ' ').toUpperCase()}
                         </span>
+                        {so.isTemplateData ? (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                            {isAr ? 'قالب توضيحي' : 'Template Data'}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                            {isAr ? 'بيانات حقيقية' : 'Empirical Telemetry'}
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs sm:text-sm text-slate-300">
                         {isAr ? so.descriptionAr : so.descriptionEn}
@@ -603,27 +612,39 @@ export const InstitutionalIntelligenceView: React.FC<InstitutionalIntelligenceVi
               </div>
 
               {/* Closing The Loop Banner */}
-              <div className="p-5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 space-y-3">
-                <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
-                  <Sparkles className="w-4 h-4" />
-                  <span>{isAr ? 'حلقة التحسين المستمر (Closing the Loop)' : 'Continuous Improvement Cycle'}</span>
+              <div className="p-5 rounded-2xl bg-indigo-950/40 border border-[#4A1224]/60 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm">
+                    <Sparkles className="w-4 h-4" />
+                    <span>{isAr ? 'حلقة التحسين المستمر (Closing the Loop)' : 'Continuous Improvement Cycle'}</span>
+                  </div>
+                  {dashboardData.accreditation.continuousImprovementLoop.isTemplateData && (
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      {isAr ? 'قالب استرشادي' : 'Illustrative Template'}
+                    </span>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
                   <div className="space-y-1">
-                    <span className="font-bold text-amber-300">{isAr ? 'الفجوة المرصودة:' : 'Identified Gap:'}</span>
+                    <span className="font-bold text-amber-300">{isAr ? 'الفجوة المرصودة (مستخلصة من الاختناقات):' : 'Identified Gap (Derived from Bottlenecks):'}</span>
                     <p>{isAr ? dashboardData.accreditation.continuousImprovementLoop.identifiedGapAr : dashboardData.accreditation.continuousImprovementLoop.identifiedGapEn}</p>
                   </div>
                   <div className="space-y-1">
-                    <span className="font-bold text-cyan-300">{isAr ? 'التدخل التربوي المطبق:' : 'Implemented Change:'}</span>
+                    <span className="font-bold text-[#E5A93C]">{isAr ? 'التدخل التربوي المطبق:' : 'Implemented Change:'}</span>
                     <p>{isAr ? dashboardData.accreditation.continuousImprovementLoop.implementedPedagogicalChangeAr : dashboardData.accreditation.continuousImprovementLoop.implementedPedagogicalChangeEn}</p>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-indigo-500/20 flex items-center justify-between text-xs">
+                <div className="pt-2 border-t border-indigo-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <span className="text-indigo-300 font-semibold">{isAr ? 'الأثر الإيجابي المقاس:' : 'Measured Impact Gain:'}</span>
                   <span className="font-extrabold text-emerald-400">
                     +{dashboardData.accreditation.continuousImprovementLoop.measuredImpactGainPercentage}% {isAr ? 'تحسن في الإتقان' : 'gain'}
                   </span>
                 </div>
+                {dashboardData.accreditation.continuousImprovementLoop.disclaimerAr && (
+                  <p className="text-[11px] text-amber-200/80 bg-amber-950/30 p-2.5 rounded-xl border border-amber-500/20">
+                    ⚠️ {isAr ? dashboardData.accreditation.continuousImprovementLoop.disclaimerAr : dashboardData.accreditation.continuousImprovementLoop.disclaimerEn}
+                  </p>
+                )}
               </div>
             </div>
           </div>

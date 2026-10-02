@@ -81,6 +81,7 @@ export interface PersonalLearningProfile {
   generatedAt: number;
   overallMasteryPercentage: number;
   overallConfidencePercentage: number;
+  isAssessed: boolean;
   primaryPreferredStrategy: PedagogyStrategy;
   secondaryPreferredStrategy?: PedagogyStrategy;
   conceptProfiles: Record<string, ConceptMasterySummary>;

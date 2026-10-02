@@ -24,7 +24,7 @@ export default function ChatQuickActions({
   const actions = [
     {
       id: 'doc',
-      icon: <FileText className="w-3.5 h-3.5 text-cyan-400" />,
+      icon: <FileText className="w-3.5 h-3.5 text-[#E5A93C]" />,
       label: localize(profile.language, 'Analyze Document', 'تحليل مستند / PDF'),
       onClick: onUploadDocument,
     },
@@ -63,7 +63,7 @@ export default function ChatQuickActions({
     },
     {
       id: 'takeaways',
-      icon: <Lightbulb className="w-3.5 h-3.5 text-cyan-300" />,
+      icon: <Lightbulb className="w-3.5 h-3.5 text-[#E5A93C]" />,
       label: localize(profile.language, 'Key Takeaways', 'الخلاصة وأهم النقاط'),
       onClick: () => {
         const prompt = isArabic
@@ -76,14 +76,14 @@ export default function ChatQuickActions({
 
   return (
     <div className="w-full flex items-center justify-center pb-2">
-      <div className="flex items-center gap-1.5 p-1 bg-[#121524]/90 border border-slate-800/90 rounded-2xl shadow-xl backdrop-blur-2xl overflow-x-auto no-scrollbar scrollbar-none max-w-full">
+      <div className="flex items-center gap-1.5 p-1 bg-[#0E0610]/95 border border-[#4A1224]/70 ring-1 ring-[#E5A93C]/10 rounded-2xl shadow-xl backdrop-blur-2xl overflow-x-auto no-scrollbar scrollbar-none max-w-full">
         {actions.map((act) => (
           <button
             key={act.id}
             type="button"
             disabled={disabled}
             onClick={act.onClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0A0C14] hover:bg-[#181d33] border border-slate-800/80 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-bold tracking-wide transition-all shrink-0 active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#150917] hover:bg-[#1A0C1D] border border-[#4A1224]/60 hover:border-[#831843]/80 text-slate-300 hover:text-white text-[11px] font-bold tracking-wide transition-all shrink-0 active:scale-95 disabled:opacity-50"
           >
             {act.icon}
             <span>{act.label}</span>

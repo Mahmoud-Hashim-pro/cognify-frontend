@@ -1,16 +1,25 @@
 /**
- * Phase 4: Scientific Adaptive IQ Assessment & Cognitive Gym Engine
+ * Cognitive & Learning Style Preview Engine
  * 
  * Implements:
- * 1. 4 Cattell-Horn-Carroll (CHC) Cognitive Domains:
- *    - Gf: Fluid Reasoning (Culture-fair matrix completion)
- *    - Gq: Quantitative & Syllogistic Logic
- *    - Gwm: Working Memory (Spatial & sequence recall)
- *    - Gs: Processing Speed (Micro-timed perceptual discrimination)
- * 2. Standardized Normed Scoring (Mean 100, SD 15)
+ * 1. 4 Core Reasoning & Puzzle Domains (Exploratory Indicators):
+ *    - Fluid Reasoning (Visual pattern & matrix completion)
+ *    - Quantitative Logic (Relational & numeric deduction)
+ *    - Working Memory (Spatial & sequence recall)
+ *    - Processing Speed (Timed perceptual discrimination)
+ * 2. Domain Strengths & Preferences (0-100% per domain)
  * 3. Exponential Cooldown Calculation (7 * 2^(n-1) days)
  * 4. Daily Cognitive Gym workout generators with Cognify points
+ * 
+ * NOTE: Strictly an exploratory educational preview to personalize AI pedagogy.
+ * Not a clinical IQ test, standardized psychometric examination, or static measure of intelligence.
  */
+
+export const COGNITIVE_ASSESSMENT_DISCLAIMER_EN =
+  'Educational & Ethical Notice: This preview is an informal, non-clinical exploratory activity to gauge reasoning preferences and puzzle-solving approaches for AI personalization. It is NOT a clinical IQ test, standardized psychometric examination, or static intelligence quotient measurement, and must not be used to assign deficit labels.';
+
+export const COGNITIVE_ASSESSMENT_DISCLAIMER_AR =
+  'إشعار تربوي وأخلاقي: هذا النشاط هو استكشاف تفاعلي غير رسمي للتعرف على نمط التفكير وأسلوب التعلم المفضل لديك لتخصيص تجربة الشرح الذكي. هذا التقييم ليس اختبار ذكاء رسمي (IQ) أو مقياساً نفسياً/إكلينيكياً معتمداً، ولا يمثل قياساً ثابتاً للقدرات العقلية، ولا يصدر عنه أي وسم تصنيفي للقدرات.';
 
 import { CognitiveDomainScores, IqAssessmentRecord } from '../types';
 
@@ -338,18 +347,17 @@ export function calculateStandardizedIq(
   const timeBufferRatio = Math.max(0, (maxAllocatedSeconds - elapsedSeconds) / maxAllocatedSeconds);
   const speedBonus = rawPercentage >= 0.75 ? Math.round(timeBufferRatio * 4) : 0;
 
-  // Standardized IQ distribution (Mean 100, SD 15, Range: 70 - 145)
-  // z-score mapped from 0.0 -> -2.0 SD (70), 0.5 -> 0.0 SD (100), 1.0 -> +2.67 SD (140)
-  const zScore = (rawPercentage - 0.5) / 0.1875;
-  const rawIq = Math.round(100 + zScore * 15) + speedBonus;
-  const iqScore = Math.min(145, Math.max(70, rawIq));
+  // Exploratory Cognitive Style Index (maps accuracy to 75-125 exploratory baseline)
+  // Preserves iqScore property name for schema compatibility without claiming clinical IQ standardization.
+  const baselineIndex = Math.round(75 + rawPercentage * 45) + speedBonus;
+  const iqScore = Math.min(130, Math.max(75, baselineIndex));
 
-  // Determine Persona Recommendation
+  // Determine Persona Recommendation based on pedagogical scaffolding preference
   let recommendedPersona: 'Foundational' | 'Balanced' | 'Socratic' = 'Balanced';
-  if (iqScore < 90) {
-    recommendedPersona = 'Foundational';
-  } else if (iqScore >= 115) {
-    recommendedPersona = 'Socratic';
+  if (rawPercentage < 0.5) {
+    recommendedPersona = 'Foundational'; // Prefers structured, step-by-step worked examples
+  } else if (rawPercentage >= 0.8) {
+    recommendedPersona = 'Socratic'; // Prefers self-directed inquiry & deeper challenges
   }
 
   return {

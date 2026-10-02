@@ -49,6 +49,9 @@ import {
   clearSecurityAudits,
   SecurityAuditRecord,
 } from "../lib/securityTracker";
+import BusinessTenancyView from "./BusinessTenancyView";
+import DeveloperApiConsole from "./DeveloperApiConsole";
+import SystemResilienceDashboard from "./SystemResilienceDashboard";
 
 interface AdminDashboardProps {
   profile: UserProfile;
@@ -69,7 +72,6 @@ const DISABILITY_META: Record<string, { label: string; Icon: typeof Eye; bar: st
   'Visual Impairment': { label: 'Visual', Icon: Eye, bar: 'bg-indigo-500' },
   'Hearing Impairment': { label: 'Hearing', Icon: Ear, bar: 'bg-rose-500' },
   'Speech Impairment': { label: 'Speech', Icon: Mic, bar: 'bg-emerald-500' },
-  'Motor Impairment': { label: 'Motor', Icon: Accessibility, bar: 'bg-amber-500' },
   'Cognitive/Learning Disability': { label: 'Cognitive', Icon: Brain, bar: 'bg-purple-500' },
   'Other': { label: 'Other', Icon: UserIcon, bar: 'bg-slate-400' },
 };
@@ -80,9 +82,8 @@ const MODE_META: Record<AccessibilityMode, { label: string; cls: string }> = {
   'Speech': { label: 'Speech', cls: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' },
   'Vocal-Deaf': { label: 'Vocal-Deaf', cls: 'bg-rose-500/20 text-rose-300 border border-rose-500/30' },
   'Sign-Only': { label: 'Sign-Only', cls: 'bg-purple-500/20 text-purple-300 border border-purple-500/30' },
-  'Motor-Euphonia': { label: 'Motor & Euphonia', cls: 'bg-amber-500/20 text-amber-300 border border-amber-500/30' },
   'Neurodiversity': { label: 'Neurodiversity', cls: 'bg-teal-500/20 text-teal-300 border border-teal-500/30' },
-  'None': { label: 'Standard', cls: 'bg-slate-800 text-slate-400 border border-slate-700' },
+  'None': { label: 'Standard', cls: 'bg-slate-800 text-slate-400 border border-[#4A1224]/50' },
 };
 
 /** Days since the user's MOST-RECENT activity signal */
@@ -123,7 +124,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
   const [passwordModalUser, setPasswordModalUser] = useState<UserProfile | null>(null);
   const [isSendingPasswordReset, setIsSendingPasswordReset] = useState(false);
   const [busyUid, setBusyUid] = useState<string | null>(null);
-  const [adminView, setAdminView] = useState<'directory' | 'accessibility' | 'analytics' | 'database' | 'security'>('directory');
+  const [adminView, setAdminView] = useState<'directory' | 'accessibility' | 'analytics' | 'database' | 'security' | 'tenancy' | 'api' | 'resilience'>('directory');
   const [copiedEmails, setCopiedEmails] = useState(false);
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const [selectedUserForModal, setSelectedUserForModal] = useState<UserProfile | null>(null);
@@ -752,7 +753,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
   if (!isAdmin) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-slate-950 text-slate-100 p-6">
+      <div className="flex-1 flex flex-col items-center justify-center bg-[#080409] text-slate-100 p-6">
         <ShieldAlert className="w-16 h-16 text-rose-500 mb-4" />
         <h2 className="text-2xl font-black uppercase tracking-tighter">Access Denied</h2>
         <p className="text-slate-400 font-medium text-sm mt-2">You do not have administrative privileges.</p>
@@ -1129,7 +1130,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
   return (
     <div
       data-security-zone={adminView === 'database' ? 'database-dashboard' : 'admin-dashboard'}
-      className="flex-1 flex flex-col bg-slate-950 text-slate-100 relative overflow-hidden custom-scrollbar font-sans selection:bg-emerald-500/30 selection:text-emerald-300 min-h-screen"
+      className="flex-1 flex flex-col bg-[#080409] text-slate-100 relative overflow-hidden custom-scrollbar font-sans selection:bg-emerald-500/30 selection:text-emerald-300 min-h-screen"
     >
       
       {/* Background Nagm Gradient Accents */}
@@ -1184,11 +1185,11 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
       )}
 
       {/* ── HEADER ───────────────────────────────────────────────────────────── */}
-      <header className="flex items-center gap-4 p-5 md:p-8 shrink-0 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-lg z-20">
+      <header className="flex items-center gap-4 p-5 md:p-8 shrink-0 border-b border-[#4A1224]/60 bg-[#080409]/80 backdrop-blur-xl shadow-lg z-20">
         {onNavigateBack && (
           <button
             onClick={onNavigateBack}
-            className="p-2.5 text-slate-400 hover:text-slate-100 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-700/70 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+            className="p-2.5 text-slate-400 hover:text-slate-100 bg-[#0E0610]/90 hover:bg-slate-800/90 border border-[#4A1224]/50/70 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
             title="Back to Assistant / العودة للمساعد"
           >
             <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -1199,14 +1200,14 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
           onClick={onMenuClick}
           aria-label="Toggle menu"
           title="Open Menu"
-          className="p-2.5 text-slate-400 hover:text-slate-100 bg-slate-900/80 hover:bg-slate-800/90 border border-slate-700/70 rounded-xl active:scale-95 shrink-0"
+          className="p-2.5 text-slate-400 hover:text-slate-100 bg-[#0E0610]/90 hover:bg-slate-800/90 border border-[#4A1224]/50/70 rounded-xl active:scale-95 shrink-0"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-indigo-500/20 to-cyan-500/20 border border-white/10 shadow-inner">
+            <div className="p-3 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-indigo-500/20 to-rose-600/20 border border-white/10 shadow-inner">
               {adminView === 'database' ? (
                 <Database className="w-6 h-6 text-emerald-400" />
               ) : adminView === 'security' ? (
@@ -1215,8 +1216,14 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 <Accessibility className="w-6 h-6 text-rose-400" />
               ) : adminView === 'analytics' ? (
                 <BarChart2 className="w-6 h-6 text-indigo-400" />
+              ) : adminView === 'tenancy' ? (
+                <Building2 className="w-6 h-6 text-cyan-400" />
+              ) : adminView === 'api' ? (
+                <Terminal className="w-6 h-6 text-amber-400" />
+              ) : adminView === 'resilience' ? (
+                <Activity className="w-6 h-6 text-emerald-400" />
               ) : (
-                <Users className="w-6 h-6 text-cyan-400" />
+                <Users className="w-6 h-6 text-[#E5A93C]" />
               )}
             </div>
             <div>
@@ -1235,6 +1242,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                  adminView === 'security' ? 'Security & DevTools Inspect Telemetry Stream' :
                  adminView === 'accessibility' ? 'Accessibility Center · Special Needs Command' :
                  adminView === 'analytics' ? 'System Insights & Cognitive Diagnostics' :
+                 adminView === 'tenancy' ? 'Multi-Tenant Business & Organization Management' :
+                 adminView === 'api' ? 'Developer API Console, Webhooks & Token Quotas' :
+                 adminView === 'resilience' ? 'System Resilience, Circuit Breakers & Failover Hub' :
                  'Global User Directory & Access Management'}
               </p>
             </div>
@@ -1242,11 +1252,11 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
           {/* Navigation Tabs Pill */}
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex items-center gap-1 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-md overflow-x-auto custom-scrollbar">
+            <div className="flex items-center gap-1 p-1 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-2xl backdrop-blur-md overflow-x-auto custom-scrollbar">
               <button
                 onClick={() => setAdminView('directory')}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                  adminView === 'directory' ? 'bg-cyan-500 text-slate-950 shadow-md font-extrabold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  adminView === 'directory' ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 shadow-md font-extrabold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                 }`}
               >
                 <Users className="w-3.5 h-3.5" /> Directory
@@ -1297,11 +1307,39 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   )}
                 </button>
               )}
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={() => setAdminView('tenancy')}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                      adminView === 'tenancy' ? 'bg-cyan-600 text-white shadow-md font-extrabold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Building2 className="w-3.5 h-3.5" /> Tenancy
+                  </button>
+                  <button
+                    onClick={() => setAdminView('api')}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                      adminView === 'api' ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Terminal className="w-3.5 h-3.5" /> API
+                  </button>
+                  <button
+                    onClick={() => setAdminView('resilience')}
+                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                      adminView === 'resilience' ? 'bg-emerald-600 text-white shadow-md font-extrabold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Activity className="w-3.5 h-3.5" /> Resilience
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Cloud Firestore Status Pill */}
             {isAdmin && (
-              <div className="hidden xl:flex items-center gap-2 px-3 py-2 bg-slate-900/90 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 shadow-inner">
+              <div className="hidden xl:flex items-center gap-2 px-3 py-2 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-xl text-xs font-bold text-slate-300 shadow-inner">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -1333,7 +1371,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             <div className="space-y-6 animate-in fade-in duration-200">
               
               {/* Super Admin Team Section */}
-              <section className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+              <section className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded-2xl">
@@ -1374,7 +1412,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               src={a.photoURL}
                               alt={a.name || 'Super Admin Avatar'}
                               onError={() => setFailedAvatarUrls(prev => ({ ...prev, [a.photoURL!]: true }))}
-                              className="w-10 h-10 rounded-2xl object-cover border border-amber-500/40 hover:border-cyan-400 transition-all shadow-md bg-slate-800"
+                              className="w-10 h-10 rounded-2xl object-cover border border-amber-500/40 hover:border-[#E5A93C] transition-all shadow-md bg-slate-800"
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 font-black text-sm bg-amber-500/20 text-amber-300 border border-amber-500/40">
@@ -1431,11 +1469,11 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   aria-pressed={sectionFilter === 'all'}
                   className={`flex items-center gap-4 p-5 rounded-3xl border text-left transition-all backdrop-blur-xl ${
                     sectionFilter === 'all'
-                      ? 'bg-cyan-500/15 border-cyan-500/50 ring-2 ring-cyan-500/20 shadow-xl'
-                      : 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700'
+                      ? 'bg-[#4A1224]/40 border-[#E5A93C]/50 ring-2 ring-[#E5A93C]/20 shadow-xl'
+                      : 'bg-[#0E0610]/70 border-[#4A1224]/60 hover:border-[#4A1224]/50'
                   }`}
                 >
-                  <div className="p-3 rounded-2xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  <div className="p-3 rounded-2xl bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/30">
                     <Users className="w-6 h-6" />
                   </div>
                   <div>
@@ -1458,7 +1496,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       className={`flex items-center gap-4 p-5 rounded-3xl border text-left transition-all backdrop-blur-xl ${
                         active
                           ? 'bg-slate-800/80 border-slate-600 ring-2 ring-white/10 shadow-xl'
-                          : 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700'
+                          : 'bg-[#0E0610]/70 border-[#4A1224]/60 hover:border-[#4A1224]/50'
                       }`}
                     >
                       <div className={`p-3 rounded-2xl ${meta.cls}`}>
@@ -1483,10 +1521,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       placeholder="Search by name, email, UID, faculty, disability..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-11 pr-4 py-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-sm font-medium text-white placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none transition-all"
+                      className="w-full pl-11 pr-4 py-3 bg-[#0E0610]/90 border border-[#4A1224]/60 rounded-2xl text-sm font-medium text-white placeholder:text-slate-500 focus:ring-2 focus:ring-[#E5A93C]/30 focus:border-[#E5A93C] outline-none transition-all"
                     />
                   </div>
-                  <div className="flex items-center gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-2xl overflow-x-auto custom-scrollbar">
+                  <div className="flex items-center gap-1.5 p-1 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-2xl overflow-x-auto custom-scrollbar">
                     {/* Role Filter Pills */}
                     <button
                       onClick={() => setRoleFilter('all')}
@@ -1535,7 +1573,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         key={sec}
                         onClick={() => setSectionFilter(sec)}
                         className={`px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                          sectionFilter === sec ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                          sectionFilter === sec ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                         }`}
                       >
                         {sec === 'all' ? 'All' : SECTION_META[sec].label}
@@ -1547,7 +1585,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <button
                     onClick={copyAllDirectoryEmails}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest rounded-xl border border-slate-700 transition-all shadow-md active:scale-95"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#150917] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest rounded-xl border border-[#4A1224]/50 transition-all shadow-md active:scale-95"
                   >
                     <Copy className="w-3.5 h-3.5" /> Copy Emails
                   </button>
@@ -1569,15 +1607,15 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
               {/* User Directory Table */}
               {loading ? (
                 <div className="flex flex-col items-center justify-center p-24">
-                  <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+                  <Loader2 className="w-10 h-10 text-[#E5A93C] animate-spin" />
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-4">Loading directory...</p>
                 </div>
               ) : (
-                <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl overflow-hidden">
+                <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="bg-slate-900/90 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-slate-800">
+                        <tr className="bg-[#0E0610]/95 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-[#4A1224]/60">
                           <th className="p-4">User & Profile Photo</th>
                           <th className="p-4">Section & Disability</th>
                           <th className="p-4">System Role</th>
@@ -1616,10 +1654,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                       src={u.photoURL}
                                       alt={u.name || 'User Avatar'}
                                       onError={() => setFailedAvatarUrls(prev => ({ ...prev, [u.photoURL!]: true }))}
-                                      className="w-10 h-10 rounded-2xl object-cover border border-slate-700/80 group-hover/avatar:border-cyan-400 group-hover/avatar:scale-105 transition-all shadow-md bg-slate-800"
+                                      className="w-10 h-10 rounded-2xl object-cover border border-[#4A1224]/60 group-hover/avatar:border-[#E5A93C] group-hover/avatar:scale-105 transition-all shadow-md bg-slate-800"
                                     />
                                   ) : (
-                                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/80 text-cyan-300 shadow-inner">
+                                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm bg-gradient-to-br from-slate-800 to-slate-900 border border-[#4A1224]/60 text-[#E5A93C] shadow-inner">
                                       {(u.name || u.email || '?').charAt(0).toUpperCase()}
                                     </div>
                                   )}
@@ -1631,7 +1669,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                 </div>
 
                                 <div className="min-w-0">
-                                  <div className="font-bold text-white group-hover:text-cyan-400 transition-colors flex items-center gap-1.5 truncate">
+                                  <div className="font-bold text-white group-hover:text-[#E5A93C] transition-colors flex items-center gap-1.5 truncate">
                                     <span className="truncate">{u.name || u.email?.split('@')[0] || 'Unnamed User'}</span>
                                     {presence.status === 'online' && (
                                       <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
@@ -1641,12 +1679,12 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                     <Sliders className="w-3.5 h-3.5 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                                   </div>
                                   <div className="flex items-center gap-1.5 mt-0.5">
-                                    <span className="font-mono text-[10px] text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/50" title={u.uid}>
+                                    <span className="font-mono text-[10px] text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded border border-[#4A1224]/50/50" title={u.uid}>
                                       {u.uid.slice(0, 8)}…
                                     </span>
                                     <button
                                       onClick={(e) => { e.stopPropagation(); copyToClipboard(u.uid, `UID copied: ${u.uid}`); }}
-                                      className="text-slate-500 hover:text-cyan-400 p-0.5 transition-colors"
+                                      className="text-slate-500 hover:text-[#E5A93C] p-0.5 transition-colors"
                                       title="Copy Firebase UID"
                                     >
                                       {copiedText === u.uid ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
@@ -1679,7 +1717,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                     <Crown className="w-3 h-3 text-amber-400" /> Super Admin User
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-800/90 text-slate-300 border border-slate-700/70">
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-slate-800/90 text-slate-300 border border-[#4A1224]/50/70">
                                     <UserIcon className="w-3 h-3 text-slate-400" /> Normal User
                                   </span>
                                 )}
@@ -1715,7 +1753,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                 <button
                                   onClick={() => setSelectedUserForModal(u)}
                                   title="Inspect full profile & details"
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg border border-slate-700 transition-colors"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg border border-[#4A1224]/50 transition-colors"
                                 >
                                   <Sliders className="w-3 h-3" /> Details
                                 </button>
@@ -1742,7 +1780,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                       <Crown className="w-3 h-3 text-amber-400" /> Founder
                                     </span>
                                   ) : norm(profile.email) === norm(u.email) ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-bold uppercase tracking-widest rounded-lg">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-800 text-slate-400 border border-[#4A1224]/50 text-[10px] font-bold uppercase tracking-widest rounded-lg">
                                       (You)
                                     </span>
                                   ) : canManageSuperAdmin(profile, u) ? (
@@ -1808,9 +1846,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   { label: 'Special Needs Learners', value: a11yAll.length, Icon: Accessibility, cls: 'bg-rose-500/15 text-rose-400 border border-rose-500/30' },
                   { label: 'Active in Last 7 Days', value: a11yActive7, Icon: Activity, cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' },
                   { label: 'Sign Language Learners', value: a11ySigners, Icon: Ear, cls: 'bg-purple-500/15 text-purple-400 border border-purple-500/30' },
-                  { label: 'Active in Last 30 Days', value: a11yNew30, Icon: CheckCircle2, cls: 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30' },
+                  { label: 'Active in Last 30 Days', value: a11yNew30, Icon: CheckCircle2, cls: 'bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30' },
                 ].map(({ label, value, Icon, cls }) => (
-                  <div key={label} className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                  <div key={label} className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
                     <div className={`p-3 rounded-2xl ${cls}`}>
                       <Icon className="w-6 h-6" />
                     </div>
@@ -1840,7 +1878,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       <a
                         key={u.uid}
                         href={`mailto:${u.email}?subject=Cognify Accessibility Check-in`}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-900/90 border border-amber-500/40 rounded-xl text-xs font-bold text-slate-200 hover:border-amber-400 transition-colors"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0E0610]/95 border border-amber-500/40 rounded-xl text-xs font-bold text-slate-200 hover:border-amber-400 transition-colors"
                       >
                         <Mail className="w-3.5 h-3.5 text-amber-400" />
                         {u.name || u.email?.split('@')[0]}
@@ -1858,7 +1896,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
               {/* Weekly Activity & Breakdowns */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <section className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+                <section className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                   <h3 className="text-sm font-black text-white uppercase tracking-tight mb-4">By Registered Disability</h3>
                   <div className="space-y-3.5">
                     {disabilityCounts.map(({ key, count }) => {
@@ -1877,13 +1915,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
                 </section>
 
-                <section className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+                <section className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                   <h3 className="text-sm font-black text-white uppercase tracking-tight mb-4">By Active Operational Mode</h3>
                   <div className="flex flex-wrap gap-2.5">
                     {modeCounts.map(({ mode, count }) => (
                       <span key={mode} className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-black ${MODE_META[mode].cls}`}>
                         {MODE_META[mode].label}
-                        <span className="bg-slate-950/60 px-2 py-0.5 rounded-lg font-mono text-white">{count}</span>
+                        <span className="bg-[#080409]/60 px-2 py-0.5 rounded-lg font-mono text-white">{count}</span>
                       </span>
                     ))}
                   </div>
@@ -1902,12 +1940,12 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     placeholder="Search accessibility users..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-slate-900/80 border border-slate-800 rounded-2xl text-sm font-medium text-white placeholder:text-slate-500 focus:ring-2 focus:ring-rose-500 outline-none"
+                    className="w-full pl-11 pr-4 py-3 bg-[#0E0610]/90 border border-[#4A1224]/60 rounded-2xl text-sm font-medium text-white placeholder:text-slate-500 focus:ring-2 focus:ring-rose-500 outline-none"
                   />
                 </div>
                 <button
                   onClick={copyA11yEmails}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest rounded-2xl border border-slate-700 transition-colors shrink-0"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#150917] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest rounded-2xl border border-[#4A1224]/50 transition-colors shrink-0"
                 >
                   <Copy className="w-4 h-4" /> Copy All Emails
                 </button>
@@ -1934,12 +1972,12 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             <div className="space-y-6 animate-in fade-in duration-200">
               <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Registered Users', value: users.length, Icon: Users, cls: 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30' },
+                  { label: 'Total Registered Users', value: users.length, Icon: Users, cls: 'bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30' },
                   { label: 'Active in Last 24h', value: users.filter(u => daysSinceActive(u) <= 1).length, Icon: Sparkles, cls: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' },
                   { label: 'Active in Last 7 Days', value: users.filter(u => daysSinceActive(u) <= 7).length, Icon: Activity, cls: 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30' },
                   { label: 'Special Needs Learners', value: a11yAll.length, Icon: Heart, cls: 'bg-rose-500/15 text-rose-400 border border-rose-500/30' },
                 ].map(({ label, value, Icon, cls }) => (
-                  <div key={label} className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                  <div key={label} className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
                     <div className={`p-3 rounded-2xl ${cls}`}>
                       <Icon className="w-6 h-6" />
                     </div>
@@ -1953,9 +1991,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Cognitive Stage Breakdown */}
-                <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+                <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                   <h3 className="text-sm font-black text-white uppercase tracking-tight mb-4 flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-cyan-400" /> Cognitive Stages
+                    <Brain className="w-4 h-4 text-[#E5A93C]" /> Cognitive Stages
                   </h3>
                   <div className="space-y-3.5">
                     {(['Basic', 'Intermediate', 'Advanced'] as CognitiveLevel[]).map(lvl => {
@@ -1968,7 +2006,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             <span className="text-slate-400 font-mono">{count} ({pct}%)</span>
                           </div>
                           <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-cyan-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                            <div className="h-full bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 rounded-full transition-all" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
                       );
@@ -1977,7 +2015,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </div>
 
                 {/* Account Paths */}
-                <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+                <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                   <h3 className="text-sm font-black text-white uppercase tracking-tight mb-4 flex items-center gap-2">
                     <GraduationCap className="w-4 h-4 text-amber-400" /> Enrolment Paths
                   </h3>
@@ -2002,7 +2040,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </div>
 
                 {/* Language Preferences */}
-                <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6">
+                <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6">
                   <h3 className="text-sm font-black text-white uppercase tracking-tight mb-4 flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-emerald-400" /> Language Preferences
                   </h3>
@@ -2033,7 +2071,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
              ═════════════════════════════════════════════════════════════════════ */}
           {adminView === 'database' && (
             !isAdmin ? (
-              <div className="backdrop-blur-xl bg-slate-900/60 border border-amber-500/30 rounded-3xl p-12 text-center max-w-xl mx-auto space-y-4">
+              <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-amber-500/30 rounded-3xl p-12 text-center max-w-xl mx-auto space-y-4">
                 <div className="w-16 h-16 rounded-3xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
                   <Lock className="w-8 h-8" />
                 </div>
@@ -2046,7 +2084,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
               <div className="space-y-8 animate-in fade-in duration-200">
                 
                 {/* 1. Header & Control Ribbon (Nagm Replication) */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#4A1224]/60 pb-5">
                   <div>
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                       <span>Admin</span>
@@ -2072,7 +2110,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       onClick={pingDatabase}
                       disabled={isPingingDb}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
+                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#150917] hover:bg-slate-800 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
                     >
                       {isPingingDb ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5 text-amber-400" />}
                       Test Ping
@@ -2081,7 +2119,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       onClick={handleRunDeepDiagnostics}
                       disabled={isDeepDiagnosing}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-indigo-400 border border-indigo-500/30 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
+                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#150917] hover:bg-slate-800 text-indigo-400 border border-indigo-500/30 text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
                     >
                       {isDeepDiagnosing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Activity className="w-3.5 h-3.5 text-indigo-400" />}
                       Deep Diagnostics
@@ -2092,7 +2130,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all border ${
                         autoRefreshInterval === '30s'
                           ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-extrabold'
-                          : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border-slate-800'
+                          : 'bg-[#150917] hover:bg-slate-800 text-slate-400 border-[#4A1224]/60'
                       }`}
                     >
                       <Clock className="w-3.5 h-3.5" />
@@ -2102,7 +2140,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       onClick={pingDatabase}
                       title="Refresh Now"
-                      className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl transition-all hover:text-white"
+                      className="p-2 bg-[#150917] hover:bg-slate-800 text-slate-300 border border-[#4A1224]/60 rounded-xl transition-all hover:text-white"
                     >
                       <RefreshCw className="w-4 h-4" />
                     </button>
@@ -2130,13 +2168,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 shrink-0 flex-wrap">
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800">
-                      <Clock className="w-3 h-3 text-cyan-400" /> Uptime: Live
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#080409]/80 border border-[#4A1224]/60">
+                      <Clock className="w-3 h-3 text-[#E5A93C]" /> Uptime: Live
                     </span>
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800">
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#080409]/80 border border-[#4A1224]/60">
                       <Lock className="w-3 h-3 text-emerald-400" /> SSL TLSv1.3
                     </span>
-                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800">
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#080409]/80 border border-[#4A1224]/60">
                       <ShieldCheck className="w-3 h-3 text-indigo-400" /> Auth: RS256 Active
                     </span>
                   </div>
@@ -2157,9 +2195,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </div>
 
                 {/* 4. DevTools & Intrusion Sentinel (Nagm Image 1 & 4) */}
-                <section className="backdrop-blur-xl bg-slate-900/70 border border-rose-500/30 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
+                <section className="backdrop-blur-xl bg-[#150917]/70 border border-rose-500/30 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
                   {/* Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#4A1224]/60 pb-5">
                     <div className="flex items-center gap-3">
                       <div className="p-3 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30">
                         <ShieldAlert className="w-6 h-6" />
@@ -2179,7 +2217,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-300">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#080409] border border-[#4A1224]/60 text-xs font-bold text-slate-300">
                         <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                         Live Feed
                       </span>
@@ -2188,17 +2226,17 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                   {/* 4 Sentinel KPIs */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-4">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Incidents</div>
                       <div className="text-2xl sm:text-3xl font-black text-rose-400 font-mono mt-1">
                         {securityAudits.length > 0 ? securityAudits.length : 89}
                       </div>
                     </div>
 
-                    <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-4">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Detected IPs</span>
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#150917] text-slate-400 border border-[#4A1224]/60">
                           Wi-Fi / NAT ⓘ
                         </span>
                       </div>
@@ -2210,14 +2248,14 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       </div>
                     </div>
 
-                    <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-4">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Protection Level</div>
                       <div className="text-xl sm:text-2xl font-black text-emerald-400 flex items-center gap-1.5 mt-1">
                         <Lock className="w-4 h-4" /> Zero-Trust
                       </div>
                     </div>
 
-                    <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-4">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Latest Incident</div>
                       <div className="text-xl sm:text-2xl font-black text-slate-200 font-mono mt-1">
                         {formatSentinelTime(securityAudits[0]?.timestampMs || Date.now() - 3600000 * 3)}
@@ -2226,10 +2264,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   {/* Sentinel Incidents Table */}
-                  <div className="overflow-x-auto custom-scrollbar border border-slate-800/80 rounded-2xl bg-slate-950/60">
+                  <div className="overflow-x-auto custom-scrollbar border border-[#4A1224]/60 rounded-2xl bg-[#080409]/60">
                     <table className="w-full text-left text-xs">
                       <thead>
-                        <tr className="border-b border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-950">
+                        <tr className="border-b border-[#4A1224]/60 text-[10px] font-black uppercase tracking-wider text-slate-400 bg-[#080409]">
                           <th className="py-3 px-4">Identity / User</th>
                           <th className="py-3 px-4">IP Address ⓘ</th>
                           <th className="py-3 px-4">Event / Trigger</th>
@@ -2273,7 +2311,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                 {formatSentinelTime(inc.timestampMs)}
                               </td>
                               <td className="py-3 px-4 text-right">
-                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-900 text-slate-300 border border-slate-700 font-mono">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#150917] text-slate-300 border border-[#4A1224]/50 font-mono">
                                   RECORDED <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                                 </span>
                               </td>
@@ -2291,7 +2329,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </span>
                     <button
                       onClick={() => setSentinelExpanded(!sentinelExpanded)}
-                      className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-xs font-bold text-slate-300 border border-slate-800 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#080409] hover:bg-slate-800 text-xs font-bold text-slate-300 border border-[#4A1224]/60 transition-colors"
                     >
                       {sentinelExpanded ? (
                         <>Collapse (5) <ChevronUp className="w-3.5 h-3.5" /></>
@@ -2303,9 +2341,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </section>
 
                 {/* 5. Resource Quotas & Max Limit Headroom (Nagm Image 2) */}
-                <section className="backdrop-blur-xl bg-slate-900/70 border border-slate-800/80 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
+                <section className="backdrop-blur-xl bg-[#150917]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
                   {/* Header */}
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#4A1224]/60 pb-5">
                     <div className="flex items-center gap-3">
                       <div className="p-3 rounded-2xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
                         <Sliders className="w-6 h-6" />
@@ -2333,13 +2371,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         <button
                           type="button"
                           onClick={() => setIsClusterTierDropdownOpen(!isClusterTierDropdownOpen)}
-                          className="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 active:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-slate-200 font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md group select-none"
+                          className="px-3 py-1.5 rounded-xl bg-[#080409] hover:bg-slate-800 active:bg-[#150917] border border-[#4A1224]/60 hover:border-emerald-500/50 text-slate-200 font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md group select-none"
                           aria-expanded={isClusterTierDropdownOpen}
                           aria-haspopup="true"
                           title="Click to view cluster tier specifications or compare with Blaze Plan"
                         >
                           <span className="flex items-center gap-1.5">
-                            <span className={`w-2 h-2 rounded-full ${selectedClusterTier === 'spark' ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400'}`} />
+                            <span className={`w-2 h-2 rounded-full ${selectedClusterTier === 'spark' ? 'bg-emerald-400 animate-pulse' : 'bg-[#E5A93C]'}`} />
                             <span>
                               {selectedClusterTier === 'spark'
                                 ? 'Firebase Spark Plan (1 GiB / 50k Reads / 20k Writes)'
@@ -2356,7 +2394,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                       {/* Dropdown Menu */}
                       {isClusterTierDropdownOpen && (
-                        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-slate-950/95 backdrop-blur-2xl border border-slate-800 rounded-2xl shadow-2xl p-3 space-y-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-[#080409]/95 backdrop-blur-2xl border border-[#4A1224]/60 rounded-2xl shadow-2xl p-3 space-y-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                           <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 px-2 pt-1 pb-0.5 flex items-center justify-between">
                             <span>Available Cluster Tiers</span>
                             <span className="text-emerald-400 font-mono">Live Google Cloud</span>
@@ -2373,7 +2411,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 cursor-pointer ${
                               selectedClusterTier === 'spark'
                                 ? 'bg-emerald-500/10 border-emerald-500/40 text-white'
-                                : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300'
+                                : 'bg-[#0E0610]/70 hover:bg-[#150917] border-[#4A1224]/60 text-slate-300'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -2407,21 +2445,21 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             }}
                             className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 cursor-pointer ${
                               selectedClusterTier === 'blaze'
-                                ? 'bg-cyan-500/10 border-cyan-500/40 text-white'
-                                : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300'
+                                ? 'bg-[#4A1224]/30 border-[#E5A93C]/40 text-white'
+                                : 'bg-[#0E0610]/70 hover:bg-[#150917] border-[#4A1224]/60 text-slate-300'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-xs flex items-center gap-1.5">
-                                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                                <Zap className="w-3.5 h-3.5 text-[#E5A93C]" />
                                 Firebase Blaze Plan (Pay-as-you-go)
                               </span>
                               {selectedClusterTier === 'blaze' ? (
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/30">
                                   Viewing
                                 </span>
                               ) : (
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono text-slate-400 border border-slate-700">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono text-slate-400 border border-[#4A1224]/50">
                                   Auto-scaling
                                 </span>
                               )}
@@ -2431,13 +2469,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               <div>• Uncapped reads & writes ($0.06 / 100k reads)</div>
                               <div>• 1,000,000 concurrent client connections</div>
                             </div>
-                            <div className="text-[10px] text-cyan-400 font-semibold mt-0.5">
+                            <div className="text-[10px] text-[#E5A93C] font-semibold mt-0.5">
                               ⚡ Production auto-scale: No daily request throttles.
                             </div>
                           </button>
 
                           {/* Console Link */}
-                          <div className="pt-1 border-t border-slate-800/80 flex items-center justify-between px-2 text-[11px]">
+                          <div className="pt-1 border-t border-[#4A1224]/60 flex items-center justify-between px-2 text-[11px]">
                             <span className="text-slate-500">Manage plan in Google Cloud:</span>
                             <a
                               href="https://console.firebase.google.com/project/_/usage"
@@ -2456,7 +2494,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   {/* 4 Hero Headroom Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                     {/* 1. Storage Limit */}
-                    <div className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Storage Limit</span>
                         <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -2474,7 +2512,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             {selectedClusterTier === 'blaze' ? '/ Pay-as-you-go' : '/ 1,024 MB max'}
                           </span>
                         </div>
-                        <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 mt-2 p-0.5">
+                        <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/60 mt-2 p-0.5">
                           <div
                             className="h-full bg-emerald-500 rounded-full transition-all"
                             style={{
@@ -2494,7 +2532,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
 
                     {/* 2. Pool Concurrency */}
-                    <div className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pool Concurrency</span>
                         <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -2508,7 +2546,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             {selectedClusterTier === 'blaze' ? '/ 1,000,000 pool max' : '/ 100 pool max'}
                           </span>
                         </div>
-                        <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 mt-2 p-0.5">
+                        <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/60 mt-2 p-0.5">
                           <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: '1%' }} />
                         </div>
                       </div>
@@ -2519,7 +2557,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
 
                     {/* 3. Write Quota Headroom */}
-                    <div className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Write Quota Headroom</span>
                         <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -2537,7 +2575,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             {selectedClusterTier === 'blaze' ? '/ Auto-scaling ($0.18/100k)' : '/ 20,000 / day'}
                           </span>
                         </div>
-                        <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 mt-2 p-0.5">
+                        <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/60 mt-2 p-0.5">
                           <div
                             className="h-full bg-emerald-500 rounded-full transition-all"
                             style={{
@@ -2557,7 +2595,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
 
                     {/* 4. Latency SLA Buffer */}
-                    <div className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Latency SLA Buffer</span>
                         <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
@@ -2583,7 +2621,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                           </span>
                           <span className="text-xs font-bold text-slate-500 font-mono">/ 500 ms SLA</span>
                         </div>
-                        <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 mt-2 p-0.5">
+                        <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/60 mt-2 p-0.5">
                           <div
                             className={`h-full rounded-full transition-all ${
                               (dbHealth?.latencyMs || 0) < 300
@@ -2604,9 +2642,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   {/* Threshold Policy Footer */}
-                  <div className="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-400">
+                  <div className="pt-3 border-t border-[#4A1224]/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-400">
                     <div className="flex items-center gap-2">
-                      <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <Info className="w-3.5 h-3.5 text-[#E5A93C] shrink-0" />
                       <span>
                         <strong className="text-white">Threshold Policy:</strong> Alerts automatically fire if storage exceeds 80%, active pool exceeds 60%, or latency exceeds 400ms.
                       </span>
@@ -2621,7 +2659,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                 {/* 6. Secondary Quick KPIs (Nagm Image 2 & 3) */}
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
+                  <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Query Latency (Ping)</span>
                       <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
@@ -2654,7 +2692,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
                   </div>
 
-                  <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
+                  <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Active Connections</span>
                       <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
@@ -2665,13 +2703,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       <span className="text-2xl font-black text-white font-mono">1</span>
                       <span className="text-xs text-slate-400 ml-1.5 font-mono">/ 100 total</span>
                     </div>
-                    <div className="text-[11px] text-cyan-400 flex items-center gap-1 font-bold">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                    <div className="text-[11px] text-[#E5A93C] flex items-center gap-1 font-bold">
+                      <span className="w-2 h-2 rounded-full bg-[#E5A93C] animate-pulse" />
                       Firestore Client Sync (99 idle)
                     </div>
                   </div>
 
-                  <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
+                  <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Allocated Storage</span>
                       <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
@@ -2688,7 +2726,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
                   </div>
 
-                  <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between">
+                  <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Stored Records</span>
                       <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 border border-purple-500/30">
@@ -2710,9 +2748,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 {/* 7. Split Grid: Core Collections Inventory + Engine Architecture (Nagm Image 3) */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left 2 Cols: Core Collections Inventory */}
-                  <div className="lg:col-span-2 backdrop-blur-xl bg-slate-900/70 border border-slate-800/80 shadow-2xl rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+                  <div className="lg:col-span-2 backdrop-blur-xl bg-[#150917]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 space-y-4 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+                      <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3 mb-3">
                         <div className="flex items-center gap-2">
                           <Layers className="w-4 h-4 text-indigo-400" />
                           <h4 className="text-sm font-black uppercase text-white tracking-wider">Core Collections Inventory</h4>
@@ -2723,7 +2761,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       <div className="overflow-x-auto custom-scrollbar">
                         <table className="w-full text-left text-xs">
                           <thead>
-                            <tr className="border-b border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                            <tr className="border-b border-[#4A1224]/60 text-[10px] font-black uppercase tracking-wider text-slate-400">
                               <th className="py-2.5 px-3">Model / Collection</th>
                               <th className="py-2.5 px-3">System Path</th>
                               <th className="py-2.5 px-3">Doc Count</th>
@@ -2754,9 +2792,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   {/* Right 1 Col: Engine & Cluster Architecture */}
-                  <div className="backdrop-blur-xl bg-slate-900/70 border border-slate-800/80 shadow-2xl rounded-3xl p-6 flex flex-col justify-between space-y-4">
+                  <div className="backdrop-blur-xl bg-[#150917]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 flex flex-col justify-between space-y-4">
                     <div className="space-y-4">
-                      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                      <div className="flex items-center gap-2 border-b border-[#4A1224]/60 pb-3">
                         <Server className="w-4 h-4 text-indigo-400" />
                         <h4 className="text-sm font-black uppercase text-white tracking-wider">Engine &amp; Cluster Architecture</h4>
                       </div>
@@ -2834,9 +2872,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 )}
 
                 {/* Firebase Spark Plan (Free Tier) & Live HTTPS Limits Monitor */}
-                <section className="backdrop-blur-xl bg-slate-900/70 border border-slate-800/80 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
+                <section className="backdrop-blur-xl bg-[#150917]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 md:p-8 space-y-6">
                   {/* Header */}
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#4A1224]/60 pb-5">
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2.5">
                         <div className="p-2 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
@@ -2904,16 +2942,16 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                     {/* Category Breakdown Chips */}
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-900 border border-slate-800 text-slate-300">
-                        🤖 AI Gemini: <strong className="text-cyan-400 font-mono">{httpMetrics.byCategory.gemini}</strong>
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-[#150917] border border-[#4A1224]/60 text-slate-300">
+                        🤖 AI Gemini: <strong className="text-[#E5A93C] font-mono">{httpMetrics.byCategory.gemini}</strong>
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-900 border border-slate-800 text-slate-300">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-[#150917] border border-[#4A1224]/60 text-slate-300">
                         🛡️ Audits: <strong className="text-indigo-400 font-mono">{httpMetrics.byCategory.telemetry}</strong>
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-900 border border-slate-800 text-slate-300">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-[#150917] border border-[#4A1224]/60 text-slate-300">
                         🔥 Firestore: <strong className="text-amber-400 font-mono">{httpMetrics.byCategory.firebase}</strong>
                       </span>
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-900 border border-slate-800 text-slate-300">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-[#150917] border border-[#4A1224]/60 text-slate-300">
                         🌐 APIs: <strong className="text-emerald-400 font-mono">{httpMetrics.byCategory.internal + httpMetrics.byCategory.external}</strong>
                       </span>
                       <button
@@ -2941,7 +2979,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 ${
                           quotaCategoryFilter === f.id
                             ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20'
-                            : 'bg-slate-950/80 text-slate-400 hover:text-white border border-slate-800'
+                            : 'bg-[#080409]/80 text-slate-400 hover:text-white border border-[#4A1224]/60'
                         }`}
                       >
                         {f.label}
@@ -2965,7 +3003,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       return (
                         <div
                           key={item.id}
-                          className="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all hover:shadow-xl group"
+                          className="bg-[#080409]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/60 rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all hover:shadow-xl group"
                         >
                           <div className="space-y-2">
                             {/* Card Top: Name, Period & Status */}
@@ -2995,7 +3033,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                             {/* Glowing Progress Bar */}
                             <div className="space-y-1">
-                              <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800/80 p-0.5">
+                              <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/60 p-0.5">
                                 <div
                                   className={`h-full rounded-full transition-all duration-500 ${barBg}`}
                                   style={{ width: `${Math.min(100, Math.max(2, item.percentUsed))}%` }}
@@ -3018,7 +3056,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   {/* Spark Plan Educational Footnote */}
-                  <div className="p-4 bg-slate-950/60 border border-slate-800/60 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-400">
+                  <div className="p-4 bg-[#080409]/60 border border-[#4A1224]/50 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-400">
                     <div className="flex items-center gap-2.5">
                       <Info className="w-4 h-4 text-emerald-400 shrink-0" />
                       <span>
@@ -3037,8 +3075,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </section>
 
                 {/* 9. Database Administration Actions */}
-                <section className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6 md:p-8 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+                <section className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 md:p-8 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#4A1224]/60 pb-4">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                         <Terminal className="w-5 h-5" />
@@ -3061,7 +3099,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       type="button"
                       onClick={handleDownloadFullBackup}
-                      className="flex flex-col items-start p-4 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/40 rounded-2xl transition-all group text-left cursor-pointer"
+                      className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-emerald-500/40 rounded-2xl transition-all group text-left cursor-pointer"
                     >
                       <Download className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform mb-2" />
                       <span className="text-xs font-black uppercase text-white tracking-wider">Download Full JSON Snapshot</span>
@@ -3071,9 +3109,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       type="button"
                       onClick={exportAllCsv}
-                      className="flex flex-col items-start p-4 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 hover:border-cyan-500/40 rounded-2xl transition-all group text-left cursor-pointer"
+                      className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl transition-all group text-left cursor-pointer"
                     >
-                      <FileJson className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform mb-2" />
+                      <FileJson className="w-5 h-5 text-[#E5A93C] group-hover:scale-110 transition-transform mb-2" />
                       <span className="text-xs font-black uppercase text-white tracking-wider">Export Database CSV</span>
                       <span className="text-[11px] text-slate-400 mt-1">Excel-compatible UTF-8 spreadsheet of user accounts</span>
                     </button>
@@ -3082,7 +3120,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       type="button"
                       onClick={handleCleanCache}
                       disabled={isCleaningCache}
-                      className="flex flex-col items-start p-4 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/40 rounded-2xl transition-all group disabled:opacity-50 text-left cursor-pointer"
+                      className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-amber-500/40 rounded-2xl transition-all group disabled:opacity-50 text-left cursor-pointer"
                     >
                       {isCleaningCache ? (
                         <Loader2 className="w-5 h-5 text-amber-400 animate-spin mb-2" />
@@ -3096,7 +3134,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <button
                       type="button"
                       onClick={handleDownloadAuditReport}
-                      className="flex flex-col items-start p-4 bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 hover:border-indigo-500/40 rounded-2xl transition-all group text-left cursor-pointer"
+                      className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-indigo-500/40 rounded-2xl transition-all group text-left cursor-pointer"
                     >
                       <BookOpen className="w-5 h-5 text-indigo-400 group-hover:scale-110 transition-transform mb-2" />
                       <span className="text-xs font-black uppercase text-white tracking-wider">Generate Audit Report (.md)</span>
@@ -3106,10 +3144,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </section>
 
                 {/* 10. Firestore Document & Chat Inspector */}
-                <section className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-6 md:p-8 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+                <section className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-6 md:p-8 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#4A1224]/60 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-2xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                      <div className="p-2.5 rounded-2xl bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30">
                         <Search className="w-5 h-5" />
                       </div>
                       <div>
@@ -3128,7 +3166,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         placeholder="Search UID, email, name..."
                         value={dbSearchTerm}
                         onChange={(e) => setDbSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-500 outline-none focus:border-cyan-500 transition-all font-mono"
+                        className="w-full pl-9 pr-8 py-2 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-white placeholder:text-slate-500 outline-none focus:border-[#E5A93C] transition-all font-mono"
                       />
                       {dbSearchTerm && (
                         <button
@@ -3144,10 +3182,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 pt-2">
                     {/* User Selection List */}
-                    <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-2 max-h-[560px] overflow-y-auto custom-scrollbar divide-y divide-slate-800/40 space-y-1">
+                    <div className="bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl p-2 max-h-[560px] overflow-y-auto custom-scrollbar divide-y divide-slate-800/40 space-y-1">
                       <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center justify-between">
                         <span>User Accounts ({inspectedUsersList.length})</span>
-                        <span className="font-mono text-cyan-400">Live Sync</span>
+                        <span className="font-mono text-[#E5A93C]">Live Sync</span>
                       </div>
                       {inspectedUsersList.map((u) => {
                         const isSelected = inspectedDoc?.uid === u.uid;
@@ -3162,8 +3200,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             }}
                             className={`w-full text-left p-3 rounded-xl text-xs transition-all flex items-center justify-between gap-2 cursor-pointer ${
                               isSelected
-                                ? 'bg-cyan-500/15 border border-cyan-500/40 text-white shadow-lg'
-                                : 'hover:bg-slate-900 border border-transparent text-slate-300'
+                                ? 'bg-[#4A1224]/40 border border-[#E5A93C]/40 text-white shadow-lg'
+                                : 'hover:bg-[#150917] border border-transparent text-slate-300'
                             }`}
                           >
                             <div className="min-w-0 flex-1">
@@ -3174,11 +3212,11 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               <div className="font-mono text-[9px] text-slate-600 truncate mt-0.5">{u.uid}</div>
                             </div>
                             <div className="flex flex-col items-end gap-1 shrink-0">
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 uppercase font-bold">
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#150917] text-slate-400 border border-[#4A1224]/60 uppercase font-bold">
                                 {u.role || 'Student'}
                               </span>
                               {chatsCount > 0 && (
-                                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-0.5 rounded-full">
+                                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-[#E5A93C] bg-[#4A1224]/30 border border-[#E5A93C]/30 px-1.5 py-0.5 rounded-full">
                                   <MessageSquare className="w-2.5 h-2.5" />
                                   {chatsCount} {chatsCount === 1 ? 'chat' : 'chats'}
                                 </span>
@@ -3195,13 +3233,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
 
                     {/* Document & Chat Viewer */}
-                    <div className="lg:col-span-2 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 flex flex-col min-h-[460px] max-h-[560px] overflow-hidden">
+                    <div className="lg:col-span-2 bg-[#080409] border border-[#4A1224]/60 rounded-2xl p-5 flex flex-col min-h-[460px] max-h-[560px] overflow-hidden">
                       {inspectedDoc ? (
                         <div className="flex flex-col h-full">
                           {/* Viewer Header */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3 mb-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#4A1224]/60 pb-3 mb-3">
                             <div className="min-w-0">
-                              <div className="font-mono text-xs text-cyan-400 font-bold truncate flex items-center gap-1.5">
+                              <div className="font-mono text-xs text-[#E5A93C] font-bold truncate flex items-center gap-1.5">
                                 <span>users/{inspectedDoc.uid}</span>
                               </div>
                               <div className="text-[11px] text-slate-400 truncate">
@@ -3211,13 +3249,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                             <div className="flex items-center gap-2 flex-wrap shrink-0">
                               {/* Tab Switcher */}
-                              <div className="flex items-center p-0.5 bg-slate-900 border border-slate-800 rounded-xl text-xs">
+                              <div className="flex items-center p-0.5 bg-[#150917] border border-[#4A1224]/60 rounded-xl text-xs">
                                 <button
                                   type="button"
                                   onClick={() => setInspectedDocTab('chats')}
                                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                                     inspectedDocTab === 'chats'
-                                      ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                                      ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 shadow-sm'
                                       : 'text-slate-400 hover:text-white'
                                   }`}
                                 >
@@ -3229,7 +3267,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                   onClick={() => setInspectedDocTab('json')}
                                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                                     inspectedDocTab === 'json'
-                                      ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                                      ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 shadow-sm'
                                       : 'text-slate-400 hover:text-white'
                                   }`}
                                 >
@@ -3242,7 +3280,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               <button
                                 type="button"
                                 onClick={() => copyToClipboard(JSON.stringify(sanitizeDocumentForInspector(inspectedDoc), null, 2), 'Document JSON copied to clipboard')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold rounded-xl border border-slate-800 transition-all cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#150917] hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-bold rounded-xl border border-[#4A1224]/60 transition-all cursor-pointer"
                                 title="Copy full JSON"
                               >
                                 <Copy className="w-3 h-3" /> Copy
@@ -3251,7 +3289,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               <button
                                 type="button"
                                 onClick={() => handleDownloadUserJson(inspectedDoc)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#4A1224]/30 hover:bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/30 text-xs font-bold rounded-xl transition-all cursor-pointer"
                                 title="Download User JSON File"
                               >
                                 <Download className="w-3 h-3" /> JSON
@@ -3280,8 +3318,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                           key={thread.id || tIdx}
                                           className={`rounded-2xl border transition-all overflow-hidden ${
                                             isThreadOpen
-                                              ? 'bg-slate-900/90 border-cyan-500/40'
-                                              : 'bg-slate-900/40 hover:bg-slate-900/70 border-slate-800/80'
+                                              ? 'bg-[#0E0610]/95 border-[#E5A93C]/40'
+                                              : 'bg-[#150917]/40 hover:bg-[#150917]/70 border-[#4A1224]/60'
                                           }`}
                                         >
                                           <button
@@ -3291,7 +3329,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                           >
                                             <div className="min-w-0 flex-1">
                                               <div className="font-bold text-white text-xs flex items-center gap-2">
-                                                <MessageSquare className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                                <MessageSquare className="w-3.5 h-3.5 text-[#E5A93C] shrink-0" />
                                                 <span className="truncate">{thread.title || `Session #${tIdx + 1}`}</span>
                                               </div>
                                               {thread.lastMessageSnippet && (
@@ -3302,7 +3340,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                               <div className="flex items-center gap-3 text-[10px] text-slate-500 font-mono mt-2">
                                                 <span>Updated: {thread.updatedAt ? new Date(thread.updatedAt).toLocaleDateString() : 'Recent'}</span>
                                                 {thread.messages && (
-                                                  <span className="text-cyan-400">{thread.messages.length} messages</span>
+                                                  <span className="text-[#E5A93C]">{thread.messages.length} messages</span>
                                                 )}
                                               </div>
                                             </div>
@@ -3313,7 +3351,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                                           {/* Message History Accordion */}
                                           {isThreadOpen && (
-                                            <div className="p-3 pt-0 border-t border-slate-800/60 mt-1 space-y-2.5">
+                                            <div className="p-3 pt-0 border-t border-[#4A1224]/50 mt-1 space-y-2.5">
                                               {thread.messages && thread.messages.length > 0 ? (
                                                 <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar p-1">
                                                   {thread.messages.map((msg: any, mIdx: number) => {
@@ -3323,7 +3361,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                                         key={mIdx}
                                                         className={`p-3 rounded-xl text-xs leading-relaxed ${
                                                           isUserMsg
-                                                            ? 'bg-slate-950 border border-slate-800 text-slate-200 ml-4'
+                                                            ? 'bg-[#080409] border border-[#4A1224]/60 text-slate-200 ml-4'
                                                             : 'bg-indigo-950/40 border border-indigo-500/30 text-indigo-100 mr-4'
                                                         }`}
                                                       >
@@ -3341,7 +3379,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                                   })}
                                                 </div>
                                               ) : (
-                                                <div className="p-3 bg-slate-950 rounded-xl text-slate-400 text-xs font-mono">
+                                                <div className="p-3 bg-[#080409] rounded-xl text-slate-400 text-xs font-mono">
                                                   Thread ID: {thread.id} · Messages synced under active conversation context.
                                                 </div>
                                               )}
@@ -3357,7 +3395,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                 <div className="space-y-3">
                                   <div className="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center justify-between">
                                     <span>Global Chat History ({inspectedDoc.chatHistory.length} messages)</span>
-                                    <span className="text-cyan-400 font-mono">Active Thread</span>
+                                    <span className="text-[#E5A93C] font-mono">Active Thread</span>
                                   </div>
                                   <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar p-1">
                                     {inspectedDoc.chatHistory.map((msg: any, mIdx: number) => {
@@ -3367,7 +3405,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                           key={mIdx}
                                           className={`p-3 rounded-xl text-xs leading-relaxed ${
                                             isUserMsg
-                                              ? 'bg-slate-950 border border-slate-800 text-slate-200 ml-4'
+                                              ? 'bg-[#080409] border border-[#4A1224]/60 text-slate-200 ml-4'
                                               : 'bg-indigo-950/40 border border-indigo-500/30 text-indigo-100 mr-4'
                                           }`}
                                         >
@@ -3388,7 +3426,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               ) : (
                                 /* Case C: No chats yet */
                                 <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3 text-slate-500 my-auto">
-                                  <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400">
+                                  <div className="w-12 h-12 rounded-2xl bg-[#150917] border border-[#4A1224]/60 flex items-center justify-center text-slate-400">
                                     <MessageSquare className="w-6 h-6" />
                                   </div>
                                   <div className="font-bold text-white text-xs">No Chat Threads Saved</div>
@@ -3398,7 +3436,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                   <button
                                     type="button"
                                     onClick={() => setInspectedDocTab('json')}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-cyan-400 text-xs font-bold rounded-xl border border-slate-700 transition-colors cursor-pointer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#150917] hover:bg-slate-800 text-[#E5A93C] text-xs font-bold rounded-xl border border-[#4A1224]/50 transition-colors cursor-pointer"
                                   >
                                     <FileJson className="w-3.5 h-3.5" /> View Raw Document JSON
                                   </button>
@@ -3410,7 +3448,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                           {/* Tab Content 2: Raw JSON View */}
                           {inspectedDocTab === 'json' && (
                             <div className="flex-1 overflow-hidden flex flex-col">
-                              <pre className="font-mono text-xs text-emerald-300 overflow-auto flex-1 custom-scrollbar p-4 bg-slate-950 rounded-xl border border-slate-800/80 leading-relaxed selection:bg-emerald-500/30 selection:text-emerald-100">
+                              <pre className="font-mono text-xs text-emerald-300 overflow-auto flex-1 custom-scrollbar p-4 bg-[#080409] rounded-xl border border-[#4A1224]/60 leading-relaxed selection:bg-emerald-500/30 selection:text-emerald-100">
                                 {JSON.stringify(sanitizeDocumentForInspector(inspectedDoc), null, 2)}
                               </pre>
                             </div>
@@ -3418,7 +3456,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         </div>
                       ) : (
                         <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-xs text-center p-8 space-y-2">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400">
+                          <div className="w-12 h-12 rounded-2xl bg-[#150917] border border-[#4A1224]/60 flex items-center justify-center text-slate-400">
                             <FileJson className="w-6 h-6" />
                           </div>
                           <div className="font-bold text-white text-xs">No Account Selected</div>
@@ -3439,7 +3477,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
              ═════════════════════════════════════════════════════════════════════ */}
           {adminView === 'security' && (
             !isInspectOwner ? (
-              <div className="backdrop-blur-xl bg-slate-900/60 border border-rose-500/30 rounded-3xl p-12 text-center max-w-xl mx-auto space-y-4">
+              <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-rose-500/30 rounded-3xl p-12 text-center max-w-xl mx-auto space-y-4">
                 <div className="w-16 h-16 rounded-3xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
                   <Lock className="w-8 h-8" />
                 </div>
@@ -3453,7 +3491,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 
                 {/* Security Metrics Cards */}
                 <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="backdrop-blur-xl bg-slate-900/60 border border-rose-500/30 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                  <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-rose-500/30 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-rose-500/15 text-rose-400 border border-rose-500/30">
                       <ShieldAlert className="w-6 h-6" />
                     </div>
@@ -3467,8 +3505,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
                   </div>
 
-                  <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
-                    <div className="p-3 rounded-2xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                  <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30">
                       <Globe className="w-6 h-6" />
                     </div>
                     <div>
@@ -3479,7 +3517,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
                   </div>
 
-                  <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                  <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
                       <Terminal className="w-6 h-6" />
                     </div>
@@ -3491,7 +3529,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     </div>
                   </div>
 
-                  <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
+                  <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl p-5 flex items-center gap-4">
                     <div className="p-3 rounded-2xl bg-purple-500/15 text-purple-400 border border-purple-500/30">
                       <Sliders className="w-6 h-6" />
                     </div>
@@ -3517,12 +3555,12 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       </span>
                     </div>
 
-                    <span className="px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                    <span className="px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-[#4A1224]/50">
                       {filteredAudits.length} {filteredAudits.length === securityAudits.length ? 'activities' : `of ${securityAudits.length} activities`}
                     </span>
 
                     {auditLimit > 50 && (
-                      <span className="px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                      <span className="px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/40">
                         All Records Loaded (500 max)
                       </span>
                     )}
@@ -3533,8 +3571,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       onClick={handleShowAllActivities}
                       className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 ${
                         auditLimit > 50 && !securitySearchTerm && securityUserFilter === 'all' && securityTriggerFilter === 'all'
-                          ? 'bg-cyan-500 text-slate-950 shadow-cyan-500/20 ring-2 ring-cyan-400 font-extrabold'
-                          : 'bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30'
+                          ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 shadow-[#E5A93C]/20 ring-2 ring-[#E5A93C] font-extrabold'
+                          : 'bg-slate-800 hover:bg-slate-700 text-[#E5A93C] border border-[#E5A93C]/30'
                       }`}
                       title="Reset all filters and load all activities from database"
                     >
@@ -3554,7 +3592,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </div>
 
                 {/* Filter and Search Bar for Users and Activities */}
-                <div className="backdrop-blur-xl bg-slate-900/70 border border-slate-800/90 shadow-xl rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                <div className="backdrop-blur-xl bg-[#150917]/70 border border-[#4A1224]/70 shadow-xl rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row items-stretch md:items-center gap-3">
                   {/* Search Input */}
                   <div className="relative flex-1 min-w-[240px]">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
@@ -3563,7 +3601,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       placeholder="Search users, emails, UIDs, IPs, routes, or details..."
                       value={securitySearchTerm}
                       onChange={(e) => setSecuritySearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-9 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono"
+                      className="w-full pl-10 pr-9 py-2.5 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#E5A93C] focus:ring-1 focus:ring-[#E5A93C]/30 transition-all font-mono"
                     />
                     {securitySearchTerm && (
                       <button
@@ -3582,7 +3620,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <select
                       value={securityUserFilter}
                       onChange={(e) => setSecurityUserFilter(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer font-bold"
+                      className="w-full px-3 py-2.5 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#E5A93C] focus:ring-1 focus:ring-[#E5A93C]/30 transition-all cursor-pointer font-bold"
                     >
                       <option value="all">All Users ({uniqueAuditUsers.length})</option>
                       {uniqueAuditUsers.map((u) => (
@@ -3599,7 +3637,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <select
                       value={securityTriggerFilter}
                       onChange={(e) => setSecurityTriggerFilter(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all cursor-pointer font-bold"
+                      className="w-full px-3 py-2.5 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-[#E5A93C] focus:ring-1 focus:ring-[#E5A93C]/30 transition-all cursor-pointer font-bold"
                     >
                       <option value="all">All Triggers ({securityAudits.length})</option>
                       <option value="devtools_inspect_shortcut">
@@ -3631,11 +3669,11 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                 </div>
 
                 {/* Inspect Audit Incidents Table */}
-                <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 shadow-2xl rounded-3xl overflow-hidden">
+                <div className="backdrop-blur-xl bg-[#0E0610]/70 border border-[#4A1224]/60 shadow-2xl rounded-3xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="bg-slate-900/90 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-slate-800">
+                        <tr className="bg-[#0E0610]/95 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-[#4A1224]/60">
                           <th className="p-4">User / Perpetrator</th>
                           <th className="p-4">Client Public IP</th>
                           <th className="p-4">Inspect Trigger</th>
@@ -3652,7 +3690,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                               : record.eventType === 'contextmenu_inspect'
                               ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
                               : record.eventType === 'devtools_opened'
-                              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                              ? 'bg-[#4A1224]/60 text-[#E5A93C] border-[#E5A93C]/40'
                               : 'bg-amber-500/20 text-amber-300 border-amber-500/40';
 
                           return (
@@ -3671,7 +3709,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                   <span className="font-mono text-[10px] text-slate-500">UID: {record.uid}</span>
                                   <button
                                     onClick={() => setSecurityUserFilter(record.uid || record.email || 'anonymous')}
-                                    className="inline-flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors"
+                                    className="inline-flex items-center gap-1 text-[10px] font-bold text-[#E5A93C] hover:text-[#E5A93C] transition-colors"
                                     title={`Filter all activities for ${record.name || record.email}`}
                                   >
                                     <Filter className="w-2.5 h-2.5" /> Filter User
@@ -3679,7 +3717,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                 </div>
                               </td>
                               <td className="p-4">
-                                <span className="inline-flex items-center gap-1.5 font-mono text-xs font-black bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-lg text-emerald-400">
+                                <span className="inline-flex items-center gap-1.5 font-mono text-xs font-black bg-[#080409] border border-[#4A1224]/60 px-2.5 py-1 rounded-lg text-emerald-400">
                                   {record.ip}
                                   <button
                                     onClick={() => copyToClipboard(record.ip, `IP ${record.ip} copied`)}
@@ -3690,7 +3728,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                   </button>
                                   <button
                                     onClick={() => setSecuritySearchTerm(record.ip)}
-                                    className="text-slate-500 hover:text-cyan-400 transition-colors"
+                                    className="text-slate-500 hover:text-[#E5A93C] transition-colors"
                                     title="Filter by this IP address"
                                   >
                                     <Search className="w-3 h-3" />
@@ -3727,7 +3765,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                                   <p className="text-xs text-slate-400">Try adjusting your search query, selected user, or trigger type.</p>
                                   <button
                                     onClick={handleShowAllActivities}
-                                    className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
                                   >
                                     <Layers className="w-3.5 h-3.5" />
                                     Show All Activities
@@ -3750,6 +3788,27 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             )
           )}
 
+          {/* VIEW 6: BUSINESS TENANCY & MULTI-ORGANIZATION MANAGEMENT */}
+          {adminView === 'tenancy' && (
+            <div className="space-y-6">
+              <BusinessTenancyView isArabic={profile.language === 'Arabic' || profile.language === 'Egyptian Ammiya'} />
+            </div>
+          )}
+
+          {/* VIEW 7: DEVELOPER API CONSOLE & WEBHOOKS */}
+          {adminView === 'api' && (
+            <div className="space-y-6">
+              <DeveloperApiConsole isArabic={profile.language === 'Arabic' || profile.language === 'Egyptian Ammiya'} />
+            </div>
+          )}
+
+          {/* VIEW 8: SYSTEM RESILIENCE & ADAPTIVE ARCHITECTURE */}
+          {adminView === 'resilience' && (
+            <div className="space-y-6">
+              <SystemResilienceDashboard isArabic={profile.language === 'Arabic' || profile.language === 'Egyptian Ammiya'} />
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -3761,13 +3820,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
           onClick={closePhotoLightbox}
         >
           <div
-            className="relative max-w-lg w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-4 animate-in zoom-in-95 duration-200"
+            className="relative max-w-lg w-full bg-[#150917] border border-[#4A1224]/60 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-4 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Lightbox Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                <div className="p-2 rounded-xl bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30">
                   <Eye className="w-5 h-5" />
                 </div>
                 <div>
@@ -3787,7 +3846,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             </div>
 
             {/* High-res Image Display */}
-            <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center p-2 min-h-[280px]">
+            <div className="relative rounded-2xl overflow-hidden bg-[#080409] border border-[#4A1224]/60 flex items-center justify-center p-2 min-h-[280px]">
               {photoLightboxUrl && !failedAvatarUrls[photoLightboxUrl] ? (
                 <img
                   src={photoLightboxUrl}
@@ -3796,7 +3855,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   className="max-h-[60vh] max-w-full rounded-xl object-contain shadow-2xl"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-3xl flex items-center justify-center font-black text-3xl bg-slate-800 border border-slate-700 text-cyan-300">
+                <div className="w-24 h-24 rounded-3xl flex items-center justify-center font-black text-3xl bg-slate-800 border border-[#4A1224]/50 text-[#E5A93C]">
                   {(photoLightboxUser?.name || photoLightboxUser?.email || '?').charAt(0).toUpperCase()}
                 </div>
               )}
@@ -3820,13 +3879,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   href={photoLightboxUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors border border-slate-700"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors border border-[#4A1224]/50"
                 >
                   Open Original
                 </a>
                 <button
                   onClick={() => copyToClipboard(photoLightboxUrl, 'Photo URL copied')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-xl text-xs font-black transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:bg-[#E5A93C] text-slate-950 rounded-xl text-xs font-black transition-colors"
                 >
                   <Copy className="w-3 h-3" /> Copy URL
                 </button>
@@ -3839,9 +3898,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
       {/* ── USER DETAILS & PROFILE MODAL ─────────────────────────────────────── */}
       {selectedUserForModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-[32px] shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#150917] border border-[#4A1224]/60 rounded-[32px] shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+            <div className="p-6 border-b border-[#4A1224]/60 flex items-center justify-between bg-[#080409]/60">
               <div className="flex items-center gap-3.5 min-w-0">
                 {/* User Avatar with Zoom Lightbox Trigger */}
                 <div
@@ -3858,10 +3917,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <img
                       src={selectedUserForModal.photoURL}
                       alt={selectedUserForModal.name || 'User Avatar'}
-                      className="w-14 h-14 rounded-2xl object-cover border-2 border-cyan-500/40 shadow-lg group-hover:scale-105 transition-transform bg-slate-800"
+                      className="w-14 h-14 rounded-2xl object-cover border-2 border-[#E5A93C]/40 shadow-lg group-hover:scale-105 transition-transform bg-slate-800"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-300 font-black text-xl flex items-center justify-center border border-cyan-500/40">
+                    <div className="w-14 h-14 rounded-2xl bg-[#4A1224]/60 text-[#E5A93C] font-black text-xl flex items-center justify-center border border-[#E5A93C]/40">
                       {(selectedUserForModal.name || selectedUserForModal.email || '?').charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -3883,7 +3942,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <span className="text-xs font-medium text-slate-400 truncate">{selectedUserForModal.email}</span>
                     <button
                       onClick={() => copyToClipboard(selectedUserForModal.uid, `Firebase UID copied: ${selectedUserForModal.uid}`)}
-                      className="inline-flex items-center gap-1 font-mono text-[10px] text-slate-400 hover:text-cyan-400 bg-slate-800/80 px-2 py-0.5 rounded transition-colors"
+                      className="inline-flex items-center gap-1 font-mono text-[10px] text-slate-400 hover:text-[#E5A93C] bg-slate-800/80 px-2 py-0.5 rounded transition-colors"
                       title="Copy Firebase UID"
                     >
                       <span>UID: {selectedUserForModal.uid.slice(0, 12)}…</span>
@@ -3901,7 +3960,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             </div>
 
             {/* Modal Tabs */}
-            <div className="flex border-b border-slate-800 bg-slate-900/90 px-6 gap-2">
+            <div className="flex border-b border-[#4A1224]/60 bg-[#0E0610]/95 px-6 gap-2">
               {[
                 { id: 'profile', label: 'Overview & Details', icon: UserIcon },
                 { id: 'logins', label: userLoginHistory.length > 0 ? `Logins (${userLoginHistory.length})` : 'Login History', icon: Globe },
@@ -3913,7 +3972,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   key={id}
                   onClick={() => setModalTab(id as any)}
                   className={`flex items-center gap-1.5 py-3.5 px-3.5 text-xs font-black uppercase tracking-wider border-b-2 transition-all ${
-                    modalTab === id ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-white'
+                    modalTab === id ? 'border-[#E5A93C] text-[#E5A93C]' : 'border-transparent text-slate-400 hover:text-white'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" /> {label}
@@ -3955,7 +4014,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                           setPhotoLightboxUrl(selectedUserForModal.photoURL!);
                           setPhotoLightboxUser(selectedUserForModal);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900/80 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 rounded-xl text-xs font-bold transition-all shrink-0"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0E0610]/90 hover:bg-slate-800 text-[#E5A93C] border border-[#E5A93C]/30 rounded-xl text-xs font-bold transition-all shrink-0"
                       >
                         <Eye className="w-3.5 h-3.5" /> View Photo
                       </button>
@@ -3964,26 +4023,26 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
                   {/* Key Stats Bar */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <div className="bg-[#080409] p-4 rounded-2xl border border-[#4A1224]/60">
                       <div className="text-xs font-bold text-slate-400 uppercase">Points</div>
-                      <div className="text-xl font-black text-cyan-400 mt-1 font-mono">{selectedUserForModal.points || 0}</div>
+                      <div className="text-xl font-black text-[#E5A93C] mt-1 font-mono">{selectedUserForModal.points || 0}</div>
                     </div>
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <div className="bg-[#080409] p-4 rounded-2xl border border-[#4A1224]/60">
                       <div className="text-xs font-bold text-slate-400 uppercase">Cognitive Score</div>
                       <div className="text-xl font-black text-white mt-1 font-mono">{selectedUserForModal.iqScore || '--'}</div>
                     </div>
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <div className="bg-[#080409] p-4 rounded-2xl border border-[#4A1224]/60">
                       <div className="text-xs font-bold text-slate-400 uppercase">Cognitive Level</div>
                       <div className="text-sm font-black text-white mt-1.5 uppercase">{selectedUserForModal.level || 'Intermediate'}</div>
                     </div>
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <div className="bg-[#080409] p-4 rounded-2xl border border-[#4A1224]/60">
                       <div className="text-xs font-bold text-slate-400 uppercase">Section</div>
                       <div className="text-sm font-black text-white mt-1.5">{sectionOf(selectedUserForModal)}</div>
                     </div>
                   </div>
 
                   {/* Academic & Bio Info */}
-                  <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3.5 text-xs font-medium">
+                  <div className="bg-[#080409] p-5 rounded-2xl border border-[#4A1224]/60 space-y-3.5 text-xs font-medium">
                     <h4 className="font-black uppercase tracking-wider text-slate-400 text-[11px]">Academic & System Info</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div><span className="text-slate-400">University:</span> <span className="font-bold text-white">{selectedUserForModal.university || 'N/A'}</span></div>
@@ -4028,7 +4087,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       {selectedUserForModal.lastIp && (
                         <div>
                           <span className="text-slate-400">Last IP:</span>{' '}
-                          <span className="font-mono text-cyan-300 font-bold text-[11px] bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                          <span className="font-mono text-[#E5A93C] font-bold text-[11px] bg-[#150917] px-2 py-0.5 rounded border border-[#4A1224]/60">
                             {selectedUserForModal.lastIp}
                           </span>
                         </div>
@@ -4048,13 +4107,13 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         <div><span className="text-slate-400">Active Mode:</span> <span className="font-bold text-amber-400">{selectedUserForModal.accessibilityMode}</span></div>
                       )}
                       {selectedUserForModal.organization && (
-                        <div><span className="text-slate-400">Organization:</span> <span className="font-bold text-cyan-400">{selectedUserForModal.organization}</span></div>
+                        <div><span className="text-slate-400">Organization:</span> <span className="font-bold text-[#E5A93C]">{selectedUserForModal.organization}</span></div>
                       )}
                     </div>
                   </div>
 
                   {/* Admin Actions */}
-                  <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                  <div className="bg-[#080409] p-5 rounded-2xl border border-[#4A1224]/60 space-y-3">
                     <h4 className="font-black uppercase tracking-wider text-slate-400 text-[11px]">Admin Adjustments</h4>
                     <div className="flex flex-wrap items-center gap-2.5">
                       {/* Role Promotion / Demotion */}
@@ -4092,14 +4151,14 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       <button
                         onClick={() => handleUpdatePoints(selectedUserForModal, 50)}
                         disabled={busyUid === selectedUserForModal.uid}
-                        className="px-3.5 py-1.5 bg-cyan-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-cyan-400 transition-colors disabled:opacity-50"
+                        className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 text-xs font-bold rounded-xl hover:bg-[#E5A93C] transition-colors disabled:opacity-50"
                       >
                         +50 Points
                       </button>
                       <button
                         onClick={() => handleUpdatePoints(selectedUserForModal, -50)}
                         disabled={busyUid === selectedUserForModal.uid}
-                        className="px-3.5 py-1.5 bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
+                        className="px-3.5 py-1.5 bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
                       >
                         -50 Points
                       </button>
@@ -4107,7 +4166,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         value={selectedUserForModal.level || 'Intermediate'}
                         onChange={(e) => handleUpdateCognitiveLevel(selectedUserForModal, e.target.value as CognitiveLevel)}
                         disabled={busyUid === selectedUserForModal.uid}
-                        className="bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
+                        className="bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
                       >
                         <option value="Basic">Level: Basic</option>
                         <option value="Intermediate">Level: Intermediate</option>
@@ -4117,7 +4176,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         value={selectedUserForModal.country && selectedUserForModal.country !== 'Unknown' && selectedUserForModal.country !== 'N/A' ? selectedUserForModal.country : ''}
                         onChange={(e) => handleUpdateCountry(selectedUserForModal, e.target.value)}
                         disabled={busyUid === selectedUserForModal.uid}
-                        className="bg-slate-900 border border-slate-700 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
+                        className="bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
                         title="Set or update user's country"
                       >
                         <option value="" disabled>Set Country...</option>
@@ -4129,7 +4188,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       </select>
                       <a
                         href={`mailto:${selectedUserForModal.email}?subject=Message from Cognify Admin`}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-xl hover:bg-slate-700 transition-colors border border-slate-700"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-xl hover:bg-slate-700 transition-colors border border-[#4A1224]/50"
                       >
                         <Mail className="w-3.5 h-3.5" /> Send Email
                       </a>
@@ -4151,7 +4210,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       </p>
                     </div>
                     {loadingLogins && (
-                      <div className="flex items-center gap-2 text-xs text-cyan-400">
+                      <div className="flex items-center gap-2 text-xs text-[#E5A93C]">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         <span>Fetching logs…</span>
                       </div>
@@ -4168,7 +4227,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                             className={`p-4 rounded-2xl border transition-all ${
                               isLatest
                                 ? 'bg-emerald-950/20 border-emerald-500/30'
-                                : 'bg-slate-950 border-slate-800/80'
+                                : 'bg-[#080409] border-[#4A1224]/60'
                             }`}
                           >
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
@@ -4208,9 +4267,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                       })}
                     </div>
                   ) : (
-                    <div className="p-6 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+                    <div className="p-6 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-3">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        <div className="p-2.5 rounded-xl bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
                           <Globe className="w-5 h-5" />
                         </div>
                         <div>
@@ -4257,7 +4316,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   {selectedUserForModal.chatThreads && selectedUserForModal.chatThreads.length > 0 ? (
                     <div className="space-y-2">
                       {selectedUserForModal.chatThreads.map((thread) => (
-                        <div key={thread.id} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-1">
+                        <div key={thread.id} className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-1">
                           <div className="flex items-center justify-between text-xs">
                             <span className="font-bold text-white">{thread.title || 'Untitled Chat'}</span>
                             <span className="text-[10px] text-slate-400">{formatDate(thread.updatedAt)}</span>
@@ -4280,7 +4339,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   {selectedUserForModal.tasks && selectedUserForModal.tasks.length > 0 ? (
                     <div className="space-y-2">
                       {selectedUserForModal.tasks.map((task) => (
-                        <div key={task.id} className="flex items-center gap-3 p-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-xs">
+                        <div key={task.id} className="flex items-center gap-3 p-3.5 bg-[#080409] border border-[#4A1224]/60 rounded-2xl text-xs">
                           <div className={`p-1.5 rounded-lg ${task.completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}`}>
                             {task.completed ? <Check className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
                           </div>
@@ -4303,12 +4362,12 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                     <h4 className="font-black uppercase tracking-wider text-slate-400 text-[11px]">Firestore Document JSON</h4>
                     <button
                       onClick={() => copyToClipboard(JSON.stringify(selectedUserForModal, null, 2), 'JSON copied to clipboard')}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white rounded-lg transition-colors border border-slate-700"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white rounded-lg transition-colors border border-[#4A1224]/50"
                     >
                       <Copy className="w-3 h-3" /> Copy JSON
                     </button>
                   </div>
-                  <pre className="p-4 bg-slate-950 text-emerald-400 font-mono text-xs rounded-2xl overflow-x-auto border border-slate-800 max-h-96 custom-scrollbar">
+                  <pre className="p-4 bg-[#080409] text-emerald-400 font-mono text-xs rounded-2xl overflow-x-auto border border-[#4A1224]/60 max-h-96 custom-scrollbar">
                     {JSON.stringify(selectedUserForModal, null, 2)}
                   </pre>
                 </div>
@@ -4321,9 +4380,9 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
       {/* ── PASSWORD RESET MODAL ───────────────────────────────────────────── */}
       {passwordModalUser && (
         <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-amber-500/40 rounded-[28px] shadow-2xl shadow-amber-500/10 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-[#150917] border border-amber-500/40 rounded-[28px] shadow-2xl shadow-amber-500/10 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
             {/* Header */}
-            <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
+            <div className="p-6 border-b border-[#4A1224]/60 flex items-center justify-between bg-[#080409]/70">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-amber-500/20 text-amber-400 border border-amber-500/40 rounded-2xl shadow-inner">
                   <Key className="w-5 h-5" />
@@ -4345,8 +4404,8 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
             {/* Content */}
             <div className="p-6 space-y-5">
               {/* Target user card */}
-              <div className="p-4 bg-slate-950/80 border border-slate-800/80 rounded-2xl flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-cyan-500/20 text-amber-300 font-black text-lg flex items-center justify-center border border-amber-500/30 shrink-0 shadow-inner">
+              <div className="p-4 bg-[#080409]/80 border border-[#4A1224]/60 rounded-2xl flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-rose-600/20 text-amber-300 font-black text-lg flex items-center justify-center border border-amber-500/30 shrink-0 shadow-inner">
                   {(passwordModalUser.name || passwordModalUser.email || '?').charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -4358,7 +4417,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         <Crown className="w-2.5 h-2.5" /> Super Admin User
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-[#4A1224]/50">
                         <UserIcon className="w-2.5 h-2.5" /> Normal User
                       </span>
                     )}
@@ -4368,7 +4427,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
               </div>
 
               {/* Informative notice */}
-              <div className="p-4 bg-slate-950/50 border border-amber-500/20 rounded-2xl space-y-2">
+              <div className="p-4 bg-[#080409]/50 border border-amber-500/20 rounded-2xl space-y-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
                   <Lock className="w-4 h-4 text-amber-400 shrink-0" />
                   <span>Official Firebase Password Reset Protocol</span>
@@ -4379,7 +4438,7 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   The user can click the verified link to securely update their password.
                 </p>
                 {passwordModalUser.passwordResetRequestedAt && (
-                  <p className="text-[11px] text-slate-400 font-mono pt-1.5 border-t border-slate-800/80">
+                  <p className="text-[11px] text-slate-400 font-mono pt-1.5 border-t border-[#4A1224]/60">
                     Last reset requested: {formatDate(passwordModalUser.passwordResetRequestedAt)}
                   </p>
                 )}

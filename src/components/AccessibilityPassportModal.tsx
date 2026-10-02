@@ -6,7 +6,6 @@ import {
   Check,
   Eye,
   Ear,
-  Activity,
   Brain,
   Sparkles,
   Volume2,
@@ -63,11 +62,6 @@ export default function AccessibilityPassportModal({
       reverseSignToSpeech: true,
       flashingAlerts: true,
     },
-    motorSupport: {
-      trackingMode: profile.headTrackingConfig?.trackingMode || 'iris',
-      dwellDurationMs: profile.headTrackingConfig?.dwellTimeMs || 1200,
-      emergencySosEnabled: true,
-    },
     neurodiversitySupport: {
       dyslexiaFont: false,
       readingRuler: false,
@@ -97,11 +91,6 @@ export default function AccessibilityPassportModal({
           allowCameraTriggers: true,
           visualSupport: { highContrast: false, autoSpeechReadout: true, hapticAssistance: true },
           hearingSupport: { visualAcousticRadar: true, reverseSignToSpeech: true, flashingAlerts: true },
-          motorSupport: {
-            trackingMode: profile.headTrackingConfig?.trackingMode || 'iris',
-            dwellDurationMs: profile.headTrackingConfig?.dwellTimeMs || 1200,
-            emergencySosEnabled: true,
-          },
           neurodiversitySupport: { dyslexiaFont: false, readingRuler: false, sensoryRegulation: true },
         }
       );
@@ -119,16 +108,14 @@ export default function AccessibilityPassportModal({
     setIsSaving(true);
     let cat = passport.primaryCategory as string;
     let resolvedMode: AccessibilityMode = profile.accessibilityMode;
-    if (cat === 'Motor') resolvedMode = 'Motor-Euphonia';
-    else if (cat === 'Deaf') resolvedMode = 'Vocal-Deaf';
+    if (cat === 'Deaf') resolvedMode = 'Vocal-Deaf';
     else if (cat === 'Visual') resolvedMode = 'Visual';
     else if (cat === 'Neurodiversity') resolvedMode = 'Neurodiversity';
     else if (cat === 'None') resolvedMode = 'None';
     else if (passport.primaryMode && passport.primaryMode !== 'None') resolvedMode = passport.primaryMode;
 
     try {
-      const mappedTab = resolvedMode === 'Motor-Euphonia' ? 'motor' :
-                        resolvedMode === 'Neurodiversity' ? 'neurodiversity' :
+      const mappedTab = resolvedMode === 'Neurodiversity' ? 'neurodiversity' :
                         resolvedMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
       localStorage.setItem('cognify_default_disability_tab', mappedTab);
       localStorage.setItem('cognify_font_scale', passport.fontSizeScale || 'normal');
@@ -174,10 +161,10 @@ export default function AccessibilityPassportModal({
         initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.92, opacity: 0 }}
-        className="w-full max-w-2xl bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-5 sm:p-6 shadow-2xl text-white space-y-5 max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl bg-[#150917] border-2 border-indigo-500/50 rounded-3xl p-5 sm:p-6 shadow-2xl text-white space-y-5 max-h-[90vh] flex flex-col"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-400 shadow-lg">
               <Shield className="w-5 h-5" />
@@ -226,7 +213,7 @@ export default function AccessibilityPassportModal({
                   className={`p-3 rounded-2xl border transition-all text-start flex items-center gap-2.5 ${
                     passport.primaryCategory === item.id
                       ? 'bg-indigo-600 border-indigo-400 text-white font-black shadow-lg'
-                      : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                      : 'bg-[#080409] border-[#4A1224]/60 text-slate-300 hover:border-[#4A1224]/50'
                   }`}
                 >
                   <span className="text-xl">{item.icon}</span>
@@ -237,7 +224,7 @@ export default function AccessibilityPassportModal({
           </div>
 
           {/* Universal System-Wide Accommodations (Font Scaling, High Contrast, Motion Reduction) */}
-          <div className="p-4 rounded-3xl bg-slate-950 border border-slate-800 space-y-4">
+          <div className="p-4 rounded-3xl bg-[#080409] border border-[#4A1224]/60 space-y-4">
             <div className="flex items-center gap-2 font-bold text-xs text-amber-400">
               <Sliders className="w-4 h-4" />
               <span>{t('Universal Display & Sensory Settings', 'إعدادات العرض والحواس الشاملة للمنظومة')}</span>
@@ -272,7 +259,7 @@ export default function AccessibilityPassportModal({
                       className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition-all ${
                         isCurrent
                           ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-md font-black'
-                          : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                          : 'bg-[#150917] border-[#4A1224]/60 text-slate-300 hover:border-[#4A1224]/50'
                       }`}
                     >
                       {s.label}
@@ -284,7 +271,7 @@ export default function AccessibilityPassportModal({
 
             {/* High Contrast & Reduce Motion Toggles */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
-              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer hover:border-[#4A1224]/50">
                 <input
                   type="checkbox"
                   checked={passport.highContrast ?? false}
@@ -302,7 +289,7 @@ export default function AccessibilityPassportModal({
                 </div>
               </label>
 
-              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+              <label className="flex items-center gap-2 p-2.5 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer hover:border-[#4A1224]/50">
                 <input
                   type="checkbox"
                   checked={passport.reduceMotion ?? false}
@@ -315,7 +302,7 @@ export default function AccessibilityPassportModal({
                   className="rounded text-amber-500 w-4 h-4"
                 />
                 <div className="flex items-center gap-1.5 font-bold">
-                  <Minimize2 className="w-4 h-4 text-cyan-400" />
+                  <Minimize2 className="w-4 h-4 text-[#E5A93C]" />
                   <span>{t('Reduce Motion & Flashing', 'تقليل الحركة والوميض الحسي')}</span>
                 </div>
               </label>
@@ -323,13 +310,13 @@ export default function AccessibilityPassportModal({
           </div>
 
           {/* 2. Visual Accommodations */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
+          <div className="p-3.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5">
             <div className="flex items-center gap-2 font-bold text-xs text-emerald-400">
               <Eye className="w-4 h-4" />
               <span>{t('Visual Accommodations', 'تسهيلات الرؤية والصوت')}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.visualSupport?.autoSpeechReadout ?? true}
@@ -344,7 +331,7 @@ export default function AccessibilityPassportModal({
                 <span>{t('Auto-Repeat Aloud (TTS)', 'نطق فوري تلقائي بالصوت')}</span>
               </label>
 
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.visualSupport?.hapticAssistance ?? true}
@@ -362,13 +349,13 @@ export default function AccessibilityPassportModal({
           </div>
 
           {/* 3. Hearing Accommodations */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
-            <div className="flex items-center gap-2 font-bold text-xs text-cyan-400">
+          <div className="p-3.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5">
+            <div className="flex items-center gap-2 font-bold text-xs text-[#E5A93C]">
               <Ear className="w-4 h-4" />
               <span>{t('Deaf & Hearing Accommodations', 'تسهيلات الصم وضعاف السمع')}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.hearingSupport?.visualAcousticRadar ?? true}
@@ -383,7 +370,7 @@ export default function AccessibilityPassportModal({
                 <span>{t('Visual Sound Radar', 'رادار الأصوات والمخاطر البصري')}</span>
               </label>
 
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.hearingSupport?.reverseSignToSpeech ?? true}
@@ -400,38 +387,14 @@ export default function AccessibilityPassportModal({
             </div>
           </div>
 
-          {/* 4. Motor Accommodations */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
-            <div className="flex items-center gap-2 font-bold text-xs text-amber-400">
-              <Activity className="w-4 h-4" />
-              <span>{t('Motor & Eye-Gaze Accommodations', 'تسهيلات الحركة وتتبع العين')}</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={passport.motorSupport?.emergencySosEnabled ?? true}
-                  onChange={(e) =>
-                    setPassport({
-                      ...passport,
-                      motorSupport: { ...passport.motorSupport, emergencySosEnabled: e.target.checked },
-                    })
-                  }
-                  className="rounded text-indigo-600 w-4 h-4"
-                />
-                <span>{t('4s Eye-Closure Emergency SOS', 'استغاثة الطوارئ بغمض العين 4 ثوانٍ')}</span>
-              </label>
-            </div>
-          </div>
-
-          {/* 5. Neurodiversity Accommodations */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
+          {/* 4. Neurodiversity Accommodations */}
+          <div className="p-3.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5">
             <div className="flex items-center gap-2 font-bold text-xs text-indigo-400">
               <Brain className="w-4 h-4" />
               <span>{t('Neurodiversity & Sensory Accommodations', 'تسهيلات التوحد وعسر القراءة')}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.neurodiversitySupport?.dyslexiaFont ?? false}
@@ -446,7 +409,7 @@ export default function AccessibilityPassportModal({
                 <span>{t('High-Legibility Dyslexia Font', 'خط عريض وواضح لعسر القراءة')}</span>
               </label>
 
-              <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+              <label className="flex items-center gap-2 p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={passport.neurodiversitySupport?.readingRuler ?? false}
@@ -465,7 +428,7 @@ export default function AccessibilityPassportModal({
         </div>
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#4A1224]/60">
           <button
             type="button"
             onClick={onClose}

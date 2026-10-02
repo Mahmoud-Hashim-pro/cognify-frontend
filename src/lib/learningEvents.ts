@@ -84,9 +84,16 @@ class PersistentLearningEventStore {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
-        this.flushSync();
-      });
+      const handleFlush = () => this.flushSync();
+      window.addEventListener('beforeunload', handleFlush);
+      window.addEventListener('pagehide', handleFlush);
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+            this.flushSync();
+          }
+        });
+      }
     }
   }
 

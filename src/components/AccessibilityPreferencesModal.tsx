@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Sliders,
   Lock,
@@ -89,9 +89,9 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans animate-in fade-in">
-      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-[#0d101d] border border-slate-800 p-6 shadow-2xl text-slate-100 space-y-6">
+      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl bg-[#080409] border border-[#4A1224]/60 p-6 shadow-2xl text-slate-100 space-y-6">
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-4 border-b border-[#4A1224]/60">
           <div className="flex items-center gap-3">
             <span className="p-2.5 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               <Sliders className="w-5 h-5" />
@@ -132,10 +132,10 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
         </div>
 
         {/* Auto-Adaptation Toggle */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#121526] border border-slate-800">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60">
           <div>
             <div className="text-xs font-bold text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <Sparkles className="w-4 h-4 text-[#E5A93C]" />
               <span>{isAr ? 'التكيّف التلقائي الذكي' : 'Smart Auto-Adaptation'}</span>
             </div>
             <p className="text-[11px] text-slate-400 mt-0.5">
@@ -149,8 +149,8 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
             onClick={handleToggleAutoAdaptation}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
               profile.autoAdaptationEnabled
-                ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                : 'bg-slate-800 text-slate-400 border-slate-700'
+                ? 'bg-[#4A1224]/60 text-[#E5A93C] border-[#E5A93C]/40'
+                : 'bg-slate-800 text-slate-400 border-[#4A1224]/50'
             }`}
           >
             {profile.autoAdaptationEnabled
@@ -174,7 +174,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono transition-all border ${
                 locks.preferredResponseLength
                   ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                  : 'bg-slate-800 text-slate-500 border-slate-700'
+                  : 'bg-slate-800 text-slate-500 border-[#4A1224]/50'
               }`}
             >
               {locks.preferredResponseLength ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
@@ -195,8 +195,8 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
                   onClick={() => handleUpdate('preferredResponseLength', opt.id as ResponseLengthPreference)}
                   className={`p-3 rounded-2xl border text-xs font-semibold transition-all ${
                     isSelected
-                      ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 shadow-md shadow-cyan-950/40'
-                      : 'bg-[#121526] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      ? 'bg-[#4A1224]/60 border-[#E5A93C]/50 text-[#E5A93C] shadow-md shadow-[#E5A93C]/20'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
                   }`}
                 >
                   {isAr ? opt.labelAr : opt.labelEn}
@@ -217,7 +217,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono transition-all border ${
                 locks.preferredModality
                   ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                  : 'bg-slate-800 text-slate-500 border-slate-700'
+                  : 'bg-slate-800 text-slate-500 border-[#4A1224]/50'
               }`}
             >
               {locks.preferredModality ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
@@ -241,7 +241,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
                   className={`p-3 rounded-2xl border text-xs font-semibold transition-all flex flex-col items-center gap-2 ${
                     isSelected
                       ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300 shadow-md shadow-indigo-950/40'
-                      : 'bg-[#121526] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -271,7 +271,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
                   className={`p-3 rounded-2xl border text-xs font-semibold transition-all ${
                     isSelected
                       ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                      : 'bg-[#121526] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
                   }`}
                 >
                   {isAr ? opt.labelAr : opt.labelEn}
@@ -282,7 +282,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+        <div className="pt-4 border-t border-[#4A1224]/60 flex items-center justify-between gap-3">
           <button
             onClick={handleResetDefaults}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
@@ -293,7 +293,7 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
 
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-lg shadow-cyan-950/40 transition-all active:scale-95"
+            className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white shadow-lg shadow-[#E5A93C]/20 transition-all active:scale-95"
           >
             {isAr ? 'تم وحفظ التفضيلات' : 'Save & Done'}
           </button>
@@ -302,3 +302,5 @@ export const AccessibilityPreferencesModal: React.FC<AccessibilityPreferencesMod
     </div>
   );
 };
+
+export default AccessibilityPreferencesModal;

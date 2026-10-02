@@ -106,15 +106,15 @@ export default function RetentionWarmupBanner({
   return (
     <div
       dir={isAr ? 'rtl' : 'ltr'}
-      className="mx-4 my-2 p-3.5 rounded-2xl bg-gradient-to-r from-[#121528] via-[#161a35] to-[#121528] border border-cyan-500/40 shadow-xl flex items-center justify-between gap-3 text-slate-100 backdrop-blur-xl animate-fade-in relative z-20"
+      className="mx-4 my-2 p-3.5 rounded-2xl bg-gradient-to-r from-[#0E0610] via-[#150917] to-[#0E0610] border border-[#4A1224]/80 ring-1 ring-[#E5A93C]/20 shadow-xl flex items-center justify-between gap-3 text-slate-100 backdrop-blur-xl animate-fade-in relative z-20"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0 text-cyan-300">
+        <div className="w-8 h-8 rounded-xl bg-[#4A1224]/50 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 text-[#E5A93C]">
           <Clock className="w-4 h-4 animate-spin-slow" />
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#E5A93C]">
               {isAr ? 'إنعاش الذاكرة التباعدية (SM-2)' : isFr ? 'Rappel Espacé Actif (SM-2)' : 'Spaced Retention Due (SM-2)'}
             </span>
             <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md border ${
@@ -140,7 +140,7 @@ export default function RetentionWarmupBanner({
       <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={() => onStartRefresher(primeConcept.conceptId, primeConcept.conceptName)}
-          className="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#0a0c14] font-black text-xs transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1 active:scale-95"
+          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:opacity-95 text-white font-black text-xs transition-all shadow-md shadow-[#E5A93C]/20 flex items-center gap-1 active:scale-95"
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>{isAr ? 'تحدي الـ 30 ثانية' : isFr ? 'Défi 30s' : '30s Refresher'}</span>

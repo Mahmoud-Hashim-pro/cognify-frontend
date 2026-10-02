@@ -132,13 +132,13 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8 font-sans relative">
+    <div className="w-full min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8 font-sans relative">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#4A1224]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Cockpit Header */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
                 )}
                 System {telemetry.overallHealth.toUpperCase()}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/30 font-mono">
                 Uptime 99.98%
               </span>
             </div>
@@ -186,7 +186,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Server className="w-5 h-5 text-cyan-400" />
+              <Server className="w-5 h-5 text-[#E5A93C]" />
               Distributed Service Probes & Circuit Breakers
             </h2>
             <span className="text-xs text-slate-400">Auto-recovers to HALF_OPEN in 10s</span>
@@ -204,7 +204,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
               return (
                 <div
                   key={p.serviceId}
-                  className="p-5 bg-[#121524]/90 border border-slate-800/80 rounded-2xl backdrop-blur-xl shadow-xl space-y-3"
+                  className="p-5 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-2xl backdrop-blur-xl shadow-xl space-y-3"
                 >
                   <div className="flex justify-between items-start">
                     <span className="text-xs font-bold text-white leading-tight">{p.name}</span>
@@ -224,7 +224,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-500 truncate pt-1 border-t border-slate-800">
+                  <p className="text-[11px] text-slate-500 truncate pt-1 border-t border-[#4A1224]/60">
                     {p.message}
                   </p>
                 </div>
@@ -233,7 +233,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
           </div>
 
           {/* Breaker Manual Controls */}
-          <div className="p-4 bg-[#121524]/60 border border-slate-800 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+          <div className="p-4 bg-[#0E0610]/70 border border-[#4A1224]/60 rounded-2xl flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-xs text-slate-300">
               <Zap className="w-4 h-4 text-amber-400" />
               <span>
@@ -261,10 +261,10 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
         {/* Section 2: Sliding Window Rate Limiter & Latency Percentiles */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Rate Limiter Cockpit */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Gauge className="w-4 h-4 text-cyan-400" />
+                <Gauge className="w-4 h-4 text-[#E5A93C]" />
                 Sliding Window Rate Limiter (60s Window)
               </h3>
               <span className={`px-2 py-0.5 rounded-md text-xs font-bold font-mono border ${
@@ -276,7 +276,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
               </span>
             </div>
 
-            <div className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl space-y-3">
+            <div className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-3">
               <div className="flex justify-between text-xs text-slate-300">
                 <span>Consumed Window Quota:</span>
                 <span className="font-mono font-bold text-white">{rateStatus.currentCount} / 30 RPM</span>
@@ -287,7 +287,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
                 <div
                   className={`h-full transition-all duration-300 ${
                     rateStatus.currentCount < 20
-                      ? 'bg-cyan-500'
+                      ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600'
                       : rateStatus.currentCount < 30
                       ? 'bg-amber-500'
                       : 'bg-rose-500'
@@ -305,7 +305,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
             <div className="flex gap-2">
               <button
                 onClick={() => handleSendRateRequest(1)}
-                className="flex-1 py-2.5 px-4 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition"
+                className="flex-1 py-2.5 px-4 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:bg-[#E5A93C] text-slate-950 font-bold rounded-xl text-xs transition"
               >
                 Send 1 Request
               </button>
@@ -319,37 +319,37 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
           </div>
 
           {/* Latency Percentiles Histogram */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Cpu className="w-4 h-4 text-purple-400" />
               Latency Percentile Histogram ({telemetry.latency.samples.length} Samples)
             </h3>
 
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3.5 bg-[#0A0C14] rounded-2xl border border-slate-800">
+              <div className="p-3.5 bg-[#080409] rounded-2xl border border-[#4A1224]/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">p50 (Median)</span>
-                <span className="text-xl font-bold font-mono text-cyan-400">{telemetry.latency.p50} ms</span>
+                <span className="text-xl font-bold font-mono text-[#E5A93C]">{telemetry.latency.p50} ms</span>
               </div>
-              <div className="p-3.5 bg-[#0A0C14] rounded-2xl border border-slate-800">
+              <div className="p-3.5 bg-[#080409] rounded-2xl border border-[#4A1224]/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">p95</span>
                 <span className="text-xl font-bold font-mono text-purple-400">{telemetry.latency.p95} ms</span>
               </div>
-              <div className="p-3.5 bg-[#0A0C14] rounded-2xl border border-slate-800">
+              <div className="p-3.5 bg-[#080409] rounded-2xl border border-[#4A1224]/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">p99 (Tail)</span>
                 <span className="text-xl font-bold font-mono text-amber-400">{telemetry.latency.p99} ms</span>
               </div>
             </div>
 
-            <div className="p-3 bg-[#0A0C14] rounded-2xl border border-slate-800 text-xs text-slate-400 flex justify-between">
+            <div className="p-3 bg-[#080409] rounded-2xl border border-[#4A1224]/60 text-xs text-slate-400 flex justify-between">
               <span>Fastest Sample: <strong className="text-white font-mono">{telemetry.latency.min} ms</strong></span>
-              <span>Average: <strong className="text-cyan-400 font-mono">{telemetry.latency.average} ms</strong></span>
+              <span>Average: <strong className="text-[#E5A93C] font-mono">{telemetry.latency.average} ms</strong></span>
               <span>Slowest Sample: <strong className="text-rose-400 font-mono">{telemetry.latency.max} ms</strong></span>
             </div>
           </div>
         </div>
 
         {/* Section 3: Graceful Degradation Matrix */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -365,7 +365,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
               <select
                 value={selectedConcept}
                 onChange={e => setSelectedConcept(e.target.value as any)}
-                className="bg-[#0A0C14] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"
+                className="bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-xs text-white"
               >
                 <option value="c_pointers">C Pointers</option>
                 <option value="recursion">Recursion</option>
@@ -382,7 +382,7 @@ export const SystemResilienceDashboard: React.FC<SystemResilienceDashboardProps>
           </div>
 
           {cachedOutput && (
-            <div className="p-4 bg-[#0A0C14] border border-amber-500/30 rounded-2xl space-y-2">
+            <div className="p-4 bg-[#080409] border border-amber-500/30 rounded-2xl space-y-2">
               <span className="text-[11px] font-mono text-amber-400 uppercase font-bold block">
                 Cached Offline Response (Zero-API Call)
               </span>

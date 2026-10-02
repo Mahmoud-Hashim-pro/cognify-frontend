@@ -53,6 +53,19 @@ export interface LearningOutcomeAttainment {
   targetBenchmark: number; // e.g. 75%
   actualAttainment: number; // e.g. 84%
   status: 'meets_standard' | 'exceeds_standard' | 'requires_action';
+  isTemplateData?: boolean;
+  dataSource?: 'empirical_student_mastery' | 'curricular_bottleneck_telemetry' | 'illustrative_department_template';
+}
+
+export interface ContinuousImprovementLoop {
+  identifiedGapEn: string;
+  identifiedGapAr: string;
+  implementedPedagogicalChangeEn: string;
+  implementedPedagogicalChangeAr: string;
+  measuredImpactGainPercentage: number; // e.g. +18%
+  isTemplateData?: boolean;
+  disclaimerEn?: string;
+  disclaimerAr?: string;
 }
 
 export interface AccreditationReportData {
@@ -60,13 +73,8 @@ export interface AccreditationReportData {
   accreditationStandard: 'ABET_CAC' | 'NCAAA' | 'GENERAL_QA';
   evaluationPeriod: string;
   outcomesAttainment: LearningOutcomeAttainment[];
-  continuousImprovementLoop: {
-    identifiedGapEn: string;
-    identifiedGapAr: string;
-    implementedPedagogicalChangeEn: string;
-    implementedPedagogicalChangeAr: string;
-    measuredImpactGainPercentage: number; // e.g. +14%
-  };
+  continuousImprovementLoop: ContinuousImprovementLoop;
+  hasTemplateData?: boolean;
 }
 
 export interface InstitutionalDashboardData {

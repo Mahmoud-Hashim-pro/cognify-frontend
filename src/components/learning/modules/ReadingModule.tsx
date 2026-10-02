@@ -187,7 +187,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-slate-900/60 rounded-3xl border border-slate-800">
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0E0610]/70 rounded-3xl border border-[#4A1224]/60">
           <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-bold text-sm">
             {isArabic ? 'جاري تجهيز نص القراءة الممتع...' : 'Preparing a fun reading lesson for you...'}
@@ -195,7 +195,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
         </div>
       ) : currentExercise ? (
         <div className="flex flex-col gap-5">
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-green-500/30 shadow-2xl backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0610]/95 border-2 border-green-500/30 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-3 mb-4">
               <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 font-black text-xs flex items-center gap-1.5 border border-green-500/30">
                 <BookOpen className="w-3.5 h-3.5" />
@@ -206,7 +206,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => speakText(currentExercise.question, true)}
-                  className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs text-amber-300 flex items-center gap-1 border border-slate-700 transition-all font-bold"
+                  className="px-2.5 py-1 rounded-xl bg-[#150917]/80 hover:bg-slate-700 text-xs text-amber-300 flex items-center gap-1 border border-[#4A1224]/50 transition-all font-bold"
                   title={isArabic ? 'نطق بطيء' : 'Slow audio'}
                 >
                   <Repeat className="w-3.5 h-3.5" />
@@ -223,7 +223,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
             </div>
 
             {/* Main Reading Text Banner */}
-            <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 my-4 text-center">
+            <div className="p-6 rounded-2xl bg-[#080409]/80 border border-[#4A1224]/60 my-4 text-center">
               <p className="text-2xl sm:text-3xl font-black text-green-300 tracking-wide leading-relaxed">
                 {isArabic
                   ? currentExercise.questionArabic || currentExercise.question
@@ -291,7 +291,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
 
             {/* Live Speech Feedback Alert */}
             {speechFeedback && (
-              <div className="p-3 rounded-xl bg-slate-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold mb-3 flex items-center gap-2 animate-in fade-in">
+              <div className="p-3 rounded-xl bg-[#080409]/80 border border-emerald-500/40 text-xs text-emerald-300 font-bold mb-3 flex items-center gap-2 animate-in fade-in">
                 <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{speechFeedback}</span>
               </div>
@@ -308,7 +308,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
                   const isSelected = selectedOption === originalOpt;
                   const isCorrect = originalOpt === currentExercise.correctAnswer;
 
-                  let buttonStyle = 'bg-slate-950/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-green-500/50';
+                  let buttonStyle = 'bg-[#080409]/80 hover:bg-slate-800/90 border-[#4A1224]/60 text-slate-200 hover:border-green-500/50';
 
                   if (isAnswered) {
                     if (isCorrect) {
@@ -316,7 +316,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
                     } else if (isSelected) {
                       buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300';
                     } else {
-                      buttonStyle = 'bg-slate-950/40 border-slate-800 text-slate-500 opacity-60';
+                      buttonStyle = 'bg-[#080409]/40 border-[#4A1224]/60 text-slate-500 opacity-60';
                     }
                   }
 
@@ -339,7 +339,7 @@ export const ReadingModule: React.FC<ReadingModuleProps> = ({
                           <Volume2 className="w-3.5 h-3.5" />
                         </span>
                       </div>
-                      <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className="w-6 h-6 rounded-full border border-[#4A1224]/50 flex items-center justify-center text-xs font-bold shrink-0">
                         {String.fromCharCode(65 + idx)}
                       </div>
                     </button>

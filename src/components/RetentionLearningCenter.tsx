@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   RotateCcw,
   CheckCircle2,
@@ -27,16 +27,56 @@ import {
 import type { RetentionSchedule } from '../lib/spacedRetention';
 
 interface RetentionLearningCenterProps {
-  schedules: Record<string, RetentionSchedule>;
+  schedules?: Record<string, RetentionSchedule>;
   onScheduleUpdated?: (conceptId: string, result: MicroReviewResult) => void;
   lang?: 'en' | 'ar' | 'fr';
 }
+
+const DEFAULT_SAMPLE_SCHEDULES: Record<string, RetentionSchedule> = {
+  pointers: {
+    conceptId: 'pointers',
+    easeFactor: 2.5,
+    intervalDays: 1,
+    repetitions: 1,
+    nextReviewDate: Date.now() - 3600000,
+    lastReviewDate: Date.now() - 86400000,
+    status: 'learning',
+  },
+  recursion: {
+    conceptId: 'recursion',
+    easeFactor: 2.6,
+    intervalDays: 6,
+    repetitions: 2,
+    nextReviewDate: Date.now() + 86400000 * 3,
+    lastReviewDate: Date.now() - 86400000 * 3,
+    status: 'learning',
+  },
+  big_o_notation: {
+    conceptId: 'big_o_notation',
+    easeFactor: 2.7,
+    intervalDays: 15,
+    repetitions: 4,
+    nextReviewDate: Date.now() + 86400000 * 10,
+    lastReviewDate: Date.now() - 86400000 * 5,
+    status: 'retained',
+  },
+  asynchronous_programming: {
+    conceptId: 'asynchronous_programming',
+    easeFactor: 2.1,
+    intervalDays: 1,
+    repetitions: 1,
+    nextReviewDate: Date.now() - 86400000 * 2,
+    lastReviewDate: Date.now() - 86400000 * 3,
+    status: 'learning',
+  },
+};
 
 export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = ({
   schedules,
   onScheduleUpdated,
   lang = 'ar',
 }) => {
+  const effectiveSchedules = (schedules && Object.keys(schedules).length > 0) ? schedules : DEFAULT_SAMPLE_SCHEDULES;
   const isAr = lang === 'ar';
   const [activeTab, setActiveTab] = useState<'due_today' | 'upcoming' | 'mastered' | 'at_risk'>('due_today');
   const [dashboardData, setDashboardData] = useState<RetentionDashboardData>({
@@ -54,14 +94,14 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
   const [startTime, setStartTime] = useState<number>(0);
 
   useEffect(() => {
-    const data = categorizeRetentionState(schedules, undefined, Date.now());
+    const data = categorizeRetentionState(effectiveSchedules, undefined, Date.now());
     setDashboardData(data);
 
     // Auto-select first non-empty tab if current is empty
     if (data.dueToday.length === 0 && data.atRisk.length > 0 && activeTab === 'due_today') {
       setActiveTab('at_risk');
     }
-  }, [schedules]);
+  }, [effectiveSchedules]);
 
   const handleStartReview = (item: RetentionItem) => {
     const q = generateMicroReview(item.conceptId, lang);
@@ -119,12 +159,12 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
       : dashboardData.upcoming;
 
   return (
-    <div className="w-full rounded-3xl bg-[#0d101d]/90 border border-slate-800/80 p-6 backdrop-blur-xl shadow-2xl text-slate-100 font-sans">
+    <div className="w-full rounded-3xl bg-[#080409]/90 border border-[#4A1224]/60 p-6 backdrop-blur-xl shadow-2xl text-slate-100 font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-800/60">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-[#4A1224]/50">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="p-2 rounded-xl bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
               <RotateCcw className="w-5 h-5" />
             </span>
             <h2 className="text-xl font-bold text-white tracking-wide">
@@ -139,12 +179,12 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
         </div>
 
         {/* Global Summary Badge */}
-        <div className="flex items-center gap-3 bg-[#13172b] border border-slate-800 rounded-2xl p-2.5 px-4">
+        <div className="flex items-center gap-3 bg-[#13172b] border border-[#4A1224]/60 rounded-2xl p-2.5 px-4">
           <div className="text-right">
             <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
               {isAr ? 'مستحق المراجعة' : 'Reviews Ready'}
             </div>
-            <div className="text-lg font-black text-cyan-400">
+            <div className="text-lg font-black text-[#E5A93C]">
               {dashboardData.dueToday.length + dashboardData.atRisk.length}
             </div>
           </div>
@@ -167,15 +207,15 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
           onClick={() => setActiveTab('due_today')}
           className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all text-sm font-semibold ${
             activeTab === 'due_today'
-              ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300 shadow-lg shadow-cyan-950/30'
-              : 'bg-[#121526]/50 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+              ? 'bg-[#4A1224]/40 border-[#E5A93C]/40 text-[#E5A93C] shadow-lg shadow-[#E5A93C]/20'
+              : 'bg-[#150917]/50 border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
           }`}
         >
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-cyan-400" />
+            <Clock className="w-4 h-4 text-[#E5A93C]" />
             <span>{isAr ? 'مستحق اليوم' : 'Due Today'}</span>
           </div>
-          <span className="px-2 py-0.5 rounded-full text-xs font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+          <span className="px-2 py-0.5 rounded-full text-xs font-black bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30">
             {dashboardData.dueToday.length}
           </span>
         </button>
@@ -186,7 +226,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
           className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all text-sm font-semibold ${
             activeTab === 'at_risk'
               ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-lg shadow-amber-950/30'
-              : 'bg-[#121526]/50 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+              : 'bg-[#150917]/50 border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -204,7 +244,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
           className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all text-sm font-semibold ${
             activeTab === 'mastered'
               ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-lg shadow-emerald-950/30'
-              : 'bg-[#121526]/50 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+              : 'bg-[#150917]/50 border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -221,15 +261,15 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
           onClick={() => setActiveTab('upcoming')}
           className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all text-sm font-semibold ${
             activeTab === 'upcoming'
-              ? 'bg-indigo-500/15 border-indigo-500/40 text-indigo-300 shadow-lg shadow-indigo-950/30'
-              : 'bg-[#121526]/50 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+              ? 'bg-indigo-500/15 border-[#E5A93C]/30 text-indigo-300 shadow-lg shadow-indigo-950/30'
+              : 'bg-[#150917]/50 border-[#4A1224]/60 text-slate-400 hover:text-slate-200 hover:border-[#4A1224]/50'
           }`}
         >
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-indigo-400" />
+            <Layers className="w-4 h-4 text-[#E5A93C]" />
             <span>{isAr ? 'قادم لاحقاً' : 'Upcoming'}</span>
           </div>
-          <span className="px-2 py-0.5 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+          <span className="px-2 py-0.5 rounded-full text-xs font-black bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60">
             {dashboardData.upcoming.length}
           </span>
         </button>
@@ -238,7 +278,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
       {/* Concept Items List */}
       <div className="space-y-3 min-h-[220px]">
         {currentList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 px-4 rounded-2xl bg-[#121526]/30 border border-slate-800/50 text-center">
+          <div className="flex flex-col items-center justify-center py-12 px-4 rounded-2xl bg-[#150917]/30 border border-[#4A1224]/50 text-center">
             <Sparkles className="w-8 h-8 text-slate-600 mb-2" />
             <div className="text-sm font-semibold text-slate-300">
               {isAr ? 'لا توجد عناصر في هذا القسم حالياً' : 'No items in this category currently'}
@@ -259,7 +299,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
             return (
               <div
                 key={item.conceptId}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#121526]/80 border border-slate-800/80 hover:border-slate-700 transition-all hover:bg-[#151930]"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#150917]/80 border border-[#4A1224]/60 hover:border-[#4A1224]/50 transition-all hover:bg-[#151930]"
               >
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2.5 flex-wrap">
@@ -297,7 +337,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
                 <div>
                   <button
                     onClick={() => handleStartReview(item)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-md shadow-cyan-950/40 transition-all active:scale-95"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white shadow-md shadow-[#E5A93C]/20 transition-all active:scale-95"
                   >
                     <Zap className="w-3.5 h-3.5" />
                     <span>{isAr ? 'مراجعة سريعة (60ث)' : 'Micro-Review (60s)'}</span>
@@ -313,11 +353,11 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
       {/* Interactive Micro-Review Modal */}
       {activeReviewItem && activeQuestion && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-lg rounded-3xl bg-[#101322] border border-slate-700/80 p-6 shadow-2xl text-slate-100 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-lg rounded-3xl bg-[#0E0610] border border-[#4A1224]/60 p-6 shadow-2xl text-slate-100 animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 border-b border-[#4A1224]/60">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <span className="p-1.5 rounded-lg bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
                   <Zap className="w-4 h-4" />
                 </span>
                 <div>
@@ -339,7 +379,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
             </div>
 
             {/* Question prompt */}
-            <div className="my-5 p-4 rounded-2xl bg-[#161a30] border border-slate-800">
+            <div className="my-5 p-4 rounded-2xl bg-[#161a30] border border-[#4A1224]/60">
               <p className="text-sm text-slate-100 font-medium leading-relaxed">
                 {isAr ? activeQuestion.promptAr : activeQuestion.promptEn}
               </p>
@@ -350,7 +390,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
               {activeQuestion.options.map((opt, idx) => {
                 const isSelected = selectedOption === idx;
                 const isCorrect = idx === activeQuestion.correctIndex;
-                let btnStyle = 'bg-[#14182b] border-slate-800 text-slate-300 hover:border-slate-600 hover:bg-[#181d36]';
+                let btnStyle = 'bg-[#14182b] border-[#4A1224]/60 text-slate-300 hover:border-slate-600 hover:bg-[#181d36]';
 
                 if (selectedOption !== null) {
                   if (isCorrect) {
@@ -358,7 +398,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
                   } else if (isSelected) {
                     btnStyle = 'bg-rose-500/20 border-rose-500/60 text-rose-200';
                   } else {
-                    btnStyle = 'bg-[#121526]/40 border-slate-900 text-slate-600';
+                    btnStyle = 'bg-[#150917]/40 border-slate-900 text-slate-600';
                   }
                 }
 
@@ -380,7 +420,7 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
 
             {/* Feedback & SM-2 Result Progression */}
             {reviewResult && (
-              <div className="mt-5 p-4 rounded-2xl bg-[#121528] border border-slate-800 space-y-3 animate-in fade-in">
+              <div className="mt-5 p-4 rounded-2xl bg-[#121528] border border-[#4A1224]/60 space-y-3 animate-in fade-in">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {reviewResult.isCorrect ? (
@@ -435,3 +475,5 @@ export const RetentionLearningCenter: React.FC<RetentionLearningCenterProps> = (
     </div>
   );
 };
+
+export default RetentionLearningCenter;

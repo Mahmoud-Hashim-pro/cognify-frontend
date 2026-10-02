@@ -100,7 +100,7 @@ export default function DeafEcosystemView({
       subtitleEn: '3D Avatar, Sign Studio & Two-Way Communication',
       subtitleAr: 'أفاتار ثلاثي الأبعاد واستوديو الإشارة وجسر التواصل',
       icon: Accessibility,
-      color: 'text-indigo-400',
+      color: 'text-[#E5A93C]',
       activeBg: 'bg-indigo-500/20 text-indigo-200 border-indigo-400 shadow-indigo-500/20',
       gradient: 'from-indigo-500 via-purple-500 to-indigo-600',
     },
@@ -124,28 +124,28 @@ export default function DeafEcosystemView({
       subtitleEn: 'Acoustic AI sirens, smoke alarms & car horns',
       subtitleAr: 'كشف مباشر لصفارات الإنذار، الحريق وكلاكس السيارات',
       icon: Radio,
-      color: 'text-cyan-400',
-      activeBg: 'bg-cyan-500/20 text-cyan-200 border-cyan-400 shadow-cyan-500/20',
-      gradient: 'from-cyan-500 to-teal-500',
+      color: 'text-[#E5A93C]',
+      activeBg: 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C] shadow-[#E5A93C]/20',
+      gradient: 'from-amber-400 to-teal-500',
     },
   ];
 
   return (
     <div 
       dir={isAr ? 'rtl' : 'ltr'}
-      className={`flex-1 flex flex-col h-full bg-[#090b14] text-slate-100 overflow-hidden select-none relative ${
+      className={`flex-1 flex flex-col h-full bg-[#080409] text-slate-100 overflow-hidden select-none relative ${
         largeCaptionScale ? 'text-lg' : ''
       }`}
     >
       {/* ── UNIFIED HIGH-ACCESSIBILITY TOP NAVIGATION & TOGGLE BAR ── */}
-      <header className="shrink-0 z-30 px-3 py-2.5 sm:px-6 sm:py-3.5 bg-[#101322]/95 backdrop-blur-xl border-b border-slate-800 shadow-xl flex flex-col gap-2.5">
+      <header className="shrink-0 z-30 px-3 py-2.5 sm:px-6 sm:py-3.5 bg-[#0E0610]/95 backdrop-blur-xl border-b border-[#4A1224]/60 shadow-xl flex flex-col gap-2.5">
         <div className="flex items-center justify-between gap-3">
           {/* Back to Main Hub & Title */}
           <div className="flex items-center gap-2.5 sm:gap-3.5">
             <button
               onClick={onNavigateBack}
               aria-label={localize(profile.language, 'Back', 'رجوع')}
-              className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
+              className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 hover:bg-slate-800 hover:border-[#4A1224]/50 text-slate-300 hover:text-white transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
             >
               <ArrowLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
               <span className="hidden md:inline text-xs font-black uppercase tracking-wider">
@@ -154,13 +154,13 @@ export default function DeafEcosystemView({
             </button>
 
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shadow-inner">
+              <div className="w-9 h-9 rounded-2xl bg-indigo-500/20 border border-[#E5A93C]/30 flex items-center justify-center text-[#E5A93C] shadow-inner">
                 <Accessibility className="w-5 h-5" />
               </div>
               <div>
                 <h1 className="text-sm sm:text-base font-black text-white leading-tight flex items-center gap-2">
                   <span>{localize(profile.language, 'Deaf & Hard of Hearing Suite', 'منظومة الصم وضعاف السمع الشاملة')}</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 hidden sm:inline">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C] hidden sm:inline">
                     {localize(profile.language, 'All-in-One', 'الكل في شاشة واحدة')}
                   </span>
                 </h1>
@@ -176,10 +176,10 @@ export default function DeafEcosystemView({
             {/* Ambient Safety Indicator */}
             {persistentRadarTicker && (
               <div 
-                className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 text-xs font-bold"
+                className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#2D0B16] border border-[#E5A93C]/30 text-[#E5A93C] text-xs font-bold"
                 title={localize(profile.language, 'Acoustic Hazard Sentinel is actively guarding in the background', 'حارس المخاطر الصوتية يعمل في الخلفية')}
               >
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#4A1224]/40 animate-pulse" />
                 <span>{localize(profile.language, 'Sound Sentinel Active', 'المستشعر الصوتي متيقظ')}</span>
               </div>
             )}
@@ -187,10 +187,10 @@ export default function DeafEcosystemView({
             {/* Cross-Disability Bridge Button */}
             <button
               onClick={() => onTabChange?.('orchestrator')}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 hover:text-white transition-all text-xs font-black flex items-center gap-1.5 active:scale-95 shrink-0"
+              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-gradient-to-r from-[#4A1224]/80 to-[#831843]/50 border border-[#E5A93C]/40 hover:border-[#E5A93C] text-[#E5A93C] hover:text-white transition-all text-xs font-black flex items-center gap-1.5 active:scale-95 shrink-0"
               title={localize(profile.language, 'Open Peer-to-Peer Cross-Disability Bridge', 'فتح جسر التواصل المباشر مع المكفوفين')}
             >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <Sparkles className="w-4 h-4 text-[#E5A93C]" />
               <span className="hidden sm:inline">{localize(profile.language, 'Blind ⇄ Deaf Bridge', 'تواصل مع كفيف 👁️')}</span>
             </button>
 
@@ -199,8 +199,8 @@ export default function DeafEcosystemView({
               aria-label={localize(profile.language, 'Deaf Assistive Quick Toggles', 'تفضيلات وتيسيرات الصم')}
               className={`p-2.5 sm:px-3 sm:py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all ${
                 showAssistiveSettings
-                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-black shadow-lg shadow-cyan-500/20'
-                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
+                  ? 'bg-[#4A1224]/40 text-slate-950 border-[#E5A93C] font-black shadow-lg shadow-[#E5A93C]/20'
+                  : 'bg-[#150917] border-[#4A1224]/60 text-slate-300 hover:text-white hover:border-[#4A1224]/50'
               }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
@@ -213,7 +213,7 @@ export default function DeafEcosystemView({
         <div 
           role="tablist"
           aria-label={localize(profile.language, 'Deaf feature switcher', 'مبدل أدوات الصم')}
-          className="grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-2 p-1 bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-inner"
+          className="grid grid-cols-2 md:grid-cols-3 gap-1.5 sm:gap-2 p-1 bg-[#0E0610]/95 border border-[#4A1224]/70 rounded-2xl shadow-inner"
         >
           {DEAF_TOOLS.map((tool) => {
             const isSelected = activeTool === tool.id;
@@ -228,7 +228,7 @@ export default function DeafEcosystemView({
                 className={`min-h-[46px] sm:min-h-[52px] px-2 sm:px-4 py-2 rounded-xl text-start transition-all flex items-center justify-between gap-2 border relative active:scale-[0.98] ${
                   isSelected
                     ? `${tool.activeBg} border shadow-lg font-black`
-                    : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200 hover:bg-[#150917]/60'
                 }`}
               >
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -267,7 +267,7 @@ export default function DeafEcosystemView({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-slate-800/80 pt-2.5 mt-1"
+              className="overflow-hidden border-t border-[#4A1224]/60 pt-2.5 mt-1"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 text-start">
                 {/* 1. Visual Strobe Toggle */}
@@ -276,7 +276,7 @@ export default function DeafEcosystemView({
                   className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
                     strobeAlertsEnabled
                       ? 'bg-red-500/15 border-red-500/40 text-red-300'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -302,7 +302,7 @@ export default function DeafEcosystemView({
                   className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
                     hapticEnabled
                       ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -323,8 +323,8 @@ export default function DeafEcosystemView({
                   onClick={() => setLargeCaptionScale(!largeCaptionScale)}
                   className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
                     largeCaptionScale
-                      ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                      ? 'bg-[#4A1224]/40 border-[#E5A93C]/40 text-[#E5A93C]'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -334,7 +334,7 @@ export default function DeafEcosystemView({
                     </span>
                   </div>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    largeCaptionScale ? 'bg-cyan-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-500'
+                    largeCaptionScale ? 'bg-[#4A1224]/40 text-slate-950 font-black' : 'bg-slate-800 text-slate-500'
                   }`}>
                     {largeCaptionScale ? 'ON' : 'OFF'}
                   </span>
@@ -345,8 +345,8 @@ export default function DeafEcosystemView({
                   onClick={() => setPersistentRadarTicker(!persistentRadarTicker)}
                   className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
                     persistentRadarTicker
-                      ? 'bg-indigo-500/15 border-indigo-500/40 text-indigo-300'
-                      : 'bg-slate-900 border-slate-800 text-slate-400'
+                      ? 'bg-indigo-500/15 border-[#E5A93C]/30 text-indigo-300'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">

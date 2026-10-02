@@ -1,7 +1,42 @@
-import { doc, setDoc, collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { getVisitorGeo, formatCountryName, getDeviceSummary } from './geo';
 import { LoginHistoryRecord } from '../types';
+
+/**
+ * Enforces privacy data minimization (GDPR Article 5(1)(e)):
+ * Retains a maximum of 50 login history records, and purges entries older than 90 days
+ * (while guaranteeing at least the most recent 10 sessions are preserved for security auditing).
+ */
+export async function pruneOldLoginHistory(uid: string): Promise<void> {
+  if (!uid) return;
+  try {
+    const q = query(
+      collection(db, 'users', uid, 'loginHistory'),
+      orderBy('timestamp', 'desc')
+    );
+    const snap = await getDocs(q);
+    if (snap.empty || snap.docs.length <= 10) return;
+
+    const ninetyDaysAgo = Date.now() - 90 * 24 * 60 * 60 * 1000;
+    const docsToDelete = snap.docs.filter((docSnap, index) => {
+      // Keep first 10 unconditionally for audit trail continuity
+      if (index < 10) return false;
+      // Cap at 50 records total
+      if (index >= 50) return true;
+      // Prune records older than 90 days
+      const data = docSnap.data();
+      const time = data.timestamp ? new Date(data.timestamp).getTime() : 0;
+      return time > 0 && time < ninetyDaysAgo;
+    });
+
+    for (const d of docsToDelete) {
+      await deleteDoc(d.ref).catch(() => {});
+    }
+  } catch (err) {
+    console.warn('[LoginHistory] Failed to prune stale login records:', err);
+  }
+}
 
 export async function recordUserLoginSession(uid: string): Promise<void> {
   if (!uid || typeof window === 'undefined') return;
@@ -59,6 +94,9 @@ export async function recordUserLoginSession(uid: string): Promise<void> {
 
     // Mark as recorded for this session tab
     window.sessionStorage.setItem(sessionKey, 'true');
+
+    // Asynchronously prune stale login records beyond retention boundary
+    pruneOldLoginHistory(uid).catch(() => {});
   } catch (err) {
     console.warn('[LoginHistory] Failed to record login session:', err);
   }

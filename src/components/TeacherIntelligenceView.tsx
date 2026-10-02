@@ -243,32 +243,32 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
   }, [classId, className, studentCohort]);
 
   return (
-    <div className="min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Background Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 -left-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/3 -left-20 w-96 h-96 bg-[#4A1224]/30 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-4">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2.5 rounded-2xl bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 transition"
+                className="p-2.5 rounded-2xl bg-[#150917]/70 hover:bg-slate-700/60 text-slate-300 transition"
                 aria-label="Back"
               >
                 <ArrowRight className={`w-5 h-5 ${isAr ? '' : 'rotate-180'}`} />
               </button>
             )}
-            <div className="p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white shadow-lg shadow-indigo-500/20">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600 to-rose-600 text-white shadow-lg shadow-indigo-500/20">
               <GraduationCap className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60">
                   {classId}
                 </span>
                 <span className="text-xs font-medium text-slate-400">
@@ -283,12 +283,12 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
 
           <div className="flex flex-wrap items-center gap-3">
             {/* Live Data vs Benchmark Toggle */}
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950/80 border border-slate-800">
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#080409]/80 border border-[#4A1224]/60">
               <button
                 onClick={() => setViewMode('live')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
                   viewMode === 'live'
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                    ? 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -299,21 +299,21 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                 onClick={() => setViewMode('benchmark')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
                   viewMode === 'benchmark'
-                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                    ? 'bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <Sparkles className="w-3 h-3 text-indigo-400" />
+                <Sparkles className="w-3 h-3 text-[#E5A93C]" />
                 {isAr ? 'عينة معيارية [Benchmark Baseline Dataset] (20)' : '[Benchmark Baseline Dataset] (20)'}
               </button>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
-              <Users className="w-4 h-4 text-cyan-400" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
+              <Users className="w-4 h-4 text-[#E5A93C]" />
               <span className="text-sm font-semibold text-white">{dashboardData.totalStudents}</span>
               <span className="text-xs text-slate-400">{isAr ? 'طالباً' : 'Students'}</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
               <AlertTriangle className="w-4 h-4 text-amber-400" />
               <span className="text-sm font-semibold text-amber-300">{dashboardData.struggleClusters.length}</span>
               <span className="text-xs text-slate-400">{isAr ? 'بؤر تعثر' : 'Clusters'}</span>
@@ -343,14 +343,14 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
 
         {/* Curriculum Pacing Banner */}
         {dashboardData.curriculumPacing && (
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-5 backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-5 backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
             <div className="flex items-center gap-3.5">
               <div className={`p-3 rounded-2xl ${
                 dashboardData.curriculumPacing.pacingDecision === 'decelerate_review'
                   ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                   : dashboardData.curriculumPacing.pacingDecision === 'accelerate_enrich'
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                  : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                  : 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
               }`}>
                 <Clock className="w-5 h-5" />
               </div>
@@ -364,7 +364,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       ? 'bg-amber-500/20 text-amber-300'
                       : dashboardData.curriculumPacing.pacingDecision === 'accelerate_enrich'
                       ? 'bg-emerald-500/20 text-emerald-300'
-                      : 'bg-cyan-500/20 text-cyan-300'
+                      : 'bg-[#4A1224]/50 text-[#E5A93C]'
                   }`}>
                     {dashboardData.curriculumPacing.pacingDecision.replace('_', ' ').toUpperCase()}
                   </span>
@@ -379,7 +379,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                 </p>
               </div>
             </div>
-            <div className="text-xs px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 shrink-0">
+            <div className="text-xs px-3 py-2 rounded-xl bg-[#0E0610]/95 border border-[#4A1224]/60 text-slate-300 shrink-0">
               <span className="text-slate-400 block">{isAr ? 'الوحدة القادمة الموصى بها:' : 'Next Suggested Module:'}</span>
               <span className="font-semibold text-white">{dashboardData.curriculumPacing.nextPlannedModule}</span>
             </div>
@@ -387,13 +387,13 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
         )}
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#121524] border border-slate-800/80 w-full sm:w-fit overflow-x-auto">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('clusters')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'clusters'
                 ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <AlertTriangle className="w-4 h-4" />
@@ -408,7 +408,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'heatmap'
                 ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <Grid className="w-4 h-4" />
@@ -423,7 +423,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'groups'
                 ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -438,7 +438,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'efficacy'
                 ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -450,7 +450,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'actions'
                 ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <Lightbulb className="w-4 h-4" />
@@ -472,7 +472,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                 return (
                   <div
                     key={cluster.conceptId}
-                    className="flex flex-col justify-between bg-[#121524]/90 border border-slate-800/80 hover:border-slate-700 rounded-3xl p-6 backdrop-blur-xl shadow-xl transition"
+                    className="flex flex-col justify-between bg-[#0E0610]/95 border border-[#4A1224]/60 hover:border-[#4A1224]/50 rounded-3xl p-6 backdrop-blur-xl shadow-xl transition"
                   >
                     <div className="space-y-4">
                       <div className="flex items-start justify-between gap-3">
@@ -532,14 +532,14 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 mt-4">
+                    <div className="pt-4 border-t border-[#4A1224]/60 flex items-center justify-between text-xs text-slate-400 mt-4">
                       <span>{isAr ? 'متوسط الدقة' : 'Average Accuracy'}:</span>
                       <span className="font-bold text-white">
                         {Math.round(cluster.averageAccuracy * 100)}%
                       </span>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between gap-2 mt-3">
+                    <div className="pt-3 border-t border-[#4A1224]/50 flex items-center justify-between gap-2 mt-3">
                       <span className="text-xs text-slate-400">
                         {isAr ? 'إرسال تنبيه علاجي:' : 'Remediation:'}
                       </span>
@@ -584,7 +584,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
         {activeTab === 'heatmap' && dashboardData.heatmap && (
           <div className="space-y-4">
             {/* Heatmap Controls Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-4 backdrop-blur-xl shadow-xl">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-4 backdrop-blur-xl shadow-xl">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
@@ -592,13 +592,13 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={isAr ? 'بحث عن طالب في المصفوفة...' : 'Search student in heatmap...'}
-                  className="w-full pl-10 pr-4 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 transition"
+                  className="w-full pl-10 pr-4 py-2 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 transition"
                 />
               </div>
 
               <div className="flex items-center gap-2">
                 {/* Legend */}
-                <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs">
+                <div className="hidden lg:flex items-center gap-3 px-3 py-1.5 rounded-2xl bg-[#080409]/60 border border-[#4A1224]/60 text-xs">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                     <span className="text-slate-300">&ge; 80% ({isAr ? 'إتقان تام' : 'Mastered'})</span>
@@ -649,12 +649,12 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
             </div>
 
             {/* Matrix Table */}
-            <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl">
+            <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-300 border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-800 bg-slate-950/60">
-                      <th className="p-4 font-bold text-slate-300 sticky left-0 bg-slate-950/90 z-10 min-w-[160px]">
+                    <tr className="border-b border-[#4A1224]/60 bg-[#080409]/60">
+                      <th className="p-4 font-bold text-slate-300 sticky left-0 bg-[#080409]/90 z-10 min-w-[160px]">
                         {isAr ? 'الطالب' : 'Student'}
                       </th>
                       {dashboardData.heatmap.concepts.map((cId) => {
@@ -688,7 +688,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       .map((student) => {
                         return (
                           <tr key={student.studentUid} className="hover:bg-slate-800/30 transition">
-                            <td className="p-4 font-medium text-slate-200 sticky left-0 bg-[#121524]/95 z-10">
+                            <td className="p-4 font-medium text-slate-200 sticky left-0 bg-[#0E0610]/95 z-10">
                               <div className="font-semibold text-white">{student.studentName}</div>
                               <div className="text-[10px] text-slate-500 font-mono">{student.studentUid}</div>
                             </td>
@@ -741,7 +741,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
         {activeTab === 'groups' && (
           <div className="space-y-6">
             <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-indigo-400 shrink-0" />
+              <Sparkles className="w-5 h-5 text-[#E5A93C] shrink-0" />
               <p className="text-sm text-indigo-200">
                 {isAr
                   ? 'تم تقسيم الصف تلقائياً استناداً إلى إتقان المفاهيم ومستويات الإجهاد الذهني لتمكين التدريس المتباين الفعّال.'
@@ -757,7 +757,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                 return (
                   <div
                     key={group.id}
-                    className="flex flex-col justify-between bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
+                    className="flex flex-col justify-between bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
                   >
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
@@ -775,7 +775,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                               ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                               : isAdvanced
                               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                              : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                              : 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
                           }`}
                         >
                           {group.recommendedPedagogy.toUpperCase()}
@@ -795,7 +795,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                           {group.students.map((st) => (
                             <span
                               key={st.uid}
-                              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-200"
+                              className="text-xs px-2.5 py-1 rounded-lg bg-[#150917]/80 border border-[#4A1224]/50 text-slate-200"
                             >
                               {st.name} ({Math.round(st.accuracy * 100)}%)
                             </span>
@@ -804,7 +804,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-indigo-300">
+                    <div className="pt-4 border-t border-[#4A1224]/60 flex items-center justify-between text-xs text-indigo-300">
                       <span>{isAr ? 'الأسلوب الموصى به' : 'Recommended Pedagogy'}:</span>
                       <span className="font-bold uppercase tracking-wider">{group.recommendedPedagogy}</span>
                     </div>
@@ -825,10 +825,10 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                 return (
                   <div
                     key={stratKey}
-                    className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
+                    className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#E5A93C]">
                         {eff.strategy.replace('_', ' ')}
                       </span>
                       {eff.isCalibrated ? (
@@ -847,7 +847,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       <span className="text-xs text-slate-400">{isAr ? 'نسبة نجاح الاستراتيجية' : 'Class Efficacy Rate'}</span>
                     </div>
 
-                    <div className="space-y-1 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
+                    <div className="space-y-1 text-xs text-slate-400 border-t border-[#4A1224]/60 pt-3">
                       <div className="flex justify-between">
                         <span>{isAr ? 'عدد المحاولات' : 'Attempts'}:</span>
                         <span className="font-semibold text-slate-200">{eff.attemptsCount}</span>
@@ -877,14 +877,14 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
               return (
                 <div
                   key={rec.id}
-                  className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
                   <div className="flex items-start gap-4">
                     <div
                       className={`p-3 rounded-2xl shrink-0 ${
                         isUrgent
                           ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                          : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+                          : 'bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60'
                       }`}
                     >
                       {isUrgent ? <AlertTriangle className="w-6 h-6" /> : <Lightbulb className="w-6 h-6" />}
@@ -893,7 +893,7 @@ export const TeacherIntelligenceView: React.FC<TeacherIntelligenceViewProps> = (
                       <div className="flex items-center gap-2">
                         <span
                           className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                            isUrgent ? 'bg-rose-500/20 text-rose-300' : 'bg-indigo-500/20 text-indigo-300'
+                            isUrgent ? 'bg-rose-500/20 text-rose-300' : 'bg-[#4A1224]/40 text-[#E5A93C]'
                           }`}
                         >
                           {rec.priority.toUpperCase()}

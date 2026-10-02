@@ -413,7 +413,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
 
   return (
     <div
-      className={`flex-1 flex flex-col h-full bg-slate-950 text-white overflow-hidden select-none relative ${
+      className={`flex-1 flex flex-col h-full bg-[#080409] text-white overflow-hidden select-none relative ${
         flashScreen ? 'ring-8 ring-inset ring-red-600 animate-pulse' : ''
       }`}
       dir={isAr ? 'rtl' : 'ltr'}
@@ -431,7 +431,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
       </AnimatePresence>
 
       {/* Header Bar */}
-      <header className="p-3 sm:p-4 border-b border-slate-800 flex items-center justify-between gap-3 bg-slate-900/80 backdrop-blur-xl z-20">
+      <header className="p-3 sm:p-4 border-b border-[#4A1224]/60 flex items-center justify-between gap-3 bg-[#0E0610]/90 backdrop-blur-xl z-20">
         <div className="flex items-center gap-2.5">
           {onNavigateBack && (
             <button
@@ -443,13 +443,13 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             </button>
           )}
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-950/50">
+            <div className="w-9 h-9 rounded-2xl bg-[#4A1224]/50 border border-[#E5A93C]/40 flex items-center justify-center text-[#E5A93C] shadow-lg shadow-[#E5A93C]/20">
               <Radio className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <h1 className="font-black text-sm sm:text-base leading-tight flex items-center gap-2">
                 <span>{t('Acoustic Hazard Sentinel', 'مستشعر الأخطار الصوتية', 'Sentinelle Acoustique')}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-normal">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#4A1224]/40 border border-[#E5A93C]/40 text-[#E5A93C] font-normal">
                   {t('For the Deaf', 'للصم وضعاف السمع', 'Pour les sourds')}
                 </span>
               </h1>
@@ -466,7 +466,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             value={sensitivity}
             onChange={(e) => setSensitivity(e.target.value as any)}
             aria-label={t('Sensitivity', 'الحساسية', 'Sensibilité')}
-            className="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-xl px-2 py-1.5 outline-none font-semibold"
+            className="bg-slate-800 border border-[#4A1224]/50 text-slate-200 text-xs rounded-xl px-2 py-1.5 outline-none font-semibold"
           >
             <option value="high">{t('High Sensitivity', 'حساسية عالية', 'Haute')}</option>
             <option value="normal">{t('Normal Sensitivity', 'حساسية معتدلة', 'Normale')}</option>
@@ -478,7 +478,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
             className={`px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg active:scale-95 transition-all ${
               isListening
                 ? 'bg-red-600 hover:bg-red-500 text-white shadow-red-950/60'
-                : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-cyan-950/60'
+                : 'bg-[#4A1224]/40 hover:bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-[#E5A93C]/20'
             }`}
           >
             {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
@@ -488,7 +488,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
       </header>
 
       {/* Honest Technical Transparency Banner */}
-      <div className="bg-slate-900/90 border-b border-slate-800/80 px-4 py-1.5 text-[11px] text-slate-400 flex items-center gap-2">
+      <div className="bg-[#0E0610]/95 border-b border-[#4A1224]/60 px-4 py-1.5 text-[11px] text-slate-400 flex items-center gap-2">
         <span className="text-amber-400 font-bold shrink-0">ℹ️</span>
         <span className="truncate">
           {isAr
@@ -502,7 +502,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
       {/* Main Content Area */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
         {/* Radar & Decibel Gauge (Left 7 cols) */}
-        <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-e border-slate-800">
+        <div className="lg:col-span-7 p-4 sm:p-6 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-e border-[#4A1224]/60">
           {micError && (
             <div className="p-4 rounded-2xl bg-red-950/60 border border-red-500/50 text-red-200 text-xs sm:text-sm text-center mb-4 max-w-md">
               <AlertTriangle className="w-6 h-6 mx-auto mb-2 text-red-400" />
@@ -544,19 +544,19 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
           </AnimatePresence>
 
           {/* Circular Omnidirectional Sound Field Display */}
-          <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-2 border-cyan-500/30 bg-slate-900/90 flex items-center justify-center shadow-2xl shadow-cyan-950/50 overflow-hidden">
+          <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-2 border-[#E5A93C]/30 bg-[#0E0610]/95 flex items-center justify-center shadow-2xl shadow-[#E5A93C]/20 overflow-hidden">
             {/* Concentric Intensity Wave Rings */}
             <motion.div 
               animate={{ scale: [1, 1.06, 1], opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute w-3/4 h-3/4 rounded-full border border-cyan-500/20" 
+              className="absolute w-3/4 h-3/4 rounded-full border border-[#E5A93C]/20" 
             />
             <motion.div 
               animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.5, 0.2] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute w-1/2 h-1/2 rounded-full border border-cyan-500/30" 
+              className="absolute w-1/2 h-1/2 rounded-full border border-[#E5A93C]/30" 
             />
-            <div className="absolute w-1/4 h-1/4 rounded-full border border-cyan-500/40" />
+            <div className="absolute w-1/4 h-1/4 rounded-full border border-[#E5A93C]/40" />
 
             {/* Omnidirectional Pulse Ripple when sound is active */}
             {isListening && (
@@ -568,14 +568,14 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
                   height: `${Math.min(90, Math.max(20, (decibels / 120) * 90))}%`,
                 }}
                 className={`absolute rounded-full border-2 ${
-                  decibels > 85 ? 'border-red-500 bg-red-500/10' : decibels > 70 ? 'border-amber-400 bg-amber-400/10' : 'border-cyan-400 bg-cyan-400/10'
+                  decibels > 85 ? 'border-red-500 bg-red-500/10' : decibels > 70 ? 'border-amber-400 bg-amber-400/10' : 'border-[#E5A93C] bg-[#E5A93C]/10'
                 }`}
               />
             )}
 
             {/* Center Decibel Hub */}
-            <div className="relative z-10 text-center p-3 rounded-2xl bg-slate-950/90 border border-cyan-500/40 shadow-xl backdrop-blur-md">
-              <div className="font-mono font-black text-2xl sm:text-3xl text-cyan-300">
+            <div className="relative z-10 text-center p-3 rounded-2xl bg-[#080409]/90 border border-[#E5A93C]/40 shadow-xl backdrop-blur-md">
+              <div className="font-mono font-black text-2xl sm:text-3xl text-[#E5A93C]">
                 {decibels}
                 <span className="text-xs text-slate-400 ms-1">dB</span>
               </div>
@@ -595,9 +595,9 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
           <div className="w-full max-w-md mt-6 space-y-2">
             <div className="flex justify-between text-xs text-slate-400 font-semibold">
               <span>{t('Sound Level Gauge', 'مؤشر شدة الصوت', 'Niveau Sonore')}</span>
-              <span className="font-mono text-cyan-300 font-bold">{decibels} / 120 dB</span>
+              <span className="font-mono text-[#E5A93C] font-bold">{decibels} / 120 dB</span>
             </div>
-            <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
+            <div className="h-3 w-full bg-[#150917] rounded-full overflow-hidden p-0.5 border border-[#4A1224]/60">
               <div
                 style={{ width: `${Math.min(100, Math.max(0, ((decibels - 30) / 90) * 100))}%` }}
                 className={`h-full rounded-full transition-all duration-150 ${
@@ -605,7 +605,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
                     ? 'bg-gradient-to-r from-red-500 to-rose-600 shadow-lg shadow-red-500/50'
                     : decibels > 70
                     ? 'bg-gradient-to-r from-amber-400 to-orange-500'
-                    : 'bg-gradient-to-r from-cyan-500 to-emerald-500'
+                    : 'bg-gradient-to-r from-amber-400 to-emerald-500'
                 }`}
               />
             </div>
@@ -613,10 +613,10 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
         </div>
 
         {/* Detected Sound History Log (Right 5 cols) */}
-        <div className="lg:col-span-5 p-4 sm:p-5 flex flex-col h-full bg-slate-900/40 overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+        <div className="lg:col-span-5 p-4 sm:p-5 flex flex-col h-full bg-[#150917]/40 overflow-hidden">
+          <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3 mb-3">
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-cyan-400" />
+              <History className="w-4 h-4 text-[#E5A93C]" />
               <h2 className="font-bold text-sm text-slate-200">
                 {t('Detected Sounds Log', 'سجل الأصوات المرصودة', 'Historique des Sons')}
               </h2>
@@ -650,7 +650,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
                   className={`p-3 rounded-2xl border transition-all flex items-start gap-3 ${
                     evt.severity === 'danger'
                       ? 'bg-red-950/40 border-red-500/40 hover:bg-red-950/60'
-                      : 'bg-slate-800/60 border-slate-700/60 hover:bg-slate-800'
+                      : 'bg-[#150917]/70 border-[#4A1224]/50 hover:bg-slate-800'
                   }`}
                 >
                   <div className="p-2 rounded-xl bg-black/40 shrink-0 mt-0.5">
@@ -667,7 +667,7 @@ export default function AmbientSoundRadar({ profile, onNavigateBack }: AmbientSo
                       {isAr ? evt.descAr : isFr ? evt.descFr : evt.descEn}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-cyan-300">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#150917] border border-[#4A1224]/50 text-[#E5A93C]">
                         {evt.db} dB
                       </span>
                       <span

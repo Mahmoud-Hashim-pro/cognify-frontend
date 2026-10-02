@@ -104,17 +104,17 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
   const openApiSpec = useMemo(() => generateOpenApiSpec(), []);
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8 font-sans relative">
+    <div className="w-full min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8 font-sans relative">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-[#4A1224]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Cockpit Header */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl text-cyan-400">
+                <div className="p-3 bg-[#4A1224]/30 border border-[#E5A93C]/30 rounded-2xl text-[#E5A93C]">
                   <Terminal className="w-7 h-7" />
                 </div>
                 <div>
@@ -134,7 +134,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <Shield className="w-3.5 h-3.5" /> SHA-256 Hashed Keys
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
                 <Lock className="w-3.5 h-3.5" /> HMAC Signed
               </span>
             </div>
@@ -142,11 +142,11 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
         </div>
 
         {/* Section 1: API Key Lifecycle */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Key className="w-5 h-5 text-cyan-400" />
+                <Key className="w-5 h-5 text-[#E5A93C]" />
                 API Keys ({apiKeys.filter(k => k.status === 'active').length} Active)
               </h2>
               <p className="text-xs text-slate-400 mt-1">
@@ -157,8 +157,8 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
 
           {/* New Key Revealed Banner */}
           {newlyGeneratedKey && (
-            <div className="p-5 bg-cyan-950/40 border border-cyan-500/50 rounded-2xl space-y-2">
-              <div className="flex justify-between items-center text-xs font-bold text-cyan-400">
+            <div className="p-5 bg-[#2D0B16] border border-[#E5A93C]/50 rounded-2xl space-y-2">
+              <div className="flex justify-between items-center text-xs font-bold text-[#E5A93C]">
                 <span>Save Your API Key Now (Will Not Be Displayed Again)</span>
                 <button
                   onClick={() => setNewlyGeneratedKey(null)}
@@ -167,7 +167,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
                   Dismiss
                 </button>
               </div>
-              <div className="flex items-center gap-2 p-3 bg-[#0A0C14] rounded-xl border border-slate-800 font-mono text-xs text-cyan-300 select-all">
+              <div className="flex items-center gap-2 p-3 bg-[#080409] rounded-xl border border-[#4A1224]/60 font-mono text-xs text-[#E5A93C] select-all">
                 <span className="flex-1 truncate">{newlyGeneratedKey}</span>
                 <button
                   onClick={() => navigator.clipboard.writeText(newlyGeneratedKey)}
@@ -180,7 +180,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
           )}
 
           {/* Create Key Form */}
-          <form onSubmit={handleCreateKey} className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl space-y-4">
+          <form onSubmit={handleCreateKey} className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-4">
             <span className="text-xs font-bold text-white block">Generate New Scoped API Key</span>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
@@ -188,11 +188,11 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
                 placeholder="Key Name (e.g. Canvas LMS Sync)"
                 value={keyName}
                 onChange={e => setKeyName(e.target.value)}
-                className="flex-1 px-3.5 py-2.5 bg-[#121524] border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:border-cyan-500/50 outline-none"
+                className="flex-1 px-3.5 py-2.5 bg-[#0E0610] border border-[#4A1224]/60 rounded-xl text-xs text-white placeholder-slate-500 focus:border-[#E5A93C]/50 outline-none"
               />
               <button
                 type="submit"
-                className="py-2.5 px-5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
+                className="py-2.5 px-5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:bg-[#E5A93C] text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
               >
                 <Plus className="w-4 h-4" /> Generate Secret Key
               </button>
@@ -207,7 +207,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
                     type="checkbox"
                     checked={selectedScopes.includes(sc)}
                     onChange={() => toggleScope(sc)}
-                    className="rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0"
+                    className="rounded bg-slate-800 border-[#4A1224]/50 text-[#E5A93C] focus:ring-0"
                   />
                   <span className="font-mono">{sc}</span>
                 </label>
@@ -219,7 +219,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-500 uppercase text-[10px]">
+                <tr className="border-b border-[#4A1224]/60 text-slate-500 uppercase text-[10px]">
                   <th className="pb-3 font-semibold">Key Name</th>
                   <th className="pb-3 font-semibold">Prefix</th>
                   <th className="pb-3 font-semibold">Scopes</th>
@@ -229,9 +229,9 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-800/50">
                 {apiKeys.map(k => (
-                  <tr key={k.keyId} className="hover:bg-slate-900/40 transition">
+                  <tr key={k.keyId} className="hover:bg-[#150917]/40 transition">
                     <td className="py-3 font-semibold text-white">{k.name}</td>
-                    <td className="py-3 font-mono text-cyan-400">{k.keyPrefix}</td>
+                    <td className="py-3 font-mono text-[#E5A93C]">{k.keyPrefix}</td>
                     <td className="py-3">
                       <div className="flex flex-wrap gap-1">
                         {k.scopes.map(s => (
@@ -266,7 +266,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
         </div>
 
         {/* Section 2: Webhooks Dispatch Simulator */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -286,7 +286,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
             </button>
           </div>
 
-          <div className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl space-y-2">
+          <div className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-2">
             <div className="flex justify-between text-xs text-slate-400">
               <span>Configured Endpoint URL:</span>
               <span className="text-purple-400 font-mono">Shared Secret Configured</span>
@@ -295,12 +295,12 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
               type="text"
               value={webhookUrl}
               onChange={e => setWebhookUrl(e.target.value)}
-              className="w-full p-2.5 bg-[#121524] border border-slate-800 rounded-xl text-xs font-mono text-white outline-none focus:border-purple-500/50"
+              className="w-full p-2.5 bg-[#0E0610] border border-[#4A1224]/60 rounded-xl text-xs font-mono text-white outline-none focus:border-purple-500/50"
             />
           </div>
 
           {lastWebhookDelivery && (
-            <div className="p-5 bg-[#0A0C14] border border-slate-800 rounded-2xl space-y-3">
+            <div className="p-5 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Last Webhook Dispatch Payload
@@ -312,14 +312,14 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
 
               <div className="space-y-1">
                 <span className="text-[10px] text-slate-500 uppercase font-bold">HTTP Header: X-Cognify-Signature</span>
-                <pre className="p-2.5 bg-[#121524] rounded-xl border border-slate-800 text-[11px] font-mono text-cyan-400 overflow-x-auto">
+                <pre className="p-2.5 bg-[#0E0610] rounded-xl border border-[#4A1224]/60 text-[11px] font-mono text-[#E5A93C] overflow-x-auto">
                   {lastWebhookDelivery.signature}
                 </pre>
               </div>
 
               <div className="space-y-1">
                 <span className="text-[10px] text-slate-500 uppercase font-bold">Body JSON Payload</span>
-                <pre className="p-2.5 bg-[#121524] rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto">
+                <pre className="p-2.5 bg-[#0E0610] rounded-xl border border-[#4A1224]/60 text-[11px] font-mono text-slate-300 overflow-x-auto">
                   {lastWebhookDelivery.payload}
                 </pre>
               </div>
@@ -328,11 +328,11 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
         </div>
 
         {/* Section 3: OpenAPI 3.1 Spec Generator */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Code className="w-5 h-5 text-cyan-400" />
+                <Code className="w-5 h-5 text-[#E5A93C]" />
                 OpenAPI 3.1 Machine-Readable Specification
               </h2>
               <p className="text-xs text-slate-400 mt-1">
@@ -356,7 +356,7 @@ export const DeveloperApiConsole: React.FC<DeveloperApiConsoleProps> = ({
             </button>
           </div>
 
-          <pre className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs font-mono text-slate-300 max-h-56 overflow-y-auto">
+          <pre className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl text-xs font-mono text-slate-300 max-h-56 overflow-y-auto">
             {JSON.stringify(openApiSpec, null, 2)}
           </pre>
         </div>

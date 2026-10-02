@@ -21,7 +21,7 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({
   return (
     <div
       onClick={() => onSelect(subject)}
-      className={`group relative p-5 sm:p-6 rounded-3xl bg-[#121524]/90 hover:bg-[#181C2E] border border-slate-800/80 hover:border-indigo-500/50 backdrop-blur-xl transition-all duration-300 transform hover:-translate-y-1.5 shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 cursor-pointer flex flex-col justify-between overflow-hidden`}
+      className={`group relative p-5 sm:p-6 rounded-3xl bg-[#0E0610]/95 hover:bg-[#150917] border border-[#4A1224]/60 hover:border-indigo-500/50 backdrop-blur-xl transition-all duration-300 transform hover:-translate-y-1.5 shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 cursor-pointer flex flex-col justify-between overflow-hidden`}
     >
       {/* Background ambient glow */}
       <div className={`absolute top-0 right-0 w-32 h-32 ${meta.bgColor} rounded-full blur-3xl -z-10 group-hover:scale-150 transition-all duration-500 opacity-60`} />
@@ -68,9 +68,9 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({
         </div>
 
         {/* Accuracy Progress Track */}
-        <div className="w-full h-2.5 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/80 mb-4 shadow-inner">
+        <div className="w-full h-2.5 bg-[#080409] rounded-full overflow-hidden border border-[#4A1224]/60 mb-4 shadow-inner">
           <div
-            className="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-pink-500 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C] rounded-full transition-all duration-500"
             style={{ width: `${Math.max(8, accuracyPercent)}%` }}
           />
         </div>

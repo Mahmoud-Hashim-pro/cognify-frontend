@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Compass,
   MapPin,
@@ -70,9 +70,9 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
   };
 
   return (
-    <div className="w-full rounded-3xl bg-[#0d101d]/90 border border-slate-800/80 p-6 backdrop-blur-xl shadow-2xl text-slate-100 font-sans space-y-5">
+    <div className="w-full rounded-3xl bg-[#080409]/90 border border-[#4A1224]/60 p-6 backdrop-blur-xl shadow-2xl text-slate-100 font-sans space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800/60">
+      <div className="flex items-center justify-between pb-4 border-b border-[#4A1224]/50">
         <div className="flex items-center gap-2.5">
           <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <Compass className="w-5 h-5" />
@@ -97,9 +97,9 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
 
       {/* Disambiguation Section if ambiguous */}
       {disambiguation?.isAmbiguous && disambiguation.candidateMatches.length > 1 && (
-        <div className="p-4 rounded-2xl bg-[#14182b] border border-cyan-500/30 space-y-3">
-          <div className="flex items-start gap-2 text-cyan-300">
-            <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-cyan-400" />
+        <div className="p-4 rounded-2xl bg-[#14182b] border border-[#E5A93C]/30 space-y-3">
+          <div className="flex items-start gap-2 text-[#E5A93C]">
+            <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#E5A93C]" />
             <p className="text-xs font-semibold leading-relaxed">
               {isAr ? disambiguation.clarificationPromptAr : disambiguation.clarificationPromptEn}
             </p>
@@ -114,8 +114,8 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
                   onClick={() => handleSelect(cand)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                     isChosen
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-md shadow-cyan-950/40'
-                      : 'bg-[#181d36] text-slate-300 border-slate-700 hover:border-slate-500'
+                      ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 border-[#E5A93C] shadow-md shadow-[#E5A93C]/20'
+                      : 'bg-[#181d36] text-slate-300 border-[#4A1224]/50 hover:border-slate-500'
                   }`}
                 >
                   <MapPin className="w-3 h-3" />
@@ -132,25 +132,25 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
 
       {/* Active Object Details Card */}
       {currentObj ? (
-        <div className="p-5 rounded-2xl bg-[#121526]/80 border border-slate-800 space-y-4">
+        <div className="p-5 rounded-2xl bg-[#150917]/80 border border-[#4A1224]/60 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-white">
                   {isAr ? currentObj.labelAr : currentObj.labelEn}
                 </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-800 text-slate-300 border border-[#4A1224]/50">
                   {Math.round(currentObj.confidence * 100)}% {isAr ? 'دقة' : 'confidence'}
                 </span>
                 {currentObj.correctionsCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-[#4A1224]/40 text-[#E5A93C] border border-[#4A1224]/60">
                     {isAr ? `مصحح ${currentObj.correctionsCount}x` : `Corrected ${currentObj.correctionsCount}x`}
                   </span>
                 )}
               </div>
               <p className="text-xs text-slate-400 mt-1">
                 {isAr ? 'الموقع الحالي:' : 'Current Location:'}{' '}
-                <span className="text-cyan-300 font-semibold">
+                <span className="text-[#E5A93C] font-semibold">
                   {isAr ? currentObj.surfaceAr : currentObj.surfaceEn}
                 </span>{' '}
                 {isAr ? 'في' : 'in'}{' '}
@@ -162,7 +162,7 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
 
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-[#4A1224]/50"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>{isAr ? 'تصحيح يدوي' : 'Correct Location'}</span>
@@ -171,7 +171,7 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
 
           {/* Correction Input Form */}
           {isEditing && (
-            <div className="p-4 rounded-xl bg-[#161a30] border border-slate-700 space-y-3 animate-in fade-in">
+            <div className="p-4 rounded-xl bg-[#161a30] border border-[#4A1224]/50 space-y-3 animate-in fade-in">
               <div className="text-xs font-bold text-slate-200">
                 {isAr ? 'أين يوجد هذا الشيء بالضبط؟' : 'Where is this item actually located?'}
               </div>
@@ -181,14 +181,14 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
                   placeholder={isAr ? 'الغرفة (مثال: غرفة المعيشة)' : 'Room (e.g. Living Room)'}
                   value={correctedRoom}
                   onChange={(e) => setCorrectedRoom(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-[#0d101d] border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500"
+                  className="px-3 py-2 rounded-xl bg-[#080409] border border-[#4A1224]/50 text-xs text-white focus:outline-none focus:border-[#E5A93C]"
                 />
                 <input
                   type="text"
                   placeholder={isAr ? 'السطح (مثال: ترابيزة القهوة)' : 'Surface (e.g. Coffee Table)'}
                   value={correctedSurface}
                   onChange={(e) => setCorrectedSurface(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-[#0d101d] border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-500"
+                  className="px-3 py-2 rounded-xl bg-[#080409] border border-[#4A1224]/50 text-xs text-white focus:outline-none focus:border-[#E5A93C]"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-1">
@@ -201,7 +201,7 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
                 <button
                   onClick={handleSaveCorrection}
                   disabled={!correctedRoom.trim() || !correctedSurface.trim()}
-                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-cyan-500 text-slate-950 hover:bg-cyan-400 disabled:opacity-50 transition-all"
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 hover:bg-[#E5A93C] disabled:opacity-50 transition-all"
                 >
                   {isAr ? 'حفظ التصحيح' : 'Save Correction'}
                 </button>
@@ -211,9 +211,9 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
 
           {/* Movement Trajectory Timeline */}
           {currentObj.movementHistory && currentObj.movementHistory.length > 0 && (
-            <div className="pt-3 border-t border-slate-800">
+            <div className="pt-3 border-t border-[#4A1224]/60">
               <div className="flex items-center gap-2 mb-3 text-xs font-bold text-slate-300">
-                <History className="w-3.5 h-3.5 text-indigo-400" />
+                <History className="w-3.5 h-3.5 text-[#E5A93C]" />
                 <span>{isAr ? 'سجل مسار الحركة الزمني (Movement History)' : 'Chronological Movement Timeline'}</span>
               </div>
 
@@ -225,7 +225,7 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
                       <span
                         className={`absolute -left-5 top-1 w-2.5 h-2.5 rounded-full border-2 ${
                           isLatest
-                            ? 'bg-cyan-400 border-cyan-300 shadow-sm shadow-cyan-400/50'
+                            ? 'bg-[#E5A93C] border-[#E5A93C]/40 shadow-sm shadow-[#E5A93C]/20'
                             : 'bg-slate-700 border-slate-900'
                         }`}
                       />
@@ -255,3 +255,5 @@ export const SpatialMemoryTrajectoryView: React.FC<SpatialMemoryTrajectoryViewPr
     </div>
   );
 };
+
+export default SpatialMemoryTrajectoryView;

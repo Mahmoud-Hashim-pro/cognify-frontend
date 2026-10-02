@@ -8,7 +8,7 @@ import {
   Chrome, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff, 
   ArrowLeft, ArrowRight, 
   Sparkles, Tag, ChevronDown, LockKeyhole, Globe,
-  Brain, GraduationCap, Heart, Check, Ear, Activity, Zap, Compass
+  Brain, GraduationCap, Heart, Check, Ear, Activity, Zap, Compass, Accessibility
 } from 'lucide-react';
 import type { AccessibilityMode } from '../types';
 
@@ -18,7 +18,7 @@ type AccountPath = 'Normal' | 'Graduation Project' | 'Special Needs';
 // 'Neurodiversity' instead of 'Hearing' / 'Motor' / 'Cognitive'). DISABILITY_MODE_MAP
 // below is the single place that translates between the two — every option here
 // MUST have an entry there, or that user silently ends up with accessibilityMode 'None'.
-type DisabilityOption = 'Visual' | 'Hearing' | 'Motor' | 'Speech' | 'Cognitive';
+type DisabilityOption = 'Visual' | 'Hearing' | 'Speech' | 'Cognitive';
 
 // The one source of truth for turning a picker chip into the real, canonical
 // AccessibilityMode value used everywhere else in the app (DisabilityModeView's
@@ -27,7 +27,6 @@ type DisabilityOption = 'Visual' | 'Hearing' | 'Motor' | 'Speech' | 'Cognitive';
 const DISABILITY_MODE_MAP: Record<DisabilityOption, AccessibilityMode> = {
   'Visual': 'Visual',
   'Hearing': 'Vocal-Deaf',
-  'Motor': 'Motor-Euphonia',
   'Speech': 'Speech',
   'Cognitive': 'Neurodiversity',
 };
@@ -38,7 +37,6 @@ const DISABILITY_MODE_MAP: Record<DisabilityOption, AccessibilityMode> = {
 const DISABILITY_LABEL_MAP: Record<DisabilityOption, string> = {
   'Visual': 'Visual Impairment',
   'Hearing': 'Hearing Impairment',
-  'Motor': 'Motor Impairment',
   'Speech': 'Speech Impairment',
   'Cognitive': 'Cognitive/Learning Disability',
 };
@@ -69,13 +67,6 @@ const SPECIAL_NEEDS_FEATURES: {
     title: { en: 'Deaf & Hard of Hearing Suite (All-in-One)', ar: 'منظومة الصم وضعاف السمع الشاملة (الكل في واحد)' },
     description: { en: '3D sign language studio, sound & hazard radar, and a live two-way communication bridge', ar: 'استوديو لغة إشارة ثلاثي الأبعاد، رادار للأصوات والمخاطر، وجسر تواصل مباشر ثنائي الاتجاه' },
     matches: ['Hearing'],
-  },
-  {
-    key: 'motor-voice',
-    Icon: Check,
-    title: { en: 'Motor & Euphonia Control', ar: 'التحكم الحركي وإيفونيا' },
-    description: { en: 'Head-tracking pointer, eye-gaze keyboard, and hands-free vocal triggers', ar: 'مؤشر بحركة الرأس، لوحة مفاتيح بالعين، وأوامر صوتية بدون لمس' },
-    matches: ['Motor', 'Speech'],
   },
   {
     key: 'cognitive-scaffolding',
@@ -128,7 +119,11 @@ function getSpecialNeedsFeatures(
     .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary));
 }
 
-export default function Login() {
+interface LoginProps {
+  onDirectPreview?: () => void;
+}
+
+export default function Login({ onDirectPreview }: LoginProps = {}) {
   const [lang, setLang] = useState<'en' | 'ar'>(() => {
     if (typeof navigator !== 'undefined' && /^ar/i.test(navigator.language || '')) {
       return 'ar';
@@ -227,9 +222,13 @@ export default function Login() {
       localStorage.setItem('preLoginDisability', DISABILITY_LABEL_MAP[selectedDisability] || 'Visual Impairment');
       localStorage.setItem('cognify_default_disability_tab', 'hub');
       window.location.hash = '#disability';
-      window.location.reload();
     } catch (err) {
       console.warn("Direct preview error:", err);
+    }
+    if (onDirectPreview) {
+      onDirectPreview();
+    } else {
+      window.location.reload();
     }
   };
 
@@ -381,46 +380,46 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0C14] text-slate-100 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans relative overflow-x-hidden selection:bg-rose-500/30 selection:text-white" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Background ambient lighting */}
+    <div className="min-h-screen bg-[#080409] text-slate-100 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans relative overflow-x-hidden selection:bg-[#E5A93C]/30 selection:text-white" dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* Background ambient lighting - Royal Burgundy & Gold nebulae */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-rose-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/25 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/12 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/18 rounded-full blur-[140px]" />
       </div>
 
       {/* Top Navbar */}
       <header className="max-w-5xl mx-auto w-full flex items-center justify-between z-10 py-3 mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 p-0.5 shadow-xl shadow-cyan-500/20 flex items-center justify-center">
-            <div className="w-full h-full bg-[#0B0F1F] rounded-[14px] flex items-center justify-center">
-              <Brain className="w-5 h-5 text-cyan-400" />
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#4A1224] via-[#831843] to-[#E5A93C] p-0.5 shadow-xl shadow-[#4A1224]/35 flex items-center justify-center">
+            <div className="w-full h-full bg-[#0E0610] rounded-[14px] flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-[#E5A93C]" />
             </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-black text-white tracking-tight">Cognify</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              <span className="text-xl font-black text-white tracking-tight font-serif">Cognify</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/40">
                 2.0
               </span>
             </div>
-            <span className="text-[11px] text-slate-400 font-medium">
+            <span className="text-[11px] text-[#E5A93C]/80 font-medium">
               {t("Adaptive AI Study Mentor", "مدرّسك الذكي التكيّفي")}
             </span>
           </div>
         </div>
 
         {/* Language Switcher */}
-        <div className="flex items-center gap-1 p-1 bg-slate-900/90 border border-slate-800 rounded-full shadow-inner">
+        <div className="flex items-center gap-1 p-1 bg-[#150917]/90 border border-[#4A1224]/60 rounded-full shadow-inner">
           <button
             onClick={() => setLang('en')}
-            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'en' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'en' ? 'bg-[#4A1224]/80 text-[#E5A93C] border border-[#E5A93C]/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
           >
             EN
           </button>
           <button
             onClick={() => setLang('ar')}
-            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'ar' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+            className={`px-3 py-1 rounded-full text-xs font-black transition-all ${lang === 'ar' ? 'bg-[#4A1224]/80 text-[#E5A93C] border border-[#E5A93C]/40 shadow-sm' : 'text-slate-400 hover:text-white'}`}
           >
             AR
           </button>
@@ -440,16 +439,16 @@ export default function Login() {
             >
               {/* Hero Title Header */}
               <div className="space-y-2 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500/15 via-[#831843]/20 to-teal-500/15 border border-[#E5A93C]/40 text-amber-300 shadow-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#2D0B16] border border-[#E5A93C]/40 text-[#E5A93C] shadow-sm">
                   <Sparkles className="w-3.5 h-3.5 text-[#E5A93C]" />
                   <span>{t("Personalized Calibration · One Platform, Three Experiences", "معايرة تكيّفية مخصصة · منصة واحدة، ثلاث تجارب")}</span>
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
                   {isRtl ? (
-                    <>سؤال واحد. <span className="text-amber-400">ثلاثة</span> <span className="text-[#E5A93C]">طرق</span> <span className="text-cyan-400">لسماع</span> الإجابة.</>
+                    <>سؤال واحد. <span className="text-[#E5A93C]">ثلاثة</span> <span className="text-amber-300">طرق</span> <span className="text-[#E5A93C]">لسماع</span> الإجابة.</>
                   ) : (
-                    <>One question. <span className="text-amber-400">Three</span> <span className="text-[#E5A93C]">ways</span> <span className="text-cyan-400">to</span> hear the answer.</>
+                    <>One question. <span className="text-[#E5A93C]">Three</span> <span className="text-amber-300">ways</span> <span className="text-[#E5A93C]">to</span> hear the answer.</>
                   )}
                 </h1>
 
@@ -462,13 +461,9 @@ export default function Login() {
               </div>
 
               {/* Main Interactive Comparison Card - Split View */}
-              <div className="bg-[#0D1122]/95 border border-slate-700/70 rounded-[28px] overflow-hidden shadow-2xl backdrop-blur-2xl ring-1 ring-white/5">
-                {/* Top Tri-Color Strip */}
-                <div className="grid grid-cols-3 h-1.5 w-full">
-                  <div className="bg-gradient-to-r from-amber-400 to-amber-500" />
-                  <div className="bg-gradient-to-r from-teal-400 to-emerald-500" />
-                  <div className="bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C]" />
-                </div>
+              <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-[28px] overflow-hidden shadow-2xl backdrop-blur-2xl ring-1 ring-[#E5A93C]/20">
+                {/* Top Royal Burgundy & Gold Strip */}
+                <div className="h-1.5 w-full bg-gradient-to-r from-[#2D0B16] via-[#831843] via-[#E5A93C] to-[#2D0B16]" />
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 p-4 sm:p-5 lg:p-6">
                   {/* Left Column: LIVE MODE OVERVIEW / معاينة إمكانيات ومميزات الوضع */}
@@ -476,26 +471,26 @@ export default function Login() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full animate-pulse bg-cyan-400" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          <span className="w-2 h-2 rounded-full animate-pulse bg-[#E5A93C]" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]">
                             {t("LIVE MODE OVERVIEW", "ملخص إمكانيات الوضع")}
                           </span>
                         </div>
                         <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                           activePreviewPath === 'Normal'
-                            ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                            ? 'bg-[#4A1224]/60 text-[#E5A93C] border-[#E5A93C]/40'
                             : activePreviewPath === 'Graduation Project'
-                            ? 'bg-teal-500/10 text-teal-300 border-teal-500/30'
+                            ? 'bg-[#3A2210]/60 text-amber-300 border-[#E5A93C]/40'
                             : 'bg-[#4A1224]/80 text-[#E5A93C] border-[#E5A93C]/40 shadow-sm'
                         }`}>
                           {activePreviewPath === 'Normal' && t('Standard Path', 'المسار القياسي')}
                           {activePreviewPath === 'Graduation Project' && t('Academic Path · Coming Soon', 'المسار الأكاديمي · قريباً')}
-                          {activePreviewPath === 'Special Needs' && t('Royal Burgundy Constellation', 'منظومة الأبراج الملكية')}
+                          {activePreviewPath === 'Special Needs' && t('Assistive Technology Suite', 'منظومة ذوي الهمم الشاملة')}
                         </span>
                       </div>
 
                       {/* Dynamic Summary Card */}
-                      <div className="bg-[#181C2E]/95 border border-slate-700/50 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xl backdrop-blur-md">
+                      <div className="bg-[#140816]/95 border border-[#4A1224]/60 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xl backdrop-blur-md">
                         <AnimatePresence mode="wait">
                           <motion.div
                             key={activePreviewPath}
@@ -509,15 +504,15 @@ export default function Login() {
                             <div className="flex items-start gap-3">
                               <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all shadow-md ${
                                 activePreviewPath === 'Normal'
-                                  ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-amber-500/20'
+                                  ? 'bg-gradient-to-br from-[#4A1224] via-[#831843] to-[#E5A93C] text-slate-950 shadow-[#4A1224]/30'
                                   : activePreviewPath === 'Graduation Project'
-                                  ? 'bg-gradient-to-br from-teal-400 to-emerald-600 text-slate-950 shadow-teal-500/20'
+                                  ? 'bg-gradient-to-br from-[#3A2210] via-[#5A3816] to-[#E5A93C] text-slate-950 shadow-[#4A1224]/30'
                                   : 'bg-gradient-to-br from-[#4A1224] via-[#831843] to-[#2D0B16] text-[#E5A93C] border border-[#E5A93C]/50 shadow-rose-950/40'
                               }`}>
-                                {activePreviewPath === 'Normal' && <Brain className="w-5 h-5" />}
-                                {activePreviewPath === 'Graduation Project' && <GraduationCap className="w-5 h-5" />}
+                                {activePreviewPath === 'Normal' && <Brain className="w-5 h-5 text-[#E5A93C]" />}
+                                {activePreviewPath === 'Graduation Project' && <GraduationCap className="w-5 h-5 text-[#E5A93C]" />}
                                 {activePreviewPath === 'Special Needs' && (
-                                  <span className="font-mono font-black text-xs sm:text-sm tracking-tighter text-[#E5A93C]">[N|]</span>
+                                  <Accessibility className="w-5 h-5 text-[#E5A93C]" />
                                 )}
                               </div>
 
@@ -527,16 +522,16 @@ export default function Login() {
                                   {activePreviewPath === 'Graduation Project' && (
                                     <span className="flex items-center gap-2 flex-wrap">
                                       <span>{t("Faculty & Graduation Research Companion", "رفيق مشروع التخرج والأبحاث الأكاديمية")}</span>
-                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+                                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-[#E5A93C]/20 text-[#E5A93C] border border-[#E5A93C]/40 animate-pulse">
                                         {t("Coming Soon", "قريباً")}
                                       </span>
                                     </span>
                                   )}
                                   {activePreviewPath === 'Special Needs' && (
                                     <span className="flex items-center gap-2 flex-wrap">
-                                      <span>{t("People of Determination · Constellation Hub", "منظومة ذوي الهمم · مركز الأبراج التكيّفية")}</span>
+                                      <span>{t("People of Determination Hub", "منظومة ذوي الهمم · مركز التقنيات المساعدة")}</span>
                                       <span className="px-2 py-0.5 rounded-full text-[10px] font-black tracking-wider bg-[#E5A93C]/20 text-[#E5A93C] border border-[#E5A93C]/40 shrink-0">
-                                        {t("5 Sensory Stars", "5 كوكبات حسية")}
+                                        {t("5 Assistive Modes", "5 مسارات مساندة")}
                                       </span>
                                     </span>
                                   )}
@@ -551,22 +546,22 @@ export default function Login() {
                                     "ذكاء اصطناعي يفهم مقررات كليتك وتخصصك بدقة. يدعم صياغة الرسالة، توثيق المراجع، ومتابعة تسليمات مشروعك."
                                   )}
                                   {activePreviewPath === 'Special Needs' && t(
-                                    "Assistive multi-modal constellation for visual, hearing, motor, and neurodiversity needs with 3D sign avatar, Vision OCR, and vocal controls.",
-                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية والحركية والتوحد مع أفاتار 3D، كاميرا ذكية، وأوامر صوتية."
+                                    "Assistive multi-modal suite for visual, hearing, and neurodiversity needs with 3D sign avatar, Vision OCR, and spoken tools.",
+                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية والتوحد مع أفاتار 3D، كاميرا ذكية، وأدوات صوتية."
                                   )}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="h-px bg-slate-700/50 w-full" />
+                            <div className="h-px bg-[#4A1224]/50 w-full" />
 
                             {/* Eye-catching Feature Highlights */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                               {activePreviewPath === 'Normal' && (
                                 <>
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Sparkles className="w-4 h-4 text-amber-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Sparkles className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("4 Adaptive Pedagogy Styles", "4 أساليب شرح تكيّفية")}</div>
@@ -574,9 +569,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Check className="w-4 h-4 text-amber-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Check className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Dynamic GPA & Goal Tracker", "حاسبة GPA وتتبع الأهداف")}</div>
@@ -584,9 +579,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Brain className="w-4 h-4 text-amber-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Brain className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Cognitive Gym & IQ Assessment", "الجيم المعرفي واختبارات الذكاء")}</div>
@@ -594,9 +589,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-amber-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Tag className="w-4 h-4 text-amber-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Tag className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Spaced Retention Flashcards", "تكرار متباعد ذكي")}</div>
@@ -608,9 +603,9 @@ export default function Login() {
 
                               {activePreviewPath === 'Graduation Project' && (
                                 <>
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <GraduationCap className="w-4 h-4 text-teal-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <GraduationCap className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Faculty Curriculum Alignment", "ربط مباشر بمقررات كليتك")}</div>
@@ -618,9 +613,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Sparkles className="w-4 h-4 text-teal-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Sparkles className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Thesis & Literature Reviews", "صياغة الرسالة ومراجعة المراجع")}</div>
@@ -628,9 +623,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Check className="w-4 h-4 text-teal-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Check className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Automated Citation Engine", "محرك التوثيق الأكاديمي")}</div>
@@ -638,9 +633,9 @@ export default function Login() {
                                     </div>
                                   </div>
 
-                                  <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-700/70 hover:border-teal-500/50 flex items-start gap-3 shadow-md transition-all">
-                                    <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                                      <Brain className="w-4 h-4 text-teal-400" />
+                                  <div className="p-3 rounded-2xl bg-[#160A18]/80 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 flex items-start gap-3 shadow-md transition-all">
+                                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Brain className="w-4 h-4 text-[#E5A93C]" />
                                     </div>
                                     <div className="min-w-0">
                                       <div className="text-xs font-bold text-white leading-snug">{t("Sprint & Milestone Deliverables", "تتبع مراحل وتسليمات المشروع")}</div>
@@ -658,11 +653,11 @@ export default function Login() {
                                       className={`p-2.5 sm:p-3 rounded-xl border flex items-start gap-2.5 transition-all shadow-md ${
                                         feature.isPrimary
                                           ? 'bg-[#2D0B16]/80 border-[#E5A93C]/50 ring-1 ring-[#E5A93C]/30'
-                                          : 'bg-slate-900/80 border-slate-700/70 hover:border-[#E5A93C]/30'
+                                          : 'bg-[#160A18]/80 border-[#4A1224]/50 hover:border-[#E5A93C]/30'
                                       }`}
                                     >
                                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                                        feature.isPrimary ? 'bg-[#4A1224] border border-[#E5A93C]/60 text-[#E5A93C]' : 'bg-slate-800 border border-slate-700 text-amber-400/80'
+                                        feature.isPrimary ? 'bg-[#4A1224] border border-[#E5A93C]/60 text-[#E5A93C]' : 'bg-[#2D0B16] border border-[#4A1224] text-[#E5A93C]/80'
                                       }`}>
                                         <feature.Icon className="w-3.5 h-3.5" />
                                       </div>
@@ -690,28 +685,26 @@ export default function Login() {
                     {/* Bottom Feature Pill Indicator */}
                     <div className="space-y-1.5 pt-0.5">
                       <div className="flex items-center gap-2 text-xs font-bold">
-                        <span className={`inline-flex items-center gap-1.5 ${
-                          activePreviewPath === 'Normal' ? 'text-amber-400' : activePreviewPath === 'Graduation Project' ? 'text-teal-400' : 'text-[#E5A93C]'
-                        }`}>
+                        <span className="inline-flex items-center gap-1.5 text-[#E5A93C]">
                           <Check className="w-3.5 h-3.5" /> {t("Mode Unlocks:", "المميزات المفتوحة:")}
                         </span>
                         <span className="text-slate-300 font-semibold text-[11px] sm:text-xs">
                           {activePreviewPath === 'Normal' && t("Adaptive AI Chat · GPA Engine · Spaced Retention · Cognitive Tests", "دردشة تكيّفية · حاسبة GPA · تكرار متباعد · اختبارات ذهنية")}
                           {activePreviewPath === 'Graduation Project' && t("All Normal Features + Faculty Context + Thesis AI + Citations", "كل مميزات العادي + ربط الكلية + إرشاد الرسالة + توثيق المراجع")}
-                          {activePreviewPath === 'Special Needs' && t("All Normal Features + 3D Sign Language + Vision AI Eyes + Motor Euphonia + Autism Oasis", "كل مميزات العادي + لغة إشارة 3D + رفيق بصري + تحكم حركي + واحة التوحد")}
+                          {activePreviewPath === 'Special Needs' && t("All Normal Features + 3D Sign Language + Vision AI Eyes + Autism Oasis", "كل مميزات العادي + لغة إشارة 3D + رفيق بصري + واحة التوحد")}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Column: CHOOSE YOUR PATH */}
-                  <div className="lg:col-span-5 flex flex-col justify-between space-y-4 lg:border-s lg:border-slate-800/80 lg:ps-6">
+                  <div className="lg:col-span-5 flex flex-col justify-between space-y-4 lg:border-s lg:border-[#4A1224]/50 lg:ps-6">
                     <div className="space-y-3">
                       <div>
                         <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
                           {t("Choose your path", "اختر مسارك")}
                         </h2>
-                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
+                        <p className="text-[10px] sm:text-[11px] text-[#E5A93C]/80 font-medium">
                           {t("You can change this later in settings.", "يمكنك تغيير هذا المسار لاحقاً من الإعدادات.")}
                         </p>
                       </div>
@@ -731,29 +724,29 @@ export default function Login() {
                           className={({ isSelected, isFocusVisible }) =>
                             `relative z-10 w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                               isSelected
-                                ? 'bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-slate-900/90 border-amber-500 shadow-xl shadow-amber-500/15 ring-1 ring-amber-400/40 scale-[1.01]'
-                                : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
-                            } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                                ? 'bg-gradient-to-r from-[#4A1224]/60 via-[#831843]/20 to-[#120715]/95 border-[#E5A93C] shadow-xl shadow-[#4A1224]/30 ring-1 ring-[#E5A93C]/40 scale-[1.01]'
+                                : 'bg-[#140916]/70 border-[#4A1224]/40 hover:bg-[#1A0C1D]/80 hover:border-[#E5A93C]/40 shadow-sm'
+                            } ${isFocusVisible ? 'ring-2 ring-[#E5A93C] ring-offset-2 ring-offset-slate-950' : ''}`
                           }
                         >
                           {({ isSelected }) => (
                             <>
                               <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                 isSelected
-                                  ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-md shadow-amber-500/30'
-                                  : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                                  ? 'bg-gradient-to-br from-[#4A1224] via-[#831843] to-[#E5A93C] text-slate-950 shadow-md shadow-[#4A1224]/40'
+                                  : 'bg-[#1A0C1D] text-slate-400 border border-[#4A1224]/60'
                               }`}>
-                                <Brain className="w-4 h-4 sm:w-5 sm:h-5" />
+                                <Brain className={`w-4 h-4 sm:w-5 sm:h-5 ${isSelected ? 'text-[#E5A93C]' : 'text-slate-400'}`} />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-1.5">
-                                  <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-amber-300' : 'text-white'}`}>
+                                  <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-[#E5A93C]' : 'text-white'}`}>
                                     {t("Normal Path", "المسار القياسي (عام)")}
                                   </span>
                                   <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
                                     isSelected
-                                      ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
-                                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                                      ? 'bg-[#E5A93C]/20 text-[#E5A93C] border-[#E5A93C]/40'
+                                      : 'bg-[#1A0C1D] text-slate-400 border-[#4A1224]/50'
                                   }`}>
                                     {t("Active · Ready", "جاهز للبدء")}
                                   </span>
@@ -764,8 +757,8 @@ export default function Login() {
                               </div>
                               <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                 isSelected
-                                  ? 'bg-amber-400 text-slate-950 shadow-sm ring-4 ring-amber-400/20'
-                                  : 'border border-slate-700 bg-slate-800/50'
+                                  ? 'bg-[#E5A93C] text-slate-950 shadow-sm ring-4 ring-[#E5A93C]/20'
+                                  : 'border border-[#4A1224]/60 bg-[#140916]/50'
                               }`}>
                                 {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                               </div>
@@ -782,26 +775,26 @@ export default function Login() {
                             className={({ isSelected, isFocusVisible }) =>
                               `w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                                 isSelected
-                                  ? 'bg-gradient-to-r from-teal-500/20 via-teal-500/10 to-slate-900/90 border-teal-500 shadow-xl shadow-teal-500/15 ring-1 ring-teal-400/40 scale-[1.01]'
-                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-800/70 hover:border-slate-700 shadow-sm'
-                              } ${isFocusVisible ? 'ring-2 ring-teal-400 ring-offset-2 ring-offset-slate-950' : ''}`
+                                  ? 'bg-gradient-to-r from-[#3B220E]/50 via-[#4A1224]/25 to-[#120715]/95 border-[#E5A93C]/80 shadow-xl shadow-[#4A1224]/20 ring-1 ring-[#E5A93C]/30 scale-[1.01]'
+                                  : 'bg-[#140916]/70 border-[#4A1224]/40 hover:bg-[#1A0C1D]/80 hover:border-[#E5A93C]/40 shadow-sm'
+                              } ${isFocusVisible ? 'ring-2 ring-[#E5A93C] ring-offset-2 ring-offset-slate-950' : ''}`
                             }
                           >
                             {({ isSelected }) => (
                               <>
                                 <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                   isSelected
-                                    ? 'bg-gradient-to-br from-teal-400 to-emerald-600 text-slate-950 shadow-md shadow-teal-500/30'
-                                    : 'bg-slate-800/90 text-slate-400 border border-slate-700/80'
+                                    ? 'bg-gradient-to-br from-[#4A2810] via-[#5C1D24] to-[#E5A93C] text-slate-950 shadow-md shadow-[#4A1224]/30'
+                                    : 'bg-[#1A0C1D] text-slate-400 border border-[#4A1224]/60'
                                 }`}>
-                                  <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
+                                  <GraduationCap className={`w-4 h-4 sm:w-5 sm:h-5 ${isSelected ? 'text-[#E5A93C]' : 'text-slate-400'}`} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
-                                    <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-teal-300' : 'text-white'}`}>
+                                    <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-amber-300' : 'text-white'}`}>
                                       {t("Graduation Project", "مشروع التخرج")}
                                     </span>
-                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 shrink-0 animate-pulse">
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E5A93C]/20 text-[#E5A93C] border border-[#E5A93C]/40 shrink-0 animate-pulse">
                                       {t("Coming Soon", "قريباً")}
                                     </span>
                                   </div>
@@ -811,8 +804,8 @@ export default function Login() {
                                 </div>
                                 <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                   isSelected
-                                    ? 'bg-teal-400 text-slate-950 shadow-sm ring-4 ring-teal-400/20'
-                                    : 'border border-slate-700 bg-slate-800/50'
+                                    ? 'bg-[#E5A93C] text-slate-950 shadow-sm ring-4 ring-[#E5A93C]/20'
+                                    : 'border border-[#4A1224]/60 bg-[#140916]/50'
                                 }`}>
                                   {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                                 </div>
@@ -825,10 +818,10 @@ export default function Login() {
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-semibold leading-relaxed space-y-1 ms-3"
+                              className="p-3 rounded-xl bg-[#2D1B0A]/70 border border-[#E5A93C]/40 text-[#E5A93C] text-xs font-semibold leading-relaxed space-y-1 ms-3"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="flex items-center gap-1.5 font-black text-amber-300 text-xs">
+                              <div className="flex items-center gap-1.5 font-black text-[#E5A93C] text-xs">
                                 <Sparkles className="w-3 h-3 shrink-0" />
                                 <span>{t("Feature Coming Soon", "الميزة قادمة قريباً")}</span>
                               </div>
@@ -842,7 +835,7 @@ export default function Login() {
                           )}
                         </div>
 
-                        {/* 3. Special Needs / People of Determination - Royal Burgundy Constellation */}
+                        {/* 3. Special Needs / People of Determination */}
                         <div className="relative z-10 space-y-2">
                           <Radio
                             value="Special Needs"
@@ -851,8 +844,8 @@ export default function Login() {
                             className={({ isSelected, isFocusVisible }) =>
                               `w-full flex items-start gap-3 p-3 rounded-xl cursor-pointer border transition-all duration-200 outline-none ${
                                 isSelected
-                                  ? 'bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#1F0812] border-[#E5A93C] shadow-xl shadow-rose-950/40 ring-1 ring-[#E5A93C]/50 scale-[1.01]'
-                                  : 'bg-slate-900/60 border-slate-800/90 hover:bg-[#2D0B16]/30 hover:border-[#E5A93C]/40 shadow-sm'
+                                  ? 'bg-gradient-to-r from-[#2D0B16] via-[#4A1224]/90 to-[#120715]/95 border-[#E5A93C] shadow-xl shadow-[#4A1224]/40 ring-1 ring-[#E5A93C]/50 scale-[1.01]'
+                                  : 'bg-[#140916]/70 border-[#4A1224]/40 hover:bg-[#2D0B16]/40 hover:border-[#E5A93C]/40 shadow-sm'
                               } ${isFocusVisible ? 'ring-2 ring-[#E5A93C] ring-offset-2 ring-offset-slate-950' : ''}`
                             }
                           >
@@ -861,31 +854,31 @@ export default function Login() {
                                 <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                                   isSelected
                                     ? 'bg-gradient-to-br from-[#831843] via-[#4A1224] to-[#2D0B16] text-[#E5A93C] border border-[#E5A93C]/60 shadow-md shadow-rose-950/50'
-                                    : 'bg-slate-800/90 text-[#E5A93C] border border-slate-700/80'
+                                    : 'bg-[#1A0C1D] text-[#E5A93C] border border-[#4A1224]/60'
                                 }`}>
-                                  <span className="font-mono font-black text-xs sm:text-sm tracking-tighter text-[#E5A93C]">[N|]</span>
+                                  <Accessibility className="w-5 h-5 text-[#E5A93C]" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
                                     <span className={`text-xs sm:text-sm font-black transition-colors ${isSelected ? 'text-[#E5A93C]' : 'text-white'}`}>
-                                      {t("People of Determination (Burgundy Constellation)", "مسار ذوي الهمم (منظومة الأبراج البورجندي)")}
+                                      {t("People of Determination", "مسار ذوي الهمم")}
                                     </span>
                                     <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${
                                       isSelected
                                         ? 'bg-[#E5A93C]/20 text-[#E5A93C] border-[#E5A93C]/40'
-                                        : 'bg-slate-800 text-slate-400 border-slate-700'
+                                        : 'bg-[#1A0C1D] text-slate-400 border-[#4A1224]/50'
                                     }`}>
-                                      {t("5 Stars · Gold", "5 كوكبات · ذهب")}
+                                      {t("4 Assistive Modes", "4 مسارات داعمة")}
                                     </span>
                                   </div>
                                   <p className="text-[11px] text-slate-300 font-medium mt-0.5 leading-snug">
-                                    {t("Assistive constellation: 3D sign avatar, Vision eyes, vocal motor & neuro tools.", "منظومة الأبراج التكيّفية: لغة إشارة 3D، رفيق بصري، تحكم حركي، وأدوات توحد.")}
+                                    {t("Assistive suite: 3D sign avatar, Vision eyes, and neuro tools.", "منظومة الدعم الشامل: لغة إشارة 3D، رفيق بصري، وأدوات توحد.")}
                                   </p>
                                 </div>
                                 <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                                   isSelected
                                     ? 'bg-[#E5A93C] text-slate-950 shadow-sm ring-4 ring-[#E5A93C]/20'
-                                    : 'border border-slate-700 bg-slate-800/50'
+                                    : 'border border-[#4A1224]/60 bg-[#140916]/50'
                                 }`}>
                                   {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                                 </div>
@@ -907,7 +900,7 @@ export default function Login() {
                                   {t("Focus Modality:", "نظام التركيز الأساسي:")}
                                 </span>
                                 <span className="text-slate-400 font-normal text-[9px]">
-                                  {t("All 5 suites active", "كافة الأنظمة متاحة")}
+                                  {t("All 4 suites active", "كافة الأنظمة متاحة")}
                                 </span>
                               </div>
                               <RadioGroup
@@ -915,12 +908,11 @@ export default function Login() {
                                 onChange={(val) => setSelectedDisability(val as DisabilityOption)}
                                 aria-label={t("Accessibility focus", "نوع الإتاحة المطلوب")}
                                 orientation="horizontal"
-                                className="grid grid-cols-4 gap-1 outline-none"
+                                className="grid grid-cols-3 gap-1 outline-none"
                               >
                                 {[
                                   { id: 'Visual' as const, label: t('Visual', 'بصري') },
                                   { id: 'Hearing' as const, label: t('Sign 3D', 'إشارة 3D') },
-                                  { id: 'Motor' as const, label: t('Motor', 'حركي') },
                                   { id: 'Cognitive' as const, label: t('Autism', 'توحد') },
                                 ].map((item) => (
                                   <Radio
@@ -930,7 +922,7 @@ export default function Login() {
                                       `flex items-center justify-center py-1 px-1.5 rounded-lg cursor-pointer transition-all outline-none border text-[10px] font-bold text-center ${
                                         isSelected
                                           ? 'bg-[#E5A93C] text-slate-950 border-[#E5A93C] shadow-sm'
-                                          : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-[#E5A93C]/40'
+                                          : 'bg-[#160A18] border-[#4A1224]/60 text-slate-300 hover:border-[#E5A93C]/40'
                                       }`
                                     }
                                   >
@@ -962,10 +954,10 @@ export default function Login() {
                         isDisabled={accountPath === 'Graduation Project'}
                         className={`w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed outline-none ${
                           accountPath === 'Normal'
-                            ? 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-500 text-slate-950 hover:brightness-110 shadow-amber-500/25 ring-1 ring-amber-300/30'
+                            ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 hover:brightness-110 shadow-[#E5A93C]/25 ring-1 ring-[#E5A93C]/40'
                             : accountPath === 'Graduation Project'
                             ? 'bg-slate-800 text-slate-400 border border-slate-700/80 shadow-none'
-                            : 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 hover:brightness-110 shadow-amber-500/20 ring-1 ring-[#E5A93C]/40'
+                            : 'bg-gradient-to-r from-[#E5A93C] via-amber-400 to-[#E5A93C] text-slate-950 hover:brightness-110 shadow-[#E5A93C]/30 ring-1 ring-[#E5A93C]/50'
                         }`}
                       >
                         <span>
@@ -991,23 +983,21 @@ export default function Login() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="max-w-md mx-auto w-full bg-[#121524]/95 border border-slate-800 rounded-[28px] p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-5"
+              className="max-w-md mx-auto w-full bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-[28px] p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-5 ring-1 ring-[#E5A93C]/20"
             >
               {/* Header with Selected Path & Back Button */}
               <div className="flex items-center justify-between pb-1">
                 <button
                   onClick={() => { setMode('path-selection'); setError(null); }}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-[#E5A93C] transition-colors"
                 >
                   <ArrowLeft className={`w-3.5 h-3.5 ${isRtl ? 'rotate-180' : ''}`} />
                   <span>{t("Back", "رجوع")}</span>
                 </button>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-slate-800/80 border border-slate-700 text-slate-300">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#150917] border border-[#4A1224]/60 text-slate-300">
                   <span>{t("Path:", "المسار:")}</span>
-                  <strong className={
-                    accountPath === 'Normal' ? 'text-amber-400' : accountPath === 'Graduation Project' ? 'text-teal-400' : 'text-rose-400'
-                  }>
+                  <strong className="text-[#E5A93C]">
                     {accountPath === 'Normal' && t('Normal', 'عادي')}
                     {accountPath === 'Graduation Project' && t('Graduation Project', 'مشروع تخرج')}
                     {accountPath === 'Special Needs' && `${t('Special Needs', 'احتياجات خاصة')} (${selectedDisability})`}
@@ -1024,11 +1014,11 @@ export default function Login() {
                   </div>
 
                   {resetSuccess ? (
-                    <div className="p-4 bg-teal-500/10 border border-teal-500/30 rounded-2xl text-teal-300 text-xs font-bold space-y-2">
+                    <div className="p-4 bg-[#4A1224]/30 border border-[#E5A93C]/40 rounded-2xl text-[#E5A93C] text-xs font-bold space-y-2">
                       <p>{t("Reset link sent! Please check your inbox.", "تم إرسال رابط إعادة التعيين! يرجى التحقق من بريدك.")}</p>
                       <button
                         onClick={() => { setMode('email-login'); setResetSuccess(false); setError(null); }}
-                        className="block text-teal-400 hover:underline pt-2 font-black"
+                        className="block text-[#E5A93C] hover:underline pt-2 font-black"
                       >
                         {t("Return to Sign In", "العودة لتسجيل الدخول")}
                       </button>
@@ -1043,7 +1033,7 @@ export default function Login() {
                           placeholder="name@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-[#181C2E] border border-slate-700 text-white placeholder-slate-500 text-xs rounded-xl py-3 px-4 outline-none focus:border-rose-400"
+                          className="w-full bg-[#150917] border border-[#4A1224]/60 text-white placeholder-slate-500 text-xs rounded-xl py-3 px-4 outline-none focus:border-[#E5A93C]"
                         />
                       </div>
 
@@ -1057,7 +1047,7 @@ export default function Login() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-95 transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50"
+                        className="w-full py-3.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-95 transition-all shadow-lg shadow-[#E5A93C]/25 disabled:opacity-50"
                       >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : t("Send Reset Link", "إرسال رابط الاستعادة")}
                       </button>
@@ -1079,13 +1069,13 @@ export default function Login() {
                   </div>
 
                   {/* Tab Selector */}
-                  <div className="grid grid-cols-2 gap-1 p-1 bg-slate-900 border border-slate-800 rounded-xl">
+                  <div className="grid grid-cols-2 gap-1 p-1 bg-[#150917] border border-[#4A1224]/60 rounded-xl">
                     <button
                       type="button"
                       onClick={() => { setMode('email-login'); setError(null); }}
                       className={`py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${
                         mode === 'email-login'
-                          ? 'bg-slate-800 text-white shadow-sm'
+                          ? 'bg-gradient-to-r from-[#4A1224] to-[#831843] text-white shadow-sm border border-[#E5A93C]/40'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
@@ -1096,7 +1086,7 @@ export default function Login() {
                       onClick={() => { setMode('email-register'); setError(null); }}
                       className={`py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${
                         mode === 'email-register'
-                          ? 'bg-slate-800 text-white shadow-sm'
+                          ? 'bg-gradient-to-r from-[#4A1224] to-[#831843] text-white shadow-sm border border-[#E5A93C]/40'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >
@@ -1116,7 +1106,7 @@ export default function Login() {
                           placeholder="name@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className={`w-full bg-[#181C2E] border border-slate-700 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-rose-400 ${isRtl ? 'pr-9 pl-3' : 'pl-9 pr-3'}`}
+                          className={`w-full bg-[#150917] border border-[#4A1224]/60 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-[#E5A93C] ${isRtl ? 'pr-9 pl-3' : 'pl-9 pr-3'}`}
                         />
                       </div>
                     </div>
@@ -1131,12 +1121,12 @@ export default function Login() {
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className={`w-full bg-[#181C2E] border border-slate-700 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-rose-400 ${isRtl ? 'pr-9 pl-9' : 'pl-9 pr-9'}`}
+                          className={`w-full bg-[#150917] border border-[#4A1224]/60 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-[#E5A93C] ${isRtl ? 'pr-9 pl-9' : 'pl-9 pr-9'}`}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className={`absolute top-1/2 -translate-y-1/2 text-slate-400 hover:text-white ${isRtl ? 'left-3' : 'right-3'}`}
+                          className={`absolute top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#E5A93C] ${isRtl ? 'left-3' : 'right-3'}`}
                         >
                           {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -1158,7 +1148,7 @@ export default function Login() {
                             placeholder="••••••••"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className={`w-full bg-[#181C2E] border border-slate-700 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-rose-400 ${isRtl ? 'pr-9 pl-3' : 'pl-9 pr-3'}`}
+                            className={`w-full bg-[#150917] border border-[#4A1224]/60 text-white placeholder-slate-500 text-xs rounded-xl py-2.5 outline-none focus:border-[#E5A93C] ${isRtl ? 'pr-9 pl-3' : 'pl-9 pr-3'}`}
                           />
                         </div>
                       </motion.div>
@@ -1169,7 +1159,7 @@ export default function Login() {
                         <button
                           type="button"
                           onClick={() => { setMode('reset-password'); setError(null); }}
-                          className="text-[11px] font-bold text-rose-400 hover:underline"
+                          className="text-[11px] font-bold text-[#E5A93C] hover:underline"
                         >
                           {t("Forgot Password?", "نسيت كلمة المرور؟")}
                         </button>
@@ -1187,7 +1177,7 @@ export default function Login() {
                             type="button"
                             onClick={handleGoogleRedirectAuth}
                             disabled={loading}
-                            className="w-full py-2 px-3 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
+                            className="w-full py-2 px-3 bg-[#4A1224] hover:bg-[#831843] text-[#E5A93C] border border-[#E5A93C]/40 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
                           >
                             <Globe className="w-3.5 h-3.5" />
                             <span>{t("Click Here for Direct Google Sign-In", "اضغط هنا لتسجيل الدخول المباشر")}</span>
@@ -1199,10 +1189,10 @@ export default function Login() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 text-white font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-95 transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50"
+                      className="w-full py-3.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-95 transition-all shadow-lg shadow-[#E5A93C]/25 disabled:opacity-50"
                     >
                       {loading ? (
-                        <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                        <Loader2 className="w-4 h-4 animate-spin mx-auto text-slate-950" />
                       ) : mode === 'email-login' ? (
                         t("Sign In", "تسجيل الدخول")
                       ) : (
@@ -1213,9 +1203,9 @@ export default function Login() {
 
                   {/* Or Continue With Google */}
                   <div className="flex items-center gap-3 pt-1">
-                    <div className="h-px bg-slate-800 flex-1" />
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("Or", "أو")}</span>
-                    <div className="h-px bg-slate-800 flex-1" />
+                    <div className="h-px bg-[#4A1224]/50 flex-1" />
+                    <span className="text-[10px] font-black text-[#E5A93C]/80 uppercase tracking-widest">{t("Or", "أو")}</span>
+                    <div className="h-px bg-[#4A1224]/50 flex-1" />
                   </div>
 
                   <div className="space-y-2">
@@ -1239,8 +1229,8 @@ export default function Login() {
                       disabled={loading}
                       className={`w-full py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                         showRedirectOption
-                          ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 hover:bg-rose-500/25 shadow-sm'
-                          : 'bg-slate-800/50 border-slate-700/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                          ? 'bg-[#4A1224]/40 border-[#E5A93C]/50 text-[#E5A93C] hover:bg-[#4A1224]/60 shadow-sm'
+                          : 'bg-[#150917] border-[#4A1224]/60 text-slate-300 hover:text-[#E5A93C] hover:border-[#E5A93C]/40'
                       }`}
                     >
                       <Globe className="w-3.5 h-3.5 shrink-0" />

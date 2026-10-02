@@ -193,12 +193,12 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
   const currentGoal = SUSTAINABILITY_GOALS.find(g => g.id === (isEditing ? editedProfile.sustainabilityGoal : profile.sustainabilityGoal)) || SUSTAINABILITY_GOALS[1];
 
   return (
-    <div className="flex-1 h-screen overflow-y-auto bg-[#0A0C14] text-slate-100 p-6 md:p-10 flex flex-col gap-6 md:gap-10 custom-scrollbar relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden font-sans">
+    <div className="flex-1 h-screen overflow-y-auto bg-[#080409] text-slate-100 p-6 md:p-10 flex flex-col gap-6 md:gap-10 custom-scrollbar relative selection:bg-[#4A1224]/30 selection:text-white overflow-x-hidden font-sans">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
       </div>
 
       <header className="flex flex-col md:flex-row justify-between md:items-center gap-4">
@@ -206,7 +206,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
           {onNavigateBack && (
             <button
               onClick={onNavigateBack}
-              className="p-2.5 mt-1 text-slate-300 hover:text-white bg-[#121524]/90 shadow-md border border-slate-800 hover:border-slate-700 hover:bg-[#181C2E] rounded-2xl active:scale-95 transition-all flex items-center gap-2 shrink-0"
+              className="p-2.5 mt-1 text-slate-300 hover:text-white bg-[#0E0610]/90 shadow-md border border-[#4A1224]/50 hover:border-[#4A1224]/80 hover:bg-[#1A0C1D] rounded-2xl active:scale-95 transition-all flex items-center gap-2 shrink-0"
               title={localize(profile.language, 'Back to Assistant', 'العودة للمساعد')}
             >
               <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -216,7 +216,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
           {onMenuClick && (
             <button 
               onClick={onMenuClick}
-              className="p-2.5 mt-1 text-slate-300 hover:text-white bg-[#121524]/90 shadow-md border border-slate-800 hover:border-slate-700 hover:bg-[#181C2E] rounded-2xl active:scale-95 shrink-0 transition-all"
+              className="p-2.5 mt-1 text-slate-300 hover:text-white bg-[#0E0610]/90 shadow-md border border-[#4A1224]/50 hover:border-[#4A1224]/80 hover:bg-[#1A0C1D] rounded-2xl active:scale-95 shrink-0 transition-all"
               aria-label={localize(profile.language, 'Toggle menu', 'القائمة')}
               title={localize(profile.language, 'Open Menu', 'فتح القائمة')}
             >
@@ -231,22 +231,22 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
         {!isEditing ? (
           <button 
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-[#121524]/90 border border-slate-800 hover:border-cyan-500/50 hover:bg-[#181C2E] rounded-2xl text-slate-200 hover:text-cyan-400 font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/5 active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 bg-[#0E0610]/90 border border-[#4A1224]/50 hover:border-[#E5A93C]/40 hover:bg-[#1A0C1D] rounded-2xl text-slate-200 hover:text-[#E5A93C] font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-[#E5A93C]/5 active:scale-95"
           >
-            <Edit3 className="w-4 h-4 text-cyan-400" /> {getTranslation(profile.language, 'edit')}
+            <Edit3 className="w-4 h-4 text-[#E5A93C]" /> {getTranslation(profile.language, 'edit')}
           </button>
         ) : (
           <div className="flex items-center gap-3">
             <button 
               onClick={() => { setIsEditing(false); setEditedProfile(profile); }}
-              className="flex items-center gap-2 px-6 py-3 bg-[#121524]/90 border border-slate-800 hover:border-slate-700 rounded-2xl text-slate-400 hover:text-slate-200 font-black text-xs uppercase tracking-widest transition-all active:scale-95"
+              className="flex items-center gap-2 px-6 py-3 bg-[#0E0610]/90 border border-[#4A1224]/50 hover:border-[#4A1224]/80 rounded-2xl text-slate-400 hover:text-slate-200 font-black text-xs uppercase tracking-widest transition-all active:scale-95"
             >
               <X className="w-4 h-4" /> {getTranslation(profile.language, 'back')}
             </button>
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-cyan-500/20 active:scale-95 disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#E5A93C] to-[#831843] hover:from-[#E5A93C]/90 hover:to-[#831843]/90 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-[#E5A93C]/10 active:scale-95 disabled:opacity-50"
             >
               <Save className="w-4 h-4" /> {saving ? (localize(profile.language, 'Saving...', 'جاري الحفظ...')) : getTranslation(profile.language, 'saveChanges')}
             </button>
@@ -259,8 +259,8 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
         {stats.map((s, idx) => {
           const Icon = s.icon;
           return (
-            <div key={idx} className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-5 backdrop-blur-xl shadow-xl flex items-center gap-4 hover:border-slate-700 transition-all">
-              <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 shrink-0">
+            <div key={idx} className="bg-[#150917] border border-[#4A1224]/50 rounded-3xl p-5 backdrop-blur-xl shadow-xl flex items-center gap-4 hover:border-[#4A1224]/80 transition-all">
+              <div className="p-3 rounded-2xl bg-[#4A1224]/20 border border-[#E5A93C]/20 text-[#E5A93C] shrink-0">
                 <Icon className="w-5 h-5" />
               </div>
               <div>
@@ -275,8 +275,8 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pb-20">
         {/* Left Side: Avatar & Basic Info */}
         <div className="xl:col-span-1 space-y-8">
-          <div className="bg-[#121524]/90 p-8 rounded-[36px] border border-slate-800/80 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center">
-            <div className="w-32 h-32 rounded-[36px] bg-[#0A0C14] flex items-center justify-center mb-6 shadow-2xl border-2 border-slate-700/80 relative group overflow-hidden">
+          <div className="bg-[#0E0610]/95 p-8 rounded-[36px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center ring-1 ring-[#E5A93C]/10">
+            <div className="w-32 h-32 rounded-[36px] bg-[#080409] flex items-center justify-center mb-6 shadow-2xl border-2 border-[#4A1224]/80 relative group overflow-hidden">
               {editedProfile.photoURL || profile.photoURL ? (
                 <img 
                   src={isEditing ? editedProfile.photoURL : profile.photoURL} 
@@ -285,19 +285,19 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <User className="w-12 h-12 text-slate-400" />
+                <User className="w-12 h-12 text-[#E5A93C]" />
               )}
               
               {isEditing && (
                 <label className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
-                  <Camera className="w-8 h-8 text-cyan-400" />
+                  <Camera className="w-8 h-8 text-[#E5A93C]" />
                   <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                 </label>
               )}
 
               {!isEditing && (
-                <div className="absolute -bottom-2 -end-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-2 rounded-2xl shadow-lg border-2 border-[#121524] z-10">
-                  <Shield className="w-4 h-4" />
+                <div className="absolute -bottom-2 -end-2 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 p-2 rounded-2xl shadow-lg border-2 border-[#0E0610] z-10">
+                  <Shield className="w-4 h-4 text-slate-950" />
                 </div>
               )}
             </div>
@@ -305,13 +305,13 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
             {isEditing ? (
               <div className="w-full space-y-4 mb-6">
                 <input 
-                  className="w-full bg-[#0A0C14] border border-slate-800 text-white rounded-2xl px-4 py-2.5 text-center text-xl font-black outline-none focus:border-cyan-500/60 transition-all placeholder-slate-600"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 text-white rounded-2xl px-4 py-2.5 text-center text-xl font-black outline-none focus:border-[#E5A93C] transition-all placeholder-slate-600"
                   value={editedProfile.name || ''}
                   onChange={(e) => handleChange('name', e.target.value)}
                   placeholder="Full Name"
                 />
                 <select 
-                   className="w-full bg-[#0A0C14] border border-slate-800 text-slate-300 rounded-2xl px-4 py-2.5 text-center text-xs font-bold outline-none focus:border-cyan-500/60 uppercase tracking-widest cursor-pointer transition-all"
+                   className="w-full bg-[#150917] border border-[#4A1224]/60 text-slate-300 rounded-2xl px-4 py-2.5 text-center text-xs font-bold outline-none focus:border-[#E5A93C] uppercase tracking-widest cursor-pointer transition-all"
                    value={editedProfile.educationLevel || 'University'}
                    onChange={(e) => handleChange('educationLevel', e.target.value)}
                 >
@@ -324,14 +324,14 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
             ) : (
               <>
                 <h2 className="text-2xl font-black text-white mb-1 tracking-tight">{profile.name}</h2>
-                <p className="text-cyan-400 text-xs font-black mb-1 uppercase tracking-widest">{profile.educationLevel || profile.role}</p>
+                <p className="text-[#E5A93C] text-xs font-black mb-1 uppercase tracking-widest">{profile.educationLevel || profile.role}</p>
                 <p className="text-[10px] text-slate-400 font-black mb-6 uppercase tracking-[0.2em]">{profile.religion || "Unspecified Path"}</p>
               </>
             )}
             
-            <div className="w-full space-y-4 pt-6 border-t border-slate-800/80">
+            <div className="w-full space-y-4 pt-6 border-t border-[#4A1224]/50">
               <div className="flex items-center gap-3 text-slate-300 text-sm font-medium">
-                <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
+                <Mail className="w-4 h-4 text-[#E5A93C] shrink-0" />
                 <span className="truncate">{profile.email}</span>
               </div>
               <DataField 
@@ -350,14 +350,14 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                 isEditing={isEditing} 
                 onChange={(v) => handleChange('accessibilityMode', v)} 
                 type="select"
-                options={['None', 'Motor-Euphonia', 'Sign-Only', 'Speech', 'Visual', 'Vocal-Deaf']}
+                options={['None', 'Sign-Only', 'Speech', 'Visual', 'Vocal-Deaf', 'Neurodiversity']}
               />
             </div>
           </div>
 
-          <div className="bg-[#121524]/90 p-8 rounded-[36px] border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+          <div className="bg-[#0E0610]/95 p-8 rounded-[36px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl ring-1 ring-[#E5A93C]/10">
              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-4 flex items-center gap-2">
-                <currentGoal.icon className="w-4 h-4 text-cyan-400" /> Sustainability Goal
+                <currentGoal.icon className="w-4 h-4 text-[#E5A93C]" /> Sustainability Goal
              </h3>
              {isEditing ? (
                 <div className="space-y-3">
@@ -366,7 +366,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                       key={goal.id}
                       onClick={() => handleChange('sustainabilityGoal', goal.id)}
                       className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border transition-all text-xs font-bold ${
-                        editedProfile.sustainabilityGoal === goal.id ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-md' : 'bg-[#0A0C14] border-slate-800 text-slate-400 hover:border-slate-700'
+                        editedProfile.sustainabilityGoal === goal.id ? 'bg-[#4A1224]/50 border-[#E5A93C]/60 text-[#E5A93C] shadow-md' : 'bg-[#150917] border-[#4A1224]/50 text-slate-400 hover:border-[#E5A93C]/40'
                       }`}
                     >
                       <goal.icon className="w-4 h-4" /> {goal.label}
@@ -375,7 +375,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                 </div>
              ) : (
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm font-bold text-slate-200">{currentGoal.label}</span>
+                  <span className="text-sm font-bold text-[#E5A93C]">{currentGoal.label}</span>
                   <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
                     Committed to fostering positive change through educational excellence and sustainable practices.
                   </p>
@@ -386,9 +386,9 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
 
         {/* Right Side: Detailed Institutional Data */}
         <div className="xl:col-span-2 space-y-8">
-          <div className="bg-[#121524]/90 p-8 md:p-10 rounded-[36px] border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+          <div className="bg-[#0E0610]/95 p-8 md:p-10 rounded-[36px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl ring-1 ring-[#E5A93C]/10">
             <h3 className="text-lg font-black text-white mb-8 flex items-center gap-3">
-              <span className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              <span className="p-2 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]">
                 <GraduationCap className="w-5 h-5" />
               </span>
               Institution Details
@@ -415,29 +415,29 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
             </div>
           </div>
 
-          <div className="bg-[#121524]/90 p-8 md:p-10 rounded-[36px] border border-slate-800/80 backdrop-blur-xl shadow-2xl flex-1">
+          <div className="bg-[#0E0610]/95 p-8 md:p-10 rounded-[36px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl flex-1 ring-1 ring-[#E5A93C]/10">
             <h3 className="text-lg font-black text-white mb-6 flex items-center gap-3">
-              <span className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              <span className="p-2 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]">
                 <MessageSquare className="w-5 h-5" />
               </span>
               Recent Chat History
             </h3>
             <div className="space-y-3">
               {!profile.chatThreads || profile.chatThreads.length === 0 ? (
-                <div className="text-center py-10 text-slate-500 font-medium italic border-2 border-dashed border-slate-800 rounded-3xl">
+                <div className="text-center py-10 text-slate-500 font-medium italic border-2 border-dashed border-[#4A1224]/50 rounded-3xl">
                   No previous chat history recorded.
                 </div>
               ) : (
                 profile.chatThreads.slice(-4).reverse().map((t, i) => (
-                  <div key={t.id || i} className="flex items-start gap-4 p-4 rounded-2xl bg-[#0A0C14]/60 hover:bg-[#181C2E]/60 transition-all border border-slate-800/60 hover:border-slate-700">
-                    <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                  <div key={t.id || i} className="flex items-start gap-4 p-4 rounded-2xl bg-[#150917]/80 hover:bg-[#1C0B1E] transition-all border border-[#4A1224]/50 hover:border-[#E5A93C]/40">
+                    <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C]">
                       <MessageSquare className="w-4 h-4" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs font-bold text-white flex items-center gap-2">
                         {t.title}
                         {t.updatedAt && (
-                          <span className="text-[10px] font-normal text-slate-500 uppercase tracking-wider">• {formatDate(t.updatedAt)}</span>
+                          <span className="text-[10px] font-normal text-[#E5A93C]/70 uppercase tracking-wider">• {formatDate(t.updatedAt)}</span>
                         )}
                       </p>
                       <p className="text-sm text-slate-400 line-clamp-1 leading-relaxed font-medium">{t.lastMessageSnippet || 'No messages yet'}</p>
@@ -449,11 +449,11 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
           </div>
 
           {/* AI Guidance Feedback Hub */}
-          <div className="bg-[#121524]/90 p-8 md:p-10 rounded-[36px] border border-slate-800/80 backdrop-blur-xl shadow-2xl">
+          <div className="bg-[#0E0610]/95 p-8 md:p-10 rounded-[36px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl ring-1 ring-[#E5A93C]/10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
                 <h3 className="text-lg font-black text-white flex items-center gap-3">
-                  <span className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                  <span className="p-2 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]">
                     <BrainIcon className="w-5 h-5" />
                   </span>
                   {localize(profile.language, 'AI Guidance Feedback Hub', 'مؤشر تقييم الذكاء الاصطناعي')}
@@ -477,7 +477,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
 
             {feedbackStats.loading ? (
               <div className="flex items-center justify-center py-10 gap-3 text-slate-500 font-bold text-xs uppercase tracking-widest">
-                <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
+                <Loader2 className="w-5 h-5 animate-spin text-[#E5A93C]" />
                 <span>{localize(profile.language, 'Compiling intelligence feedback...', 'جاري تحميل التقييمات...')}</span>
               </div>
             ) : (
@@ -518,7 +518,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                     </h4>
                     <div className="space-y-3">
                       {feedbackStats.helpfulSnippets.map((snippet, idx) => (
-                        <div key={idx} className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2 hover:line-clamp-none transition-all cursor-pointer border-s-4 border-s-emerald-500">
+                        <div key={idx} className="p-4 bg-[#150917] border border-[#4A1224]/60 rounded-2xl text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2 hover:line-clamp-none transition-all cursor-pointer border-s-4 border-s-emerald-500">
                           "{snippet}"
                         </div>
                       ))}
@@ -535,7 +535,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                     </h4>
                     <div className="space-y-3">
                       {feedbackStats.improvementSnippets.map((snippet, idx) => (
-                        <div key={idx} className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2 hover:line-clamp-none transition-all cursor-pointer border-s-4 border-s-rose-500">
+                        <div key={idx} className="p-4 bg-[#150917] border border-[#4A1224]/60 rounded-2xl text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2 hover:line-clamp-none transition-all cursor-pointer border-s-4 border-s-rose-500">
                           "{snippet}"
                         </div>
                       ))}
@@ -544,7 +544,7 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                 )}
 
                 {feedbackStats.upvotes === 0 && feedbackStats.downvotes === 0 && (
-                  <div className="text-center py-10 text-slate-500 font-medium italic border-2 border-dashed border-slate-800 rounded-3xl">
+                  <div className="text-center py-10 text-slate-500 font-medium italic border-2 border-dashed border-[#4A1224]/50 rounded-3xl">
                     {localize(profile.language, 'No message ratings submitted yet. Commend or flag responses in the chat view to populate this analytics terminal.', 'لا توجد تقييمات لإجابات الذكاء الاصطناعي حتى الآن. يمكنك تقييم الإجابات داخل المحادثة بوضع علامة مفيد أو غير مفيد.')}
                   </div>
                 )}
@@ -576,29 +576,29 @@ function DataField({
 }) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">
-        <Icon className="w-3.5 h-3.5 text-cyan-400" /> {label}
+      <div className="flex items-center gap-2 text-[10px] font-black uppercase text-[#E5A93C] tracking-widest">
+        <Icon className="w-3.5 h-3.5 text-[#E5A93C]" /> {label}
       </div>
       {isEditing && onChange ? (
         type === 'select' ? (
           <select
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-bold text-white outline-none focus:border-cyan-500/60 cursor-pointer transition-all"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-sm font-bold text-white outline-none focus:border-[#E5A93C] cursor-pointer transition-all"
           >
             {options?.map(opt => (
-              <option key={opt} value={opt} className="bg-[#121524] text-white">{opt}</option>
+              <option key={opt} value={opt} className="bg-[#150917] text-white">{opt}</option>
             ))}
           </select>
         ) : (
           <input 
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-sm font-bold text-white outline-none focus:border-cyan-500/60 transition-all placeholder-slate-600"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-sm font-bold text-white outline-none focus:border-[#E5A93C] transition-all placeholder-slate-600"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
           />
         )
       ) : (
-        <div className="text-lg font-black text-white border-b border-slate-800/80 pb-2">{value || 'N/A'}</div>
+        <div className="text-lg font-black text-white border-b border-[#4A1224]/50 pb-2">{value || 'N/A'}</div>
       )}
     </div>
   );

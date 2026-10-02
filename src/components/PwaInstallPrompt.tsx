@@ -129,7 +129,7 @@ export default function PwaInstallPrompt({ language }: PwaInstallPromptProps) {
       role="alert"
       aria-live="polite"
       aria-label={L('Install Cognify Application', 'تثبيت تطبيق كوجنيفاي')}
-      className="fixed bottom-5 start-4 end-4 sm:start-auto sm:end-6 max-w-md z-50 bg-[#121524]/95 border border-slate-700/80 shadow-2xl rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
+      className="fixed bottom-5 start-4 end-4 sm:start-auto sm:end-6 max-w-md z-50 bg-[#0E0610]/90 border border-[#4A1224]/50 shadow-2xl rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
     >
       <div className="flex items-start gap-3.5">
         <div className="p-3 bg-rose-500/15 text-rose-400 rounded-2xl shrink-0 mt-0.5 border border-rose-500/20">
@@ -144,7 +144,7 @@ export default function PwaInstallPrompt({ language }: PwaInstallPromptProps) {
             </h3>
             <button
               onClick={handleDismiss}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-[#1A0C1D] transition-colors"
               aria-label={L('Close install banner', 'إغلاق نافذة التثبيت')}
             >
               <X className="w-4 h-4" />

@@ -98,18 +98,18 @@ export default function EditGoalModal({ goal, onClose, onSave, language }: EditG
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.97 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative bg-[#121524] border border-slate-800 text-slate-100 rounded-[32px] w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="relative bg-[#0E0610] border border-[#4A1224]/80 text-slate-100 rounded-[32px] w-full max-w-lg shadow-2xl ring-1 ring-[#E5A93C]/20 max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between p-8 pb-0">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-amber-500/15 border border-amber-500/30 rounded-2xl">
-                  <Edit3 className="w-5 h-5 text-amber-400" />
+                <div className="p-2.5 bg-[#4A1224]/40 border border-[#E5A93C]/30 rounded-2xl">
+                  <Edit3 className="w-5 h-5 text-[#E5A93C]" />
                 </div>
                 <h2 className="text-lg font-black text-white uppercase tracking-tight">
                   {isArabic ? 'تعديل الهدف' : 'Edit Goal'}
                 </h2>
               </div>
-              <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-800 transition-colors text-slate-400 hover:text-white">
+              <button onClick={onClose} className="p-2 rounded-xl hover:bg-[#4A1224]/30 transition-colors text-slate-400 hover:text-[#E5A93C]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -117,34 +117,34 @@ export default function EditGoalModal({ goal, onClose, onSave, language }: EditG
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               {/* Title */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
                   {isArabic ? 'اسم الهدف' : 'Goal Title'} *
                 </label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl px-4 py-3 text-xs font-semibold text-white outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/10"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl px-4 py-3 text-xs font-semibold text-white outline-none focus:border-[#E5A93C] focus:ring-2 focus:ring-[#E5A93C]/10"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
                   {isArabic ? 'الوصف' : 'Description'}
                 </label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={2}
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl px-4 py-3 text-xs font-semibold text-white outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/10 resize-none"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl px-4 py-3 text-xs font-semibold text-white outline-none focus:border-[#E5A93C] focus:ring-2 focus:ring-[#E5A93C]/10 resize-none"
                 />
               </div>
 
               {/* Priority + Deadline */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
                     {isArabic ? 'الأولوية' : 'Priority'}
                   </label>
                   <div className="flex flex-col gap-1.5">
@@ -156,7 +156,7 @@ export default function EditGoalModal({ goal, onClose, onSave, language }: EditG
                         className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
                           form.priority === opt.value
                             ? opt.color
-                            : 'border-slate-800 bg-[#0A0C14] text-slate-400 hover:text-slate-200'
+                            : 'border-[#4A1224]/50 bg-[#150917] text-slate-400 hover:text-slate-200'
                         }`}
                       >
                         {opt.label}
@@ -166,24 +166,24 @@ export default function EditGoalModal({ goal, onClose, onSave, language }: EditG
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
                     {isArabic ? 'الموعد النهائي' : 'Deadline'} *
                   </label>
                   <input
                     type="date"
                     value={form.deadline}
                     onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                    className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl px-3 py-3 text-xs font-semibold text-white outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/10 [color-scheme:dark]"
+                    className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl px-3 py-3 text-xs font-semibold text-white outline-none focus:border-[#E5A93C] focus:ring-2 focus:ring-[#E5A93C]/10 [color-scheme:dark]"
                   />
                 </div>
               </div>
 
               {/* Milestones */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
                   {isArabic ? 'الخطوات (Milestones)' : 'Milestones'}
                 </label>
-                <div className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4">
+                <div className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4">
                   <MilestoneList
                     milestones={form.milestones}
                     onChange={(ms) => setForm({ ...form, milestones: ms })}
@@ -198,17 +198,17 @@ export default function EditGoalModal({ goal, onClose, onSave, language }: EditG
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:text-white transition-all active:scale-95"
+                  className="flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-400 bg-[#150917] border border-[#4A1224]/60 hover:bg-[#1A0C1D] hover:text-white transition-all active:scale-95"
                 >
                   {isArabic ? 'إلغاء' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
+                  className="flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest text-slate-950 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:brightness-110 transition-all shadow-xl shadow-[#E5A93C]/20 disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
                 >
                   {saving ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> {isArabic ? 'جاري الحفظ...' : 'Saving...'}</>
+                    <><Loader2 className="w-4 h-4 animate-spin text-slate-950" /> {isArabic ? 'جاري الحفظ...' : 'Saving...'}</>
                   ) : (
                     isArabic ? 'حفظ التعديلات' : 'Save Changes'
                   )}

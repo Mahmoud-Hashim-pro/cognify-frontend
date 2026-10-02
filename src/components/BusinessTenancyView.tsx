@@ -98,17 +98,17 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
   const currentEntitlements = TIER_ENTITLEMENT_MATRIX[tenant.tier];
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8 font-sans relative">
+    <div className="w-full min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8 font-sans relative">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-[#4A1224]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Cockpit Header */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl text-indigo-400">
+                <div className="p-3 bg-indigo-500/10 border border-[#4A1224]/60 rounded-2xl text-[#E5A93C]">
                   <Building2 className="w-7 h-7" />
                 </div>
                 <div>
@@ -116,7 +116,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
                     {isArabic ? 'إدارة المؤسسات والمشتركين المتعددين' : 'Business & Multi-Tenant Management'}
                   </h1>
                   <p className="text-sm text-slate-400 mt-1">
-                    {tenant.name} &bull; <span className="font-mono text-cyan-400">ID: {tenant.tenantId}</span>
+                    {tenant.name} &bull; <span className="font-mono text-[#E5A93C]">ID: {tenant.tenantId}</span>
                   </p>
                 </div>
               </div>
@@ -126,7 +126,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="w-3.5 h-3.5" /> Tenant Isolated
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase font-mono">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-500/10 text-[#E5A93C] border border-indigo-500/20 uppercase font-mono">
                 <Crown className="w-3.5 h-3.5" /> {tenant.tier.replace('_', ' ')}
               </span>
             </div>
@@ -136,7 +136,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
         {/* Section 1: Subscription Tier Cards */}
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-indigo-400" />
+            <CreditCard className="w-5 h-5 text-[#E5A93C]" />
             Subscription Tiers & Entitlements
           </h2>
 
@@ -151,7 +151,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
                   className={`p-6 rounded-3xl backdrop-blur-xl border transition-all flex flex-col justify-between ${
                     isCurrent
                       ? 'bg-indigo-950/40 border-indigo-500/60 shadow-xl shadow-indigo-500/10'
-                      : 'bg-[#121524]/90 border-slate-800/80 hover:border-slate-700'
+                      : 'bg-[#0E0610]/95 border-[#4A1224]/60 hover:border-[#4A1224]/50'
                   }`}
                 >
                   <div className="space-y-4">
@@ -173,7 +173,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-slate-800/80 text-xs">
+                    <div className="space-y-2 pt-2 border-t border-[#4A1224]/60 text-xs">
                       <div className="flex items-center gap-2 text-slate-300">
                         {spec.features.customApiKeys ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
                         <span>BYO API Keys</span>
@@ -206,26 +206,26 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
         {/* Section 2: Seats & Token Consumption Radar */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Seat Allocation Gauge */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Users className="w-4 h-4 text-cyan-400" />
+                <Users className="w-4 h-4 text-[#E5A93C]" />
                 Seat Allocation ({tenant.activeSeats} / {tenant.seatLimit} Used)
               </h3>
-              <span className="text-xs font-mono text-cyan-400">
+              <span className="text-xs font-mono text-[#E5A93C]">
                 {tenant.seatLimit - tenant.activeSeats} Remaining
               </span>
             </div>
 
             <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-cyan-500 transition-all duration-300"
+                className="h-full bg-[#4A1224]/40 transition-all duration-300"
                 style={{ width: `${(tenant.activeSeats / tenant.seatLimit) * 100}%` }}
               />
             </div>
 
             {/* Invite Form */}
-            <form onSubmit={handleAddMember} className="pt-3 border-t border-slate-800 space-y-3">
+            <form onSubmit={handleAddMember} className="pt-3 border-t border-[#4A1224]/60 space-y-3">
               <span className="text-xs font-semibold text-slate-300 block">Allocate New Seat</span>
               <div className="flex gap-2">
                 <input
@@ -233,12 +233,12 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
                   placeholder="student@university.edu"
                   value={newEmail}
                   onChange={e => setNewEmail(e.target.value)}
-                  className="flex-1 px-3 py-2 bg-[#0A0C14] border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:border-cyan-500/50 outline-none"
+                  className="flex-1 px-3 py-2 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-white placeholder-slate-500 focus:border-[#E5A93C]/40 outline-none"
                 />
                 <select
                   value={newRole}
                   onChange={e => setNewRole(e.target.value as any)}
-                  className="px-2.5 py-2 bg-[#0A0C14] border border-slate-800 rounded-xl text-xs text-cyan-400"
+                  className="px-2.5 py-2 bg-[#080409] border border-[#4A1224]/60 rounded-xl text-xs text-[#E5A93C]"
                 >
                   <option value="student">Student</option>
                   <option value="educator">Educator</option>
@@ -246,7 +246,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
                 </select>
                 <button
                   type="submit"
-                  className="py-2 px-3 bg-cyan-500 text-slate-950 font-bold rounded-xl text-xs hover:bg-cyan-400 transition flex items-center gap-1"
+                  className="py-2 px-3 bg-[#4A1224]/40 text-slate-950 font-bold rounded-xl text-xs hover:bg-[#4A1224]/40 transition flex items-center gap-1"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add
                 </button>
@@ -259,7 +259,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
           </div>
 
           {/* Token Consumption Radar */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Coins className="w-4 h-4 text-amber-400" />
@@ -284,7 +284,7 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
               </div>
             </div>
 
-            <div className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs text-slate-300 space-y-1">
+            <div className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl text-xs text-slate-300 space-y-1">
               <div className="flex justify-between">
                 <span>Billing Cycle Closes:</span>
                 <span className="font-mono text-white">In 22 days</span>
@@ -298,16 +298,16 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
         </div>
 
         {/* Section 3: Member Roster Table */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-4">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Users className="w-4 h-4 text-indigo-400" />
+            <Users className="w-4 h-4 text-[#E5A93C]" />
             Active Member Roster ({members.length} Members)
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-500 uppercase text-[10px]">
+                <tr className="border-b border-[#4A1224]/60 text-slate-500 uppercase text-[10px]">
                   <th className="pb-3 font-semibold">User Email</th>
                   <th className="pb-3 font-semibold">Role</th>
                   <th className="pb-3 font-semibold">Status</th>
@@ -316,14 +316,14 @@ export const BusinessTenancyView: React.FC<BusinessTenancyViewProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-800/50">
                 {members.map(m => (
-                  <tr key={m.memberUid} className="hover:bg-slate-900/40 transition">
+                  <tr key={m.memberUid} className="hover:bg-[#150917]/40 transition">
                     <td className="py-3 font-mono text-slate-200">{m.email}</td>
                     <td className="py-3">
                       <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
                         m.role === 'owner'
                           ? 'bg-amber-500/20 text-amber-300'
                           : m.role === 'educator'
-                          ? 'bg-indigo-500/20 text-indigo-300'
+                          ? 'bg-[#4A1224]/40 text-[#E5A93C]'
                           : 'bg-slate-800 text-slate-300'
                       }`}>
                         {m.role}

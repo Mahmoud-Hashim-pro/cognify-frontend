@@ -199,7 +199,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Background Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
@@ -208,12 +208,12 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
 
       <div className="relative z-10 max-w-6xl mx-auto space-y-6">
         {/* Top Header Card */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-4">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2.5 rounded-2xl bg-slate-800/60 hover:bg-slate-700/60 text-slate-300 transition"
+                className="p-2.5 rounded-2xl bg-[#150917]/70 hover:bg-slate-700/60 text-slate-300 transition"
                 aria-label="Back"
               >
                 <ArrowRight className={`w-5 h-5 ${isAr ? '' : 'rotate-180'}`} />
@@ -248,23 +248,25 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
             </button>
 
             {isDemoMode ? (
-              <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                {isAr ? '⚡ عينة معيارية [Benchmark Baseline Dataset]' : '⚡ [Benchmark Baseline Dataset]'}
+              <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-300 border border-purple-500/20 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                <span>{isAr ? 'عرض إرشادي توضيحي' : 'Preview Overview'}</span>
               </span>
             ) : (
-              <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                {isAr ? '🟢 بيانات حية متصلة [Live Connected Data]' : '🟢 [Live Connected Data]'}
+              <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{isAr ? 'بيانات دراسية نشطة' : 'Active Study Progress'}</span>
               </span>
             )}
 
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
               <Calendar className="w-4 h-4 text-emerald-400" />
               <span className="text-sm font-semibold text-white">
                 {dashboardData.growthSummary.activeDaysCount} {isAr ? 'أيام' : 'Days'}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800">
-              <Clock className="w-4 h-4 text-cyan-400" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
+              <Clock className="w-4 h-4 text-[#E5A93C]" />
               <span className="text-sm font-semibold text-white">
                 {dashboardData.growthSummary.practiceTimeMinutes} {isAr ? 'دقيقة' : 'Mins'}
               </span>
@@ -295,13 +297,13 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#121524] border border-slate-800/80 w-full sm:w-fit overflow-x-auto">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('growth')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'growth'
                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -313,7 +315,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'breakthroughs'
                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <Award className="w-4 h-4" />
@@ -328,7 +330,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
               activeTab === 'discussion_cues'
                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                : 'text-slate-400 hover:text-white hover:bg-[#150917]/60'
             }`}
           >
             <MessageCircle className="w-4 h-4" />
@@ -344,7 +346,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               {/* Card 1: Concepts Mastered */}
-              <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
+              <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
                 <span className="text-xs font-semibold text-slate-400">
                   {isAr ? 'المفاهيم المتقنة هذا الأسبوع' : 'Concepts Mastered This Week'}
                 </span>
@@ -362,7 +364,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
               </div>
 
               {/* Card 2: Practice Consistency */}
-              <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
+              <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
                 <span className="text-xs font-semibold text-slate-400">
                   {isAr ? 'الاستمرارية والنشاط' : 'Practice Consistency'}
                 </span>
@@ -378,13 +380,13 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
               </div>
 
               {/* Card 3: Momentum */}
-              <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
+              <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3">
                 <span className="text-xs font-semibold text-slate-400">
                   {isAr ? 'زخم التعلم' : 'Learning Momentum'}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase tracking-wider">
-                    {dashboardData.growthSummary.learningMomentum.replace('_', ' ')}
+                  <span className="text-xs font-bold px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    {isAr ? 'تقدم مستمر وثابت' : 'Steady Growth Momentum'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-400">
@@ -417,7 +419,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                 return (
                   <div
                     key={breakthrough.id}
-                    className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3 flex flex-col justify-between"
+                    className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3 flex flex-col justify-between"
                   >
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-3">
@@ -428,14 +430,14 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                                 : isLeap
                                 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                                : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                : 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30'
                             }`}
                           >
                             <Award className="w-5 h-5" />
                           </div>
                           <div>
                             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                              {breakthrough.type.replace('_', ' ')}
+                              {isResilience ? (isAr ? 'تخطي التحدي بنجاح' : 'Overcoming Challenge') : isLeap ? (isAr ? 'قفزة إتقان' : 'Mastery Leap') : (isAr ? 'إنجاز تعليمي' : 'Milestone')}
                             </span>
                             <h3 className="text-lg font-bold text-white">
                               {isAr ? breakthrough.headlineAr : breakthrough.headlineEn}
@@ -449,7 +451,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                    <div className="pt-3 border-t border-[#4A1224]/60 flex items-center justify-between text-xs text-slate-400">
                       <span>{isAr ? 'المفهوم المكتمل' : 'Target Concept'}:</span>
                       <span className="font-semibold text-white">
                         {isAr ? breakthrough.conceptTitleAr : breakthrough.conceptTitleEn}
@@ -465,9 +467,9 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
         {/* Tab 3: Home Discussion Cues */}
         {activeTab === 'discussion_cues' && (
           <div className="space-y-5">
-            <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3">
-              <Compass className="w-5 h-5 text-cyan-400 shrink-0" />
-              <p className="text-sm text-cyan-200">
+            <div className="p-4 rounded-2xl bg-[#4A1224]/30 border border-[#E5A93C]/20 flex items-center gap-3">
+              <Compass className="w-5 h-5 text-[#E5A93C] shrink-0" />
+              <p className="text-sm text-amber-200">
                 {isAr
                   ? 'أفكار لمحادثات عائلية ممتعة ودافئة حول طاولة الطعام أو خلال اليوم لتشجيع الطالب ودعم ثقته دون توتر.'
                   : 'Actionable home conversation starters to engage your student warmly without test stress or interrogation.'}
@@ -478,10 +480,10 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
               {dashboardData.homeDiscussionCues.map((cue) => (
                 <div
                   key={cue.id}
-                  className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
+                  className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-4"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-2xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
+                    <div className="p-3 rounded-2xl bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30 shrink-0">
                       <MessageCircle className="w-6 h-6" />
                     </div>
                     <div className="space-y-2 flex-1">
@@ -491,7 +493,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                       <h4 className="text-base sm:text-lg font-bold text-white">
                         {isAr ? cue.conversationStarterAr : cue.conversationStarterEn}
                       </h4>
-                      <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                      <div className="p-3.5 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60 space-y-1">
                         <span className="text-xs font-bold text-amber-300">
                           {isAr ? '💡 نصيحة لدعم الطالب:' : '💡 Supportive Parenting Tip:'}
                         </span>
@@ -510,8 +512,8 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
         {/* Child Account Linking Modal */}
         {isLinkingModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-            <div className="relative w-full max-w-md rounded-3xl bg-[#121524] border border-slate-800 text-slate-100 p-6 shadow-2xl space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="relative w-full max-w-md rounded-3xl bg-[#0E0610] border border-[#4A1224]/60 text-slate-100 p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-[#4A1224]/60">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-2xl bg-purple-500/20 border border-purple-500/30 text-purple-300">
                     <Link2 className="w-5 h-5" />
@@ -522,7 +524,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                 </div>
                 <button
                   onClick={() => setIsLinkingModalOpen(false)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition"
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-[#150917]/70 transition"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -544,7 +546,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
                     value={childIdInput}
                     onChange={(e) => setChildIdInput(e.target.value)}
                     placeholder="e.g. std_usr_998124 or student email"
-                    className="w-full px-4 py-3 rounded-2xl bg-[#0A0C14] border border-slate-800 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-purple-500/50"
+                    className="w-full px-4 py-3 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-purple-500/50"
                   />
                 </div>
               </div>
@@ -552,7 +554,7 @@ export const ParentIntelligenceView: React.FC<ParentIntelligenceViewProps> = ({
               <div className="flex justify-end gap-2.5 pt-2">
                 <button
                   onClick={() => setIsLinkingModalOpen(false)}
-                  className="px-5 py-2.5 rounded-2xl border border-slate-800 bg-[#0A0C14] text-slate-300 text-xs font-bold hover:bg-slate-800/40 transition"
+                  className="px-5 py-2.5 rounded-2xl border border-[#4A1224]/60 bg-[#080409] text-slate-300 text-xs font-bold hover:bg-slate-800/40 transition"
                 >
                   {isAr ? 'إلغاء' : 'Cancel'}
                 </button>

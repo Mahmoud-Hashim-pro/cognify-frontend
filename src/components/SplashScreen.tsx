@@ -23,7 +23,7 @@ export default function SplashScreen() {
   return (
     <div
       dir={isAr ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0A0C14] text-white select-none overflow-hidden"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#080409] text-white select-none overflow-hidden"
       style={{
         opacity: phase === 'fade' ? 0 : 1,
         transition: 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -32,16 +32,16 @@ export default function SplashScreen() {
     >
       {/* Background ambient lighting */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-rose-500/15 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-[120px]" />
-        <div className="absolute -top-20 right-1/3 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#4A1224]/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#831843]/20 rounded-full blur-[120px]" />
+        <div className="absolute -top-20 right-1/3 w-80 h-80 bg-[#E5A93C]/10 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
         {/* Modern Brand Icon */}
-        <div className="w-20 h-20 rounded-[24px] bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 p-0.5 shadow-2xl shadow-rose-500/30 flex items-center justify-center">
-          <div className="w-full h-full bg-[#0E111D] rounded-[22px] flex items-center justify-center">
-            <Sparkles className="w-9 h-9 text-rose-400 animate-pulse" />
+        <div className="w-20 h-20 rounded-[24px] bg-gradient-to-tr from-[#4A1224] to-[#E5A93C] p-0.5 shadow-2xl shadow-[#E5A93C]/10 flex items-center justify-center">
+          <div className="w-full h-full bg-[#080409] rounded-[22px] flex items-center justify-center">
+            <Sparkles className="w-9 h-9 text-[#E5A93C] animate-pulse" />
           </div>
         </div>
 
@@ -61,9 +61,9 @@ export default function SplashScreen() {
 
       {/* Modern 3-Color Pulsing Dots */}
       <div className="absolute bottom-14 flex items-center gap-2 z-10">
-        <span className="w-2 h-2 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: '0s' }} />
-        <span className="w-2 h-2 rounded-full bg-teal-400 animate-bounce" style={{ animationDelay: '0.15s' }} />
-        <span className="w-2 h-2 rounded-full bg-rose-500 animate-bounce" style={{ animationDelay: '0.3s' }} />
+        <span className="w-2 h-2 rounded-full bg-[#E5A93C] animate-bounce" style={{ animationDelay: '0s' }} />
+        <span className="w-2 h-2 rounded-full bg-[#831843] animate-bounce" style={{ animationDelay: '0.15s' }} />
+        <span className="w-2 h-2 rounded-full bg-[#4A1224] animate-bounce" style={{ animationDelay: '0.3s' }} />
       </div>
     </div>
   );

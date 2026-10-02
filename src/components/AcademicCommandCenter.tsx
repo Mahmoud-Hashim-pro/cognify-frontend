@@ -15,7 +15,7 @@ import {
 
 const STATUS_STYLE: Record<string, { bg: string; text: string; ring: string }> = {
   'High Performance': { bg: 'bg-emerald-500/15', text: 'text-emerald-400', ring: 'ring-emerald-500/30' },
-  'On Track': { bg: 'bg-cyan-500/15', text: 'text-cyan-400', ring: 'ring-cyan-500/30' },
+  'On Track': { bg: 'bg-[#4A1224]/40', text: 'text-[#E5A93C]', ring: 'ring-[#E5A93C]/30' },
   'Needs Attention': { bg: 'bg-amber-500/15', text: 'text-amber-400', ring: 'ring-amber-500/30' },
   'At Risk': { bg: 'bg-rose-500/15', text: 'text-rose-400', ring: 'ring-rose-500/30' },
 };
@@ -31,7 +31,7 @@ function MetricTile({ label, value, suffix, state, accent, icon }: {
   label: string; value: string; suffix?: string; state: string; accent: string; icon: React.ReactNode;
 }) {
   return (
-    <div className="bg-[#0A0C14] rounded-2xl p-4 border border-slate-800 shadow-inner">
+    <div className="bg-[#150917] rounded-2xl p-4 border border-[#4A1224]/60 shadow-inner">
       <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
         <span className={accent}>{icon}</span> {label}
       </div>
@@ -68,9 +68,9 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
   // Empty state — honest, with a clear CTA (acceptance criterion #1).
   if (health.state === 'no-data') {
     return (
-      <div className="bg-[#121524]/90 rounded-3xl p-8 border border-slate-800/80 shadow-2xl backdrop-blur-xl text-center">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
-          <Activity className="w-7 h-7 text-cyan-400" />
+      <div className="bg-[#0E0610]/95 rounded-3xl p-8 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl text-center">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-[#831843]/20 border border-[#E5A93C]/20 flex items-center justify-center mb-4">
+          <Activity className="w-7 h-7 text-[#E5A93C]" />
         </div>
         <h2 className="text-xl font-black text-white">{t('Your Academic Operating System', 'نظام تشغيلك الأكاديمي')}</h2>
         <p className="text-sm text-slate-400 mt-1.5 max-w-md mx-auto">
@@ -96,12 +96,12 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="bg-[#121524]/90 rounded-3xl p-6 md:p-7 border border-slate-800/80 shadow-2xl backdrop-blur-xl"
+      className="bg-[#0E0610]/95 rounded-3xl p-6 md:p-7 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl"
     >
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-inner">
-            <Activity className="w-6 h-6 text-cyan-400" />
+          <div className="w-11 h-11 rounded-2xl bg-[#831843]/20 border border-[#E5A93C]/20 flex items-center justify-center shadow-inner">
+            <Activity className="w-6 h-6 text-[#E5A93C]" />
           </div>
           <div>
             <h2 className="font-display text-lg font-black text-white tracking-tight leading-none">
@@ -117,8 +117,8 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricTile label={t('Health Score', 'درجة الصحة')} value={String(health.value)} suffix="/100" state={health.state} accent="text-cyan-400" icon={<Activity className="w-3.5 h-3.5" />} />
-        <MetricTile label={t('Success', 'النجاح')} value={String(success.value)} suffix="%" state={success.state} accent="text-cyan-400" icon={<Target className="w-3.5 h-3.5" />} />
+        <MetricTile label={t('Health Score', 'درجة الصحة')} value={String(health.value)} suffix="/100" state={health.state} accent="text-[#E5A93C]" icon={<Activity className="w-3.5 h-3.5" />} />
+        <MetricTile label={t('Success', 'النجاح')} value={String(success.value)} suffix="%" state={success.state} accent="text-[#E5A93C]" icon={<Target className="w-3.5 h-3.5" />} />
         <MetricTile label={t('Momentum', 'الزخم')} value={String(momentum.value)} suffix="/100" state={momentum.state} accent={momentum.value >= 50 ? 'text-emerald-400' : 'text-rose-400'} icon={momentumIcon} />
         <MetricTile label={t('Predicted GPA', 'المعدل المتوقّع')} value={pgpa.state === 'no-data' ? '—' : pgpa.value.toFixed(2)} state={pgpa.state} accent="text-amber-400" icon={<TrendingUp className="w-3.5 h-3.5" />} />
       </div>
@@ -132,8 +132,8 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
           <div className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-1">{t('Focus Area', 'مجال التركيز')}</div>
           <div className="text-sm font-bold text-slate-100">{weakness?.label ?? t('Balanced', 'متوازن')}</div>
         </div>
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
-          <div className="text-[10px] font-black uppercase tracking-widest text-cyan-400 mb-1">{t('Next Critical Action', 'الخطوة التالية')}</div>
+        <div className="bg-[#150917]/90 border border-[#4A1224]/60 rounded-2xl p-4">
+          <div className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C] mb-1">{t('Next Critical Action', 'الخطوة التالية')}</div>
           <div className="text-sm font-bold text-slate-100">
             {nextAction ? `${t('Study', 'ذاكر')} ${nextAction.label}` : (health.improvementActions[0] ?? t('Keep going', 'استمر'))}
           </div>
@@ -143,19 +143,19 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
       <button
         onClick={() => setShowWhy((v) => !v)}
         aria-expanded={showWhy}
-        className="mt-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-400 hover:text-cyan-400 transition-colors"
+        className="mt-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-400 hover:text-[#E5A93C] transition-colors"
       >
-        <Info className="w-3.5 h-3.5 text-cyan-400" /> {t('Why these scores?', 'لماذا هذه الدرجات؟')}
+        <Info className="w-3.5 h-3.5 text-[#E5A93C]" /> {t('Why these scores?', 'لماذا هذه الدرجات؟')}
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showWhy ? 'rotate-180' : ''}`} />
       </button>
 
       {showWhy && (
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3.5 grid md:grid-cols-2 gap-3">
           {whyRows.map(({ title, m }) => (
-            <div key={title} className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 shadow-inner">
+            <div key={title} className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 shadow-inner">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-black uppercase tracking-widest text-slate-200">{title}</span>
-                <span className="text-[10px] font-mono font-bold text-cyan-400">{t('confidence', 'الثقة')} {Math.round(m.confidence * 100)}%</span>
+                <span className="text-[10px] font-mono font-bold text-[#E5A93C]">{t('confidence', 'الثقة')} {Math.round(m.confidence * 100)}%</span>
               </div>
               <ul className="space-y-1.5 mb-2.5">
                 {m.topFactors.map((f, i) => (
@@ -166,7 +166,7 @@ export default function AcademicCommandCenter({ input, isAr, language }: { input
                 ))}
               </ul>
               {m.improvementActions[0] && (
-                <p className="text-xs text-cyan-400 font-medium border-t border-slate-800 pt-2">→ {m.improvementActions[0]}</p>
+                <p className="text-xs text-[#E5A93C] font-medium border-t border-[#4A1224]/60 pt-2">→ {m.improvementActions[0]}</p>
               )}
             </div>
           ))}

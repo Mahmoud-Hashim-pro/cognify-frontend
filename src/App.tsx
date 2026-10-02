@@ -14,7 +14,7 @@ import { Message, UserProfile, AccessibilityMode, CognitiveLevel } from "./types
 import { auth, db, handleFirestoreError, OperationType, cleanDataForFirestore, clearPreLoginState, logout } from "./lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { doc, setDoc, onSnapshot, getDocFromServer, deleteField } from "firebase/firestore";
-import { Loader2, Settings, Layers, Menu, Moon, Sun, AlertCircle, RefreshCw, Mail, ArrowLeft, Globe, Check, Key, Shield } from "lucide-react";
+import { Loader2, Settings, Layers, Menu, Moon, Sun, AlertCircle, RefreshCw, Mail, ArrowLeft, Globe, Check, Key, Shield, Accessibility } from "lucide-react";
 import { toast, ToastContainer } from "./components/Toast";
 import PwaInstallPrompt from "./components/PwaInstallPrompt";
 
@@ -22,7 +22,7 @@ import { isRTL, isArabicLocale, getTranslation, localize } from "./lib/translati
 import { canAccessSection } from "./lib/academics";
 import { canAccessView, homeViewFor, isAccessibilityUser, AppView } from "./lib/access";
 import { isAdminUser } from "./lib/roles";
-import { subscribeToStudentMemory, clearStudentMemory } from "./lib/memory";
+import { subscribeToStudentMemory, clearStudentMemory, getCachedStudentMemory, DEFAULT_STUDENT_MEMORY } from "./lib/memory";
 import { StudentMemory, LanguagePreference } from "./types";
 import { initSecurityTracker } from "./lib/securityTracker";
 import { getVisitorCountryCode } from "./lib/geo";
@@ -60,7 +60,6 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
 // bundle. They load on demand the first time a user opens that screen, which
 // keeps the app fast to start (important on mobile / slow connections).
 const VisionCompanionView = lazyWithRetry(() => import("./components/VisionCompanionView"));
-const MotorEuphoniaView = lazyWithRetry(() => import("./components/MotorEuphoniaView"));
 const DisabilityModeView = lazyWithRetry(() => import("./components/DisabilityModeView"));
 import type { DisabilityTab } from "./components/DisabilityModeView";
 const Login = lazyWithRetry(() => import("./components/Login"));
@@ -81,6 +80,16 @@ const CognitiveGym = lazyWithRetry(() => import("./components/CognitiveGym"));
 const IqAssessmentModal = lazyWithRetry(() => import("./components/IqAssessmentModal"));
 const FrenchTravelVoiceAssistant = lazyWithRetry(() => import("./components/FrenchTravelVoiceAssistant"));
 const ChatInterface = lazyWithRetry(() => import("./components/ChatInterface"));
+const StudentIntelligenceProfileView = lazyWithRetry(() => import("./components/StudentIntelligenceProfileView"));
+const TeacherIntelligenceView = lazyWithRetry(() => import("./components/TeacherIntelligenceView"));
+const ParentIntelligenceView = lazyWithRetry(() => import("./components/ParentIntelligenceView"));
+const RetentionLearningCenter = lazyWithRetry(() => import("./components/RetentionLearningCenter"));
+const PedagogicalEvaluationView = lazyWithRetry(() => import("./components/PedagogicalEvaluationView"));
+const BusinessTenancyView = lazyWithRetry(() => import("./components/BusinessTenancyView"));
+const DeveloperApiConsole = lazyWithRetry(() => import("./components/DeveloperApiConsole"));
+const SystemResilienceDashboard = lazyWithRetry(() => import("./components/SystemResilienceDashboard"));
+const PrivacySecurityCenter = lazyWithRetry(() => import("./components/PrivacySecurityCenter"));
+const AiQualityGuardMonitor = lazyWithRetry(() => import("./components/AiQualityGuardMonitor"));
 
 /** Every hash route the app answers to — the single source of truth for both the
  *  initial read on mount and the popstate handler, so they can't drift apart. */
@@ -88,13 +97,58 @@ const VALID_VIEWS = [
   'chat', 'learning', 'profile', 'settings', 'video', 'disability',
   'admin', 'goals', 'gpa', 'analytics', 'planner', 'support', 'memory',
   'institution', 'gym', 'iq', 'france', 'privacy', 'intelligence',
+  'teacher', 'parent', 'privacy_security', 'evaluation', 'ai_quality',
+  'resilience', 'tenancy', 'developer_api', 'retention',
 ] as const;
+
+function createGuestProfile(): UserProfile {
+  let mode: AccessibilityMode = 'Visual';
+  let disLabel = 'Visual Impairment';
+  try {
+    const savedMode = localStorage.getItem('preLoginAccessibilityMode') as AccessibilityMode;
+    const savedDis = localStorage.getItem('preLoginDisability');
+    if (savedMode) mode = savedMode;
+    if (savedDis) disLabel = savedDis;
+  } catch {}
+  return {
+    uid: 'guest-explorer',
+    email: 'guest@cognify.demo',
+    name: 'مستكشف المنظومة (Guest Explorer)',
+    role: 'Student',
+    accountPath: 'Special Needs',
+    disabilityType: disLabel,
+    accessibilityMode: mode,
+    points: 250,
+    level: 'Intermediate',
+    educationLevel: 'University',
+    field: 'General',
+    language: 'Arabic',
+    questionScore: 100,
+    questionHistory: [],
+    onboardingComplete: true,
+  };
+}
 
 export default function App() {
   const [user, loading, authError] = useAuthState(auth);
   const chatRef = useRef<any>(null);
   
-  const isGuestPreview = typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability';
+  const [isGuestPreview, setIsGuestPreview] = useState<boolean>(() => {
+    return typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability';
+  });
+
+  const handleEnterGuestPreview = () => {
+    try {
+      sessionStorage.setItem('cognify_guest_preview', 'disability');
+      localStorage.setItem('preLoginAccountPath', 'Special Needs');
+      localStorage.setItem('cognify_default_disability_tab', 'hub');
+      window.location.hash = '#disability';
+    } catch {}
+    setIsGuestPreview(true);
+    setProfile(createGuestProfile());
+    setProfileLoading(false);
+    setCurrentView('disability');
+  };
 
   // Seed from the URL hash so deep links and F5 land on the right screen.
   const [currentView, setCurrentView] = useState<AppView>(() => {
@@ -103,53 +157,12 @@ export default function App() {
     }
     const h = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
     if (!h || h === 'video' || h === 'disability') return 'chat';
-    if (h === 'intelligence') return 'profile';
     return (VALID_VIEWS as readonly string[]).includes(h) ? (h as any) : 'chat';
   });
   
   const [profile, setProfile] = useState<UserProfile | null>(() => {
     if (typeof window !== 'undefined' && sessionStorage.getItem('cognify_guest_preview') === 'disability') {
-      const mode = (localStorage.getItem('preLoginAccessibilityMode') as AccessibilityMode) || 'Visual';
-      const disLabel = localStorage.getItem('preLoginDisability') || 'Visual Impairment';
-      return {
-        uid: 'guest-explorer',
-        email: 'guest@cognify.demo',
-        name: 'مستكشف المنظومة (Guest Explorer)',
-        displayName: 'مستكشف المنظومة (Guest Explorer)',
-        photoURL: null,
-        role: 'Student',
-        accountPath: 'Special Needs',
-        disability: disLabel,
-        disabilityType: disLabel,
-        accessibilityMode: mode,
-        points: 250,
-        level: 'Intermediate',
-        streak: 3,
-        learningStyle: 'Visual',
-        educationLevel: 'University',
-        field: 'General',
-        questionScore: 100,
-        questionHistory: [],
-        onboardingComplete: true,
-        history: [],
-        savedNotes: [],
-        customFields: {},
-        preferences: {
-          theme: 'dark',
-          highContrast: false,
-          fontSize: 'medium',
-          motionReduced: false,
-          screenReaderOptimized: true,
-          soundEnabled: true,
-          hapticFeedback: false,
-          language: 'ar',
-          ttsSpeed: 1,
-          captionSize: 'medium',
-          signLanguageSpeed: 1,
-          motorAssistance: 'none',
-          colorBlindMode: 'none',
-        } as any
-      };
+      return createGuestProfile();
     }
     return null;
   });
@@ -175,8 +188,19 @@ export default function App() {
   const [isIqModalOpen, setIsIqModalOpen] = useState(false);
 
   // Cognify Memory (Phase 2) state
-  const [memoryState, setMemoryState] = useState<StudentMemory | null>(null);
-  const [memoryLoading, setMemoryLoading] = useState<boolean>(true);
+  const [memoryState, setMemoryState] = useState<StudentMemory | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const lastUid = localStorage.getItem('last_known_uid');
+        if (lastUid) {
+          const cached = getCachedStudentMemory(lastUid);
+          if (cached) return cached;
+        }
+      } catch {}
+    }
+    return null;
+  });
+  const [memoryLoading, setMemoryLoading] = useState<boolean>(false);
   const [memoryError, setMemoryError] = useState<string | null>(null);
   const [memoryRetryCount, setMemoryRetryCount] = useState<number>(0);
 
@@ -191,18 +215,39 @@ export default function App() {
 
   // Subscribe to Cognify Memory snapshot from Firestore (Single Source of Truth)
   useEffect(() => {
-    if (!user?.uid) {
+    const activeUid = user?.uid || (profile?.uid === 'guest-explorer' ? 'guest-explorer' : profile?.uid);
+    if (!activeUid) {
       setMemoryState(null);
       setMemoryLoading(false);
       setMemoryError(null);
       return;
     }
 
-    setMemoryLoading(true);
+    try {
+      localStorage.setItem('last_known_uid', activeUid);
+    } catch {}
+
+    // 1. Immediately hydrate with cached memory if available
+    const cached = getCachedStudentMemory(activeUid);
+    if (cached) {
+      setMemoryState(cached);
+      setMemoryLoading(false);
+    } else {
+      setMemoryLoading(true);
+    }
     setMemoryError(null);
 
+    // 2. If guest or local demo profile, use default/cached memory immediately without remote call
+    if (activeUid === 'guest-explorer' || activeUid.startsWith('demo-')) {
+      setMemoryState(cached || DEFAULT_STUDENT_MEMORY);
+      setMemoryLoading(false);
+      setMemoryError(null);
+      return;
+    }
+
+    // 3. Subscribe to real-time updates from Firestore
     const unsubscribe = subscribeToStudentMemory(
-      user.uid,
+      activeUid,
       (mem) => {
         setMemoryState(mem);
         setMemoryLoading(false);
@@ -210,13 +255,15 @@ export default function App() {
       },
       (err) => {
         console.error('Firestore memory subscription error:', err);
-        setMemoryError('Failed to load Cognify Memory from Firestore.');
+        // Fall back gracefully to cache or default so the user is never stuck
+        setMemoryState((prev) => prev || cached || DEFAULT_STUDENT_MEMORY);
+        setMemoryError(null);
         setMemoryLoading(false);
       }
     );
 
     return () => unsubscribe();
-  }, [user?.uid, memoryRetryCount]);
+  }, [user?.uid, profile?.uid, memoryRetryCount]);
 
   // Merge memory snapshot with user profile
   const fullProfile: UserProfile | null = profile
@@ -394,8 +441,10 @@ export default function App() {
   // Sync profile from Firestore
   useEffect(() => {
     if (!user) {
-      setProfile(null);
-      setProfileLoading(false);
+      if (!isGuestPreview) {
+        setProfile(null);
+        setProfileLoading(false);
+      }
       return;
     }
 
@@ -471,8 +520,7 @@ export default function App() {
           data.accessibilityMode = preLoginMode as AccessibilityMode;
           if (preLoginDis) data.disabilityType = preLoginDis;
           try {
-            const mappedTab = preLoginMode === 'Motor-Euphonia' ? 'motor' :
-                              preLoginMode === 'Neurodiversity' ? 'neurodiversity' :
+            const mappedTab = preLoginMode === 'Neurodiversity' ? 'neurodiversity' :
                               preLoginMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
             localStorage.setItem('cognify_default_disability_tab', mappedTab);
           } catch {}
@@ -562,16 +610,13 @@ export default function App() {
               accessibilityMode = 'Vocal-Deaf';
             } else if (disabilityType === 'Speech Impairment') {
               accessibilityMode = 'Speech';
-            } else if (disabilityType === 'Motor Impairment') {
-              accessibilityMode = 'Motor-Euphonia';
             } else if (disabilityType === 'Cognitive/Learning Disability') {
               accessibilityMode = 'Neurodiversity';
             }
           }
 
           try {
-            const mappedTab = accessibilityMode === 'Motor-Euphonia' ? 'motor' :
-                              accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
+            const mappedTab = accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
                               accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
             localStorage.setItem('cognify_default_disability_tab', mappedTab);
           } catch {}
@@ -841,7 +886,7 @@ export default function App() {
     }
   };
 
-  if (loading || profileLoading) {
+  if ((!isGuestPreview && loading) || profileLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
@@ -855,7 +900,7 @@ export default function App() {
   }
 
   if (!user && !isGuestPreview) {
-    return <Login />;
+    return <Login onDirectPreview={handleEnterGuestPreview} />;
   }
 
   // Sync failed/timed out (not "no profile yet"). NEVER fall through to
@@ -896,7 +941,7 @@ export default function App() {
     if (!activeProfile) return null;
     // Guard academic sections that aren't available for this education level
     if (
-      (['gpa', 'analytics', 'goals', 'planner'] as const).includes(currentView as any) &&
+      (['gpa', 'analytics', 'goals', 'planner', 'retention', 'evaluation'] as const).includes(currentView as any) &&
       !canAccessSection(activeProfile.educationLevel, currentView as any)
     ) {
       return (
@@ -954,17 +999,20 @@ export default function App() {
         return (
           <StudentMemoryPage
             profile={activeProfile}
-            memory={memoryState}
+            memory={memoryState || DEFAULT_STUDENT_MEMORY}
             loading={memoryLoading}
             error={memoryError}
             onMenuClick={() => setIsMobileMenuOpen(true)}
             onNavigateBack={() => navigateTo(homeViewFor(profile))}
             onRetry={() => {
-              if (user?.uid) {
-                setMemoryLoading(true);
-                setMemoryError(null);
-                setMemoryRetryCount((c) => c + 1);
-              }
+              setMemoryLoading(true);
+              setMemoryError(null);
+              setMemoryRetryCount((c) => c + 1);
+            }}
+            onUseFallbackMemory={() => {
+              setMemoryState((prev) => prev || DEFAULT_STUDENT_MEMORY);
+              setMemoryLoading(false);
+              setMemoryError(null);
             }}
           />
         );
@@ -983,7 +1031,6 @@ export default function App() {
           />
         );
       case 'profile':
-      case 'intelligence':
         return (
           <ProfilePage
             profile={activeProfile}
@@ -991,6 +1038,198 @@ export default function App() {
             onNavigateBack={() => navigateTo(homeViewFor(profile))}
             setProfile={setProfile}
           />
+        );
+      case 'intelligence':
+        return (
+          <StudentIntelligenceProfileView
+            profile={activeProfile}
+            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onNavigateBack={() => navigateTo('profile')}
+          />
+        );
+      case 'teacher':
+        return (
+          <TeacherIntelligenceView
+            lang={isArabicLocale(activeProfile.language) ? 'ar' : 'en'}
+            onBack={() => navigateTo(homeViewFor(profile))}
+          />
+        );
+      case 'parent':
+        return (
+          <ParentIntelligenceView
+            profile={activeProfile}
+            lang={isArabicLocale(activeProfile.language) ? 'ar' : 'en'}
+            onBack={() => navigateTo(homeViewFor(profile))}
+          />
+        );
+      case 'retention':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <RetentionLearningCenter
+              schedules={activeProfile.studentState?.retentionSchedules || {}}
+              lang={isArabicLocale(activeProfile.language) ? 'ar' : 'en'}
+            />
+          </div>
+        );
+      case 'evaluation':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <PedagogicalEvaluationView
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
+        );
+      case 'tenancy':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <BusinessTenancyView
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
+        );
+      case 'developer_api':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <DeveloperApiConsole
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
+        );
+      case 'resilience':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <SystemResilienceDashboard
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
+        );
+      case 'privacy_security':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <PrivacySecurityCenter
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
+        );
+      case 'ai_quality':
+        return (
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <header className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => navigateTo(homeViewFor(profile))}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                <span className="text-xs font-bold hidden sm:inline">{localize(activeProfile.language, 'Back', 'رجوع')}</span>
+              </button>
+              <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </header>
+            <AiQualityGuardMonitor
+              isArabic={isArabicLocale(activeProfile.language)}
+            />
+          </div>
         );
       case 'admin':
         return <AdminDashboard profile={activeProfile} onMenuClick={() => setIsMobileMenuOpen(true)} onNavigateBack={() => navigateTo(homeViewFor(profile))} />;
@@ -1071,18 +1310,18 @@ export default function App() {
         };
 
         return (
-          <div className="flex-1 flex flex-col bg-[#0A0C14] text-slate-100 relative overflow-hidden font-sans custom-scrollbar">
-            {/* Ambient Lighting Orbs */}
+          <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 relative overflow-hidden font-sans custom-scrollbar">
+            {/* Ambient Lighting Orbs - Royal Burgundy & Champagne Gold */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-              <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-              <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
-              <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
+              <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
+              <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/10 rounded-full blur-[140px]" />
+              <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/15 rounded-full blur-[140px]" />
             </div>
 
             <header className="p-6 md:p-10 shrink-0 flex items-center gap-3">
               <button
                 onClick={() => navigateTo(homeViewFor(profile))}
-                className="p-2.5 text-slate-300 hover:text-white bg-[#121524] hover:bg-[#181C2E] shadow-md border border-slate-800/80 hover:border-slate-700 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
                 title={localize(profile.language, 'Back to Assistant', 'العودة للمساعد')}
               >
                 <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -1090,7 +1329,7 @@ export default function App() {
               </button>
               <button 
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="p-2.5 text-slate-300 hover:text-white bg-[#121524] hover:bg-[#181C2E] shadow-md border border-slate-800/80 hover:border-slate-700 rounded-2xl active:scale-95 shrink-0"
+                className="p-2.5 text-slate-300 hover:text-[#E5A93C] bg-[#150917] hover:bg-[#1F0D22] shadow-md border border-[#4A1224]/60 hover:border-[#E5A93C]/40 rounded-2xl active:scale-95 shrink-0"
                 aria-label="Toggle menu"
                 title="Open Menu"
               >
@@ -1098,15 +1337,15 @@ export default function App() {
               </button>
             </header>
             <div className="flex-1 flex items-center justify-center p-4 sm:p-6 overflow-y-auto custom-scrollbar">
-              <div className="bg-[#121524]/90 rounded-[32px] sm:rounded-[40px] border border-slate-800/80 backdrop-blur-xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 md:p-12 space-y-8 my-auto">
+              <div className="bg-[#0E0610]/95 rounded-[32px] sm:rounded-[40px] border border-[#4A1224]/60 backdrop-blur-xl shadow-2xl max-w-2xl w-full p-6 sm:p-8 md:p-12 space-y-8 my-auto ring-1 ring-[#E5A93C]/20">
                 <div className="text-center space-y-2">
                   <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">{getTranslation(profile.language, 'settings')}</h2>
-                  <div className="h-1.5 w-20 bg-gradient-to-r from-cyan-500 to-blue-600 mx-auto rounded-full shadow-lg shadow-cyan-500/30" />
+                  <div className="h-1.5 w-20 bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C] mx-auto rounded-full shadow-lg shadow-[#4A1224]/40" />
                 </div>
 
                 {/* Language Selection Card */}
-                <div className="p-5 sm:p-6 bg-[#0A0C14]/80 rounded-3xl border border-slate-800/80 space-y-4">
-                  <div className="flex items-center gap-2 text-cyan-400">
+                <div className="p-5 sm:p-6 bg-[#150917]/90 rounded-3xl border border-[#4A1224]/50 space-y-4">
+                  <div className="flex items-center gap-2 text-[#E5A93C]">
                     <Globe className="w-5 h-5" />
                     <h3 className="text-sm font-black uppercase tracking-widest">
                       {localize(profile.language, 'Language Selection', 'اختيار اللغة')}
@@ -1128,18 +1367,18 @@ export default function App() {
                           onClick={() => handleLanguageChange(lang.id)}
                           className={`p-3 rounded-2xl border flex items-center justify-between transition-all active:scale-95 text-start ${
                             isSelected
-                              ? 'border-cyan-500/80 bg-cyan-500/15 shadow-md shadow-cyan-500/10 text-cyan-300 font-bold'
-                              : 'border-slate-800 bg-[#121524] hover:border-slate-700 text-slate-300 hover:text-white'
+                              ? 'border-[#E5A93C]/80 bg-[#4A1224]/40 shadow-md shadow-[#4A1224]/30 text-[#E5A93C] font-bold'
+                              : 'border-[#4A1224]/40 bg-[#1A0C1E] hover:border-[#E5A93C]/40 text-slate-300 hover:text-white'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <span className="text-lg shrink-0">{lang.flag}</span>
                             <div className="truncate">
                               <p className="text-xs font-bold leading-none">{lang.nativeName}</p>
-                              <p className="text-[10px] text-slate-500 mt-0.5 truncate">{lang.label}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5 truncate">{lang.label}</p>
                             </div>
                           </div>
-                          {isSelected && <Check className="w-4 h-4 text-cyan-400 shrink-0 ml-1" />}
+                          {isSelected && <Check className="w-4 h-4 text-[#E5A93C] shrink-0 ml-1" />}
                         </button>
                       );
                     })}
@@ -1147,8 +1386,8 @@ export default function App() {
                 </div>
 
                 {/* Custom API Key Card */}
-                <div className="p-5 sm:p-6 bg-[#0A0C14]/80 rounded-3xl border border-slate-800/80 space-y-4">
-                  <div className="flex items-center gap-2 text-cyan-400">
+                <div className="p-5 sm:p-6 bg-[#150917]/90 rounded-3xl border border-[#4A1224]/50 space-y-4">
+                  <div className="flex items-center gap-2 text-[#E5A93C]">
                     <Key className="w-5 h-5" />
                     <h3 className="text-sm font-black uppercase tracking-widest">
                       {localize(profile.language, 'AI Provider & Custom Key', 'مفتاح الذكاء الاصطناعي الخاص')}
@@ -1167,7 +1406,7 @@ export default function App() {
                       defaultValue={secureLoadKeySync('gemini')}
                       id="cognify-custom-gemini-key-input"
                       placeholder="AIzaSy... (Gemini API Key)"
-                      className="flex-1 px-4 py-3 bg-[#121524] border border-slate-800 rounded-2xl text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/10"
+                      className="flex-1 px-4 py-3 bg-[#150917] border border-[#4A1224]/60 rounded-2xl text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-[#E5A93C]/70 focus:ring-2 focus:ring-[#E5A93C]/20"
                     />
                     <button
                       onClick={async () => {
@@ -1304,26 +1543,28 @@ export default function App() {
       {isGuestPreview && (
         <div className="fixed top-0 left-0 right-0 h-9 bg-gradient-to-r from-[#2D0B16] via-[#4A1224] to-[#2D0B16] border-b border-[#E5A93C]/40 px-4 flex items-center justify-between text-xs text-[#E5A93C] z-[99999] shadow-lg">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-black text-[#E5A93C] bg-[#E5A93C]/20 px-1.5 py-0.5 rounded text-[11px] border border-[#E5A93C]/40">[N|]</span>
+            <Accessibility className="w-4 h-4 text-[#E5A93C]" />
             <span className="font-bold text-white text-[11px] sm:text-xs">
-              معاينة حية: منظومة ذوي الهمم (هوية البورجندي والذهب) · Royal Burgundy Constellation
+              {direction === 'rtl' ? 'معاينة حية: مركز ذوي الهمم والتقنيات المساعدة' : 'Live Preview: People of Determination Hub'}
             </span>
           </div>
           <button
             onClick={() => {
               sessionStorage.removeItem('cognify_guest_preview');
+              setIsGuestPreview(false);
+              setProfile(null);
               window.location.hash = '';
               window.location.reload();
             }}
             className="px-2.5 py-1 rounded-lg bg-[#E5A93C] text-slate-950 font-black text-[10px] sm:text-[11px] hover:brightness-110 transition-all shadow-sm active:scale-95"
           >
-            تسجيل الدخول / خروج من المعاينة
+            {direction === 'rtl' ? 'تسجيل الدخول / خروج من المعاينة' : 'Sign in / Exit Preview'}
           </button>
         </div>
       )}
 
       <div
-        className={`flex w-full h-[100dvh] bg-bg-main font-sans overflow-hidden selection:bg-primary/30 transition-all duration-500 ${isGuestPreview ? 'pt-9' : ''} ${
+        className={`flex w-full h-[100dvh] bg-[#080409] text-slate-100 font-sans overflow-hidden selection:bg-[#E5A93C]/30 transition-all duration-500 ${isGuestPreview ? 'pt-9' : ''} ${
           profile?.accessibilityMode === 'Visual' ? 'text-lg contrast-125' : ''
         }`}
         dir={direction}
@@ -1333,7 +1574,7 @@ export default function App() {
         {/* WCAG 2.4.1 Skip to main content link */}
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-amber-500 focus:text-slate-950 focus:font-black focus:rounded-2xl focus:shadow-2xl focus:ring-4 focus:ring-amber-300 transition-all text-xs"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-[#E5A93C] focus:text-slate-950 focus:font-black focus:rounded-2xl focus:shadow-2xl focus:ring-4 focus:ring-[#E5A93C]/30 transition-all text-xs"
         >
           {localize(profile?.language, 'Skip to main content', 'الانتقال إلى المحتوى الرئيسي')}
         </a>
@@ -1407,8 +1648,8 @@ export default function App() {
         <main id="main-content" tabIndex={-1} className="flex-1 relative overflow-hidden flex flex-col md:flex-row focus:outline-none">
           <Suspense
             fallback={
-              <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+              <div className="flex-1 flex items-center justify-center bg-[#080409] text-[#E5A93C]">
+                <Loader2 className="w-8 h-8 text-[#E5A93C] animate-spin" />
               </div>
             }
           >

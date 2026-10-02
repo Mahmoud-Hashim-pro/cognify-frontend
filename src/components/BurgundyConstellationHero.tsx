@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Eye, Ear, Activity, Brain, Hand, Check, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
+import { Eye, Ear, Brain, Hand, Check, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isArabicLocale, localize } from '../lib/translations';
 
@@ -8,16 +8,16 @@ interface BurgundyConstellationHeroProps {
   profile: UserProfile;
   onLaunchPrimary: () => void;
   onExploreModes: () => void;
-  onSelectSuite?: (suiteId: 'vision' | 'deaf' | 'motor' | 'neurodiversity') => void;
+  onSelectSuite?: (suiteId: 'vision' | 'deaf' | 'neurodiversity') => void;
   isDarkMode?: boolean;
   toggleTheme?: () => void;
 }
 
 interface ConstellationNode {
-  id: 'vision' | 'hearing' | 'sign' | 'motor' | 'neuro';
+  id: 'vision' | 'hearing' | 'sign' | 'neuro';
   labelAr: string;
   labelEn: string;
-  suiteId: 'vision' | 'deaf' | 'motor' | 'neurodiversity';
+  suiteId: 'vision' | 'deaf' | 'neurodiversity';
   Icon: React.ComponentType<{ className?: string }>;
   x: number; // percentage in SVG viewBox 0-400
   y: number; // percentage in SVG viewBox 0-300
@@ -45,7 +45,7 @@ export default function BurgundyConstellationHero({
     ? isFemaleUser ? 'استكشفي الأوضاع' : 'استكشف الأوضاع'
     : 'Explore Assistive Suites';
 
-  // The 5 true interconnected disability symbols
+  // The 4 true interconnected disability symbols
   const nodes: ConstellationNode[] = [
     {
       id: 'vision',
@@ -81,17 +81,6 @@ export default function BurgundyConstellationHero({
       glowColor: 'rgba(244, 63, 94, 0.45)',
     },
     {
-      id: 'motor',
-      labelAr: 'الحركة',
-      labelEn: 'Motor',
-      suiteId: 'motor',
-      Icon: Activity,
-      x: 140,
-      y: 220,
-      color: '#FBBF24', // Amber
-      glowColor: 'rgba(251, 191, 36, 0.45)',
-    },
-    {
       id: 'neuro',
       labelAr: 'العقل',
       labelEn: 'Cognitive',
@@ -104,18 +93,14 @@ export default function BurgundyConstellationHero({
     },
   ];
 
-  // Connections between all 5 nodes (complete unified network)
+  // Connections between all 4 nodes (complete unified network)
   const connections: [number, number][] = [
     [0, 1], // Vision - Hearing
     [1, 2], // Hearing - Sign
-    [2, 3], // Sign - Motor
-    [3, 4], // Motor - Neuro
-    [4, 0], // Neuro - Vision
+    [2, 3], // Sign - Neuro
+    [3, 0], // Neuro - Vision
     [0, 2], // Vision - Sign
-    [0, 3], // Vision - Motor
-    [1, 4], // Hearing - Neuro
-    [1, 3], // Hearing - Motor
-    [2, 4], // Sign - Neuro
+    [1, 3], // Hearing - Neuro
   ];
 
   return (
@@ -136,9 +121,9 @@ export default function BurgundyConstellationHero({
       <div className="relative z-10 flex items-center justify-between pb-6 border-b border-rose-950/60 gap-3 flex-wrap">
         {/* Right side: Cognify with gold monogram + Arabic tagline */}
         <div className="flex items-center gap-3">
-          {/* Monogram Badge as seen in screenshot: gold border [NI] */}
-          <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border-2 border-[#E5A93C] flex items-center justify-center text-[#E5A93C] font-black text-sm shadow-md shadow-amber-950/50">
-            <span className="tracking-tighter">N|</span>
+          {/* Brand Icon Badge */}
+          <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border-2 border-[#E5A93C] flex items-center justify-center text-[#E5A93C] shadow-md shadow-amber-950/50">
+            <Sparkles className="w-5 h-5 text-[#E5A93C]" />
           </div>
           <div>
             <div className="text-xl font-black text-white tracking-tight flex items-center gap-2">
@@ -327,8 +312,8 @@ export default function BurgundyConstellationHero({
         <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed font-normal max-w-xl mx-auto mb-8 px-2">
           {localize(
             profile.language,
-            'Vision, Hearing, Sign Language, Motor, and Mind — five genuine symbols coexisting in the same design, so no one feels like an afterthought or exception. Every need has a distinct visual presence, and all are part of the same strong identity.',
-            'البصر، السمع، لغة الإشارة، الحركة، والعقل — خمسة رموز حقيقية متجاورة في نفس التصميم، عشان محدش يحس إنه ملحق أو استثناء. كل احتياج ليه حضور بصري واضح، وكلهم جزء من نفس الهوية القوية.'
+            'Vision, Hearing, Sign Language, and Mind — four genuine symbols coexisting in the same design, so no one feels like an afterthought or exception. Every need has a distinct visual presence, and all are part of the same strong identity.',
+            'البصر، السمع، لغة الإشارة، والعقل — أربعة رموز حقيقية متجاورة في نفس التصميم، عشان محدش يحس إنه ملحق أو استثناء. كل احتياج ليه حضور بصري واضح، وكلهم جزء من نفس الهوية القوية.'
           )}
         </p>
 

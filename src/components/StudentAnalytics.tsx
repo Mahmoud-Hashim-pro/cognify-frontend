@@ -81,7 +81,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
   const daysUntil = (iso: string) => Math.ceil((+parseGoalLocalDate(iso) - Date.now()) / 86400000);
 
   const Stat = ({ icon, label, value, tone }: { icon: any; label: string; value: string; tone: string }) => (
-    <div className="bg-[#121524]/90 rounded-3xl p-5 border border-slate-800/80 shadow-xl flex items-center gap-4 backdrop-blur-xl hover:border-slate-700/80 transition-all">
+    <div className="bg-[#0E0610]/95 rounded-3xl p-5 border border-[#4A1224]/60 shadow-xl flex items-center gap-4 backdrop-blur-xl hover:border-[#831843]/80 transition-all">
       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${tone}`}>{icon}</div>
       <div>
         <div className="text-2xl font-black text-white font-mono tracking-tight">{value}</div>
@@ -91,19 +91,19 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
   );
 
   return (
-    <div dir={isAr ? 'rtl' : 'ltr'} className="flex-1 h-screen overflow-y-auto bg-[#0A0C14] text-slate-100 relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden font-sans flex flex-col custom-scrollbar p-6 md:p-10 gap-6">
+    <div dir={isAr ? 'rtl' : 'ltr'} className="flex-1 h-screen overflow-y-auto bg-[#080409] text-slate-100 relative selection:bg-[#E5A93C]/30 selection:text-[#E5A93C] overflow-x-hidden font-sans flex flex-col custom-scrollbar p-6 md:p-10 gap-6">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/25 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#831843]/20 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#E5A93C]/10 rounded-full blur-[140px]" />
       </div>
 
       <header className="flex items-start gap-4">
         {onNavigateBack && (
           <button
             onClick={onNavigateBack}
-            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md"
+            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-[#150917]/80 hover:bg-slate-800/90 border border-[#4A1224]/60 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0 shadow-md"
             title={t('Back to Assistant', 'العودة للمساعد')}
           >
             <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -113,7 +113,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 rounded-xl active:scale-95 transition-all shrink-0 shadow-md"
+            className="p-2.5 mt-1 text-slate-400 hover:text-white bg-[#150917]/80 hover:bg-slate-800/90 border border-[#4A1224]/60 rounded-xl active:scale-95 transition-all shrink-0 shadow-md"
             aria-label={t('Toggle menu', 'القائمة')}
             title={t('Open Menu', 'فتح القائمة')}
           >
@@ -122,7 +122,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
         )}
         <div>
           <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight uppercase flex items-center gap-3">
-            <span className="p-2 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="p-2 rounded-2xl bg-[#831843]/20 text-[#E5A93C] border border-[#E5A93C]/20">
               <LayoutDashboard className="w-7 h-7" />
             </span>
             {t('Student Analytics', 'تحليلات الطالب')}
@@ -142,14 +142,14 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Stat icon={<GraduationCap className="w-6 h-6 text-cyan-400" />} tone="bg-cyan-500/15 border border-cyan-500/20" label={t('Cumulative GPA', 'المعدل التراكمي')} value={cgpa.toFixed(2)} />
+          <Stat icon={<GraduationCap className="w-6 h-6 text-[#E5A93C]" />} tone="bg-[#4A1224]/40 border border-[#E5A93C]/20" label={t('Cumulative GPA', 'المعدل التراكمي')} value={cgpa.toFixed(2)} />
           {subjects.length ? (
             <Stat icon={<CalendarCheck className="w-6 h-6 text-emerald-400" />} tone="bg-emerald-500/15 border border-emerald-500/20" label={t('Avg Attendance', 'متوسط الحضور')} value={`${avgAttendance}%`} />
           ) : (
-            <Stat icon={<CalendarDays className="w-6 h-6 text-cyan-400" />} tone="bg-cyan-500/15 border border-cyan-500/20" label={t('Upcoming Events', 'أحداث قادمة')} value={String(upcomingEvents.length)} />
+            <Stat icon={<CalendarDays className="w-6 h-6 text-[#E5A93C]" />} tone="bg-[#4A1224]/40 border border-[#E5A93C]/20" label={t('Upcoming Events', 'أحداث قادمة')} value={String(upcomingEvents.length)} />
           )}
-          <Stat icon={<Target className="w-6 h-6 text-indigo-400" />} tone="bg-indigo-500/15 border border-indigo-500/20" label={t('Active Goals', 'أهداف نشطة')} value={String(activeGoals.length)} />
-          <Stat icon={<Target className="w-6 h-6 text-slate-400" />} tone="bg-slate-800 border border-slate-700" label={t('Completed Goals', 'أهداف مكتملة')} value={String(completedGoals.length)} />
+          <Stat icon={<Target className="w-6 h-6 text-[#E5A93C]" />} tone="bg-[#4A1224]/40 border border-[#E5A93C]/30" label={t('Active Goals', 'أهداف نشطة')} value={String(activeGoals.length)} />
+          <Stat icon={<Target className="w-6 h-6 text-slate-400" />} tone="bg-slate-800 border border-[#4A1224]/60" label={t('Completed Goals', 'أهداف مكتملة')} value={String(completedGoals.length)} />
         </div>
 
         {/* At-risk attendance alert */}
@@ -164,9 +164,9 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* GPA trend */}
-          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+          <div className="bg-[#0E0610]/95 rounded-3xl p-6 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl">
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400" />
+              <span className="w-2 h-2 rounded-full bg-[#E5A93C]" />
               {t('GPA by Semester', 'المعدل لكل ترم')}
             </h2>
             {gpaTrend.length ? (
@@ -178,8 +178,8 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
                     <YAxis domain={[0, 4]} tick={{ fontSize: 10, fill: '#94a3b8' }} stroke="#334155" />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#0F172A',
-                        borderColor: '#334155',
+                        backgroundColor: '#0E0610',
+                        borderColor: '#4A1224',
                         borderRadius: '1rem',
                         color: '#F8FAFC',
                         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
@@ -200,7 +200,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
 
           {/* Attendance bars (legacy data) OR upcoming calendar events */}
           {subjects.length ? (
-            <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+            <div className="bg-[#0E0610]/95 rounded-3xl p-6 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 {t('Attendance', 'الحضور')}
@@ -215,7 +215,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
                         <span className="text-slate-200">{s.name}</span>
                         <span className={deprived ? 'text-rose-400 font-mono font-black' : 'text-slate-400 font-mono'}>{pct}%</span>
                       </div>
-                      <div className="h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
+                      <div className="h-2 bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/50">
                         <div className={`h-full ${deprived ? 'bg-rose-500' : 'bg-gradient-to-r from-emerald-500 to-teal-400'}`} style={{ width: `${Math.min(100, pct)}%` }} />
                       </div>
                     </div>
@@ -224,17 +224,17 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
               </div>
             </div>
           ) : (
-            <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+            <div className="bg-[#0E0610]/95 rounded-3xl p-6 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="w-2 h-2 rounded-full bg-[#E5A93C]" />
                 {t('Upcoming Events', 'الأحداث القادمة')}
               </h2>
               {upcomingEvents.length ? (
                 <div className="space-y-2.5">
                   {upcomingEvents.map((e) => (
-                    <div key={e.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[#0A0C14] border border-slate-800/80 hover:border-slate-700/80 transition-all">
-                      <div className="text-center shrink-0 w-10 p-1 rounded-xl bg-slate-900 border border-slate-800">
-                        <div className="text-[9px] font-black text-cyan-400 uppercase">{new Date(e.date + 'T00:00:00').toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short' })}</div>
+                    <div key={e.id} className="flex items-center gap-3 p-3 rounded-2xl bg-[#150917] border border-[#4A1224]/60 hover:border-[#831843]/80 transition-all">
+                      <div className="text-center shrink-0 w-10 p-1 rounded-xl bg-[#150917] border border-[#4A1224]/60">
+                        <div className="text-[9px] font-black text-[#E5A93C] uppercase">{new Date(e.date + 'T00:00:00').toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { month: 'short' })}</div>
                         <div className="text-base font-black text-white leading-none mt-0.5">{new Date(e.date + 'T00:00:00').getDate()}</div>
                       </div>
                       <div className="min-w-0 flex-1">
@@ -253,7 +253,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
 
         {/* Goals + deadlines */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+          <div className="bg-[#0E0610]/95 rounded-3xl p-6 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl">
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-indigo-400" />
               {t('Goals Progress', 'تقدّم الأهداف')}
@@ -264,10 +264,10 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
                   <div key={g.id}>
                     <div className="flex justify-between text-xs font-bold mb-1.5">
                       <span className="text-slate-200 truncate">{g.title}</span>
-                      <span className="text-cyan-400 font-mono font-black">{g.progress}%</span>
+                      <span className="text-[#E5A93C] font-mono font-black">{g.progress}%</span>
                     </div>
-                    <div className="h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
-                      <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style={{ width: `${g.progress}%` }} />
+                    <div className="h-2 bg-[#150917] rounded-full overflow-hidden border border-[#4A1224]/50">
+                      <div className="h-full bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C]" style={{ width: `${g.progress}%` }} />
                     </div>
                   </div>
                 ))}
@@ -277,7 +277,7 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
             )}
           </div>
 
-          <div className="bg-[#121524]/90 rounded-3xl p-6 border border-slate-800/80 shadow-2xl backdrop-blur-xl">
+          <div className="bg-[#0E0610]/95 rounded-3xl p-6 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl">
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-4 flex items-center gap-2">
               <Clock className="w-4 h-4 text-amber-400" /> {t('Upcoming Deadlines', 'مواعيد قريبة')}
             </h2>
@@ -286,9 +286,9 @@ export default function StudentAnalytics({ profile, onMenuClick, onNavigateBack 
                 {upcoming.map((g) => {
                   const d = daysUntil(g.deadline);
                   return (
-                    <div key={g.id} className="flex items-center justify-between gap-3 p-3.5 bg-[#0A0C14] border border-slate-800/80 rounded-2xl">
+                    <div key={g.id} className="flex items-center justify-between gap-3 p-3.5 bg-[#150917] border border-[#4A1224]/60 rounded-2xl">
                       <span className="text-sm font-bold text-slate-200 truncate">{g.title}</span>
-                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-xl border ${d < 0 ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : d <= 3 ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'}`}>
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-xl border ${d < 0 ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : d <= 3 ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-slate-800 text-slate-300 border-[#4A1224]/60'}`}>
                         {d < 0 ? t('overdue', 'متأخر') : `${d} ${t('days', 'يوم')}`}
                       </span>
                     </div>

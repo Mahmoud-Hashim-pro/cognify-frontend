@@ -41,7 +41,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
   if (!isLoaded && profile.uid && profile.uid !== 'guest') {
     return (
       <div
-        className="p-6 md:p-7 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-5 animate-pulse"
+        className="p-6 md:p-7 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl space-y-5 animate-pulse"
         aria-busy="true"
         aria-label={localize(profile.language, 'Loading learning intelligence profile', 'جاري تحميل الملف المعرفي الذكي')}
       >
@@ -100,17 +100,13 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
     ? Math.round(
         (masteryEntries.reduce((acc, [_, r]) => acc + r.confidence, 0) / masteryEntries.length) * 100
       )
-    : 75;
+    : 0;
 
   const intel = {
     confidenceScore: avgConfidence,
     cognitiveStrengths: hasLiveMastery
       ? liveMasteredConcepts.slice(0, 3).map((c) => c.conceptName)
-      : [
-          isAr ? 'التعرف على الأنماط المنطقية' : 'Visual Matrix Pattern Completion',
-          isAr ? 'الاستنتاج التحليلي' : 'Deductive Syllogistic Inferences',
-          isAr ? 'التفكيك التدريجي للمسائل' : 'Step-by-step Structural Breakdown',
-        ],
+      : [],
     masteredConcepts: hasLiveMastery ? liveMasteredConcepts : [],
     developingConcepts: hasLiveMastery ? liveDevelopingConcepts : [],
   };
@@ -225,17 +221,17 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
   const dueRetentionCount = retentionList.filter((r) => r.isDue).length;
 
   return (
-    <div className="p-6 md:p-7 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-6">
+    <div className="p-6 md:p-7 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-2xl bg-[#831843]/20 border border-[#E5A93C]/20 text-[#E5A93C] flex items-center justify-center font-bold">
             <Brain className="w-5 h-5" />
           </div>
           <div>
             <h3 className="font-black text-white text-base flex items-center gap-2">
               {localize(profile.language, 'Explainable Learning Profile', 'الملف المعرفي الشفاف')}
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30">
                 Cognify 2.0
               </span>
             </h3>
@@ -254,9 +250,15 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
           <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider block">
             {localize(profile.language, 'Mastery Confidence', 'نسبة الثقة في الإتقان')}
           </span>
-          <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 font-mono">
-            {intel.confidenceScore}%
-          </span>
+          {hasLiveMastery ? (
+            <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-emerald-400 font-mono">
+              {intel.confidenceScore}%
+            </span>
+          ) : (
+            <span className="text-xs font-semibold text-slate-400">
+              {localize(profile.language, 'Awaiting initial assessment', 'بانتظار التقييم الأولي')}
+            </span>
+          )}
         </div>
       </div>
 
@@ -266,24 +268,37 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
           <Award className="w-4 h-4 text-amber-400" />
           {localize(profile.language, 'Verified Cognitive Strengths', 'نقاط القوة المعرفية المثبتة')}
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {intel.cognitiveStrengths.map((str, idx) => (
-            <div
-              key={idx}
-              className="p-3 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs font-semibold text-slate-200 flex items-center gap-2.5 shadow-inner"
-            >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>{str}</span>
-            </div>
-          ))}
-        </div>
+        {hasLiveMastery && intel.cognitiveStrengths.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {intel.cognitiveStrengths.map((str, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs font-semibold text-slate-200 flex items-center gap-2.5 shadow-inner"
+              >
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>{str}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-2xl bg-[#150917]/70 border border-[#4A1224]/40 text-xs text-slate-400 flex items-center gap-2">
+            <Info className="w-4 h-4 text-[#E5A93C] shrink-0" />
+            <span>
+              {localize(
+                profile.language,
+                'Start interactive learning sessions to empirically diagnose your cognitive strengths.',
+                'ابدأ جلسات التعلم التفاعلية لبناء خريطة نقاط القوة المعرفية الخاصة بك.'
+              )}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Dominant Empirical Learning Modality (PLM Longitudinal Intelligence) */}
-      <div className="p-4.5 rounded-3xl bg-gradient-to-r from-indigo-950/40 via-[#121528] to-cyan-950/30 border border-indigo-500/30 shadow-xl space-y-3">
+      <div className="p-4.5 rounded-3xl bg-gradient-to-r from-indigo-950/40 via-[#121528] to-rose-600/30 border border-[#E5A93C]/30 shadow-xl space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+            <div className="w-8 h-8 rounded-xl bg-[#4A1224]/50 border border-indigo-500/40 flex items-center justify-center text-[#E5A93C]">
               <Compass className="w-4 h-4" />
             </div>
             <div>
@@ -300,7 +315,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
               </div>
             </div>
           </div>
-          <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+          <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-[#4A1224]/40 text-[#E5A93C] border border-[#E5A93C]/30">
             {hasSufficientEvidence
               ? `${localize(profile.language, 'Calibrated', 'معايرة مكتملة')} (${Math.round(bestScore * 100)}% ${localize(profile.language, 'win rate', 'نسبة نجاح')})`
               : localize(profile.language, 'Initial Baseline Calibration', 'معايرة النمط الأولي')}
@@ -318,13 +333,13 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
       {/* Pedagogical Strategy Efficacy Matrix (Pillar 4) */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-black uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-            <Sliders className="w-4 h-4 text-indigo-400" />
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#E5A93C] flex items-center gap-1.5">
+            <Sliders className="w-4 h-4 text-[#E5A93C]" />
             {localize(profile.language, 'Pedagogical Strategy Efficacy Matrix', 'مصفوفة فاعلية استراتيجيات التعلم')}
           </h4>
           <span className="text-[10px] font-bold text-slate-400">
             {localize(profile.language, 'Active: ', 'الأسلوب الحالي: ')}
-            <span className="text-cyan-400 uppercase font-mono font-black">{studentState?.activePedagogy || 'scaffolded'}</span>
+            <span className="text-[#E5A93C] uppercase font-mono font-black">{studentState?.activePedagogy || 'scaffolded'}</span>
           </span>
         </div>
 
@@ -343,15 +358,15 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                 key={item.key}
                 className={`p-3.5 rounded-2xl border transition-all text-xs space-y-2 relative overflow-hidden ${
                   isOptimal
-                    ? 'bg-gradient-to-br from-indigo-950/40 via-[#121524] to-[#0A0C14] border-indigo-500/40 shadow-lg shadow-indigo-950/40'
-                    : 'bg-[#0A0C14] border-slate-800 text-slate-300'
+                    ? 'bg-gradient-to-br from-indigo-950/40 via-[#0E0610] to-[#150917] border-indigo-500/40 shadow-lg shadow-indigo-950/40'
+                    : 'bg-[#150917] border-[#4A1224]/60 text-slate-300'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                        isOptimal ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' : 'bg-slate-800 text-slate-400'
+                        isOptimal ? 'bg-[#4A1224]/50 text-[#E5A93C] border border-[#E5A93C]/30' : 'bg-slate-800 text-slate-400'
                       }`}
                     >
                       <IconComp className="w-4 h-4" />
@@ -369,12 +384,12 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                   </div>
 
                   {isOptimal && (
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 tracking-wider">
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-[#4A1224]/50 text-indigo-300 border border-indigo-500/40 tracking-wider">
                       {isAr ? 'الأمثل' : isFr ? 'Optimal' : 'Optimal'}
                     </span>
                   )}
                   {isCalibrating && (
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700 tracking-wider">
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-[#4A1224]/60 tracking-wider">
                       {isAr ? 'قيد المعايرة' : isFr ? 'Calibrage' : 'Calibrating'}
                     </span>
                   )}
@@ -384,7 +399,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                 <div className="space-y-1">
                   <div className="flex justify-between text-[10px] font-mono">
                     <span className="text-slate-400">{localize(profile.language, 'Efficacy', 'الفاعلية')}</span>
-                    <span className={isOptimal ? 'text-indigo-400 font-black' : isCalibrating ? 'text-slate-500' : 'text-slate-300'}>
+                    <span className={isOptimal ? 'text-[#E5A93C] font-black' : isCalibrating ? 'text-slate-500' : 'text-slate-300'}>
                       {isCalibrating
                         ? `${localize(profile.language, 'Calibrating', 'قيد المعايرة')} (${3 - totalTrials} ${localize(profile.language, 'left', 'متبقي')})`
                         : `${scorePct}%`}
@@ -394,7 +409,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                     <div
                       className={`h-full rounded-full transition-all ${
                         isOptimal
-                          ? 'bg-gradient-to-r from-indigo-500 to-cyan-400'
+                          ? 'bg-gradient-to-r from-indigo-500 to-rose-600'
                           : isCalibrating
                           ? 'bg-slate-700/60 animate-pulse'
                           : 'bg-slate-600'
@@ -412,8 +427,8 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
       {/* Spaced Micro-Retrieval Schedule Overview (Pillar 3) */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-cyan-400" />
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#E5A93C] flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-[#E5A93C]" />
             {localize(profile.language, 'Spaced Micro-Retrieval Schedule (SM-2)', 'جدول التكرار المتباعد الذكي (SM-2)')}
           </h4>
           {dueRetentionCount > 0 ? (
@@ -428,7 +443,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
         </div>
 
         {retentionList.length === 0 ? (
-          <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800/80 text-xs text-slate-400 text-center">
+          <div className="p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs text-slate-400 text-center">
             {localize(
               profile.language,
               'Interactive retention schedules are generated automatically as you practice concepts and answer formative checks.',
@@ -443,7 +458,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                 className={`p-3 rounded-2xl border text-xs space-y-1.5 ${
                   item.isDue
                     ? 'bg-amber-500/10 border-amber-500/30 text-amber-200'
-                    : 'bg-[#0A0C14] border-slate-800 text-slate-300'
+                    : 'bg-[#150917] border-[#4A1224]/60 text-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -477,7 +492,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
           </div>
           <div className="space-y-2">
             {intel.masteredConcepts.length === 0 ? (
-              <div className="p-3.5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs text-slate-500 text-center">
+              <div className="p-3.5 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs text-slate-500 text-center">
                 {localize(profile.language, 'Practice concepts to solidify mastery', 'مارس المفاهيم لتوثيق إتقانها')}
               </div>
             ) : (
@@ -486,7 +501,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                 return (
                   <div
                     key={c.conceptId}
-                    className="p-3.5 rounded-2xl bg-[#0A0C14] border border-emerald-500/25 text-xs space-y-2 shadow-inner"
+                    className="p-3.5 rounded-2xl bg-[#150917] border border-emerald-500/25 text-xs space-y-2 shadow-inner"
                   >
                     <div className="flex justify-between font-bold text-slate-100">
                       <span>{c.conceptName}</span>
@@ -497,7 +512,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                       <span>{c.evidenceCount} {localize(profile.language, 'proof sessions', 'جلسات تأكيد')}</span>
                     </div>
                     {cProf && (
-                      <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-800/60 text-[9px] font-mono">
+                      <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#4A1224]/50 text-[9px] font-mono">
                         <span className="px-2 py-0.5 rounded-md bg-slate-800/80 text-slate-300">
                           {cProf.latencyProfile === 'low'
                             ? (isAr ? '⚡ طلاقة عالية' : '⚡ Fluent (<8s)')
@@ -538,7 +553,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
           </div>
           <div className="space-y-2">
             {intel.developingConcepts.length === 0 ? (
-              <div className="p-3.5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs text-slate-500 text-center">
+              <div className="p-3.5 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs text-slate-500 text-center">
                 {localize(profile.language, 'No active stumbling blocks diagnosed', 'لا توجد صعوبات تعلّم حالية')}
               </div>
             ) : (
@@ -547,7 +562,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                 return (
                   <div
                     key={c.conceptId}
-                    className="p-3.5 rounded-2xl bg-[#0A0C14] border border-amber-500/25 text-xs space-y-2 shadow-inner"
+                    className="p-3.5 rounded-2xl bg-[#150917] border border-amber-500/25 text-xs space-y-2 shadow-inner"
                   >
                     <div className="flex justify-between font-bold text-slate-100">
                       <span>{c.conceptName}</span>
@@ -572,7 +587,7 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
                             : (isAr ? 'استجابة سريعة' : 'Fluent (<8s)')}
                         </span>
                         {cProf.bestStrategy && (
-                          <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                          <span className="px-2 py-0.5 rounded-md bg-[#4A1224]/50 text-indigo-300 border border-[#E5A93C]/30">
                             {isAr ? 'الأنسب:' : 'Best:'} {cProf.bestStrategy}
                           </span>
                         )}
@@ -587,12 +602,12 @@ export default function LearningIntelligenceCard({ profile }: LearningIntelligen
       </div>
 
       {/* Ethical Non-IQ & Interaction-Derived Disclaimer Banner */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900/90 via-[#121524] to-slate-900/90 border border-slate-800 text-xs text-slate-400 flex items-start gap-3 shadow-inner">
-        <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900/90 via-[#0E0610] to-slate-900/90 border border-[#4A1224]/60 text-xs text-slate-400 flex items-start gap-3 shadow-inner">
+        <ShieldCheck className="w-5 h-5 text-[#E5A93C] shrink-0 mt-0.5" />
         <div className="space-y-1">
           <div className="font-bold text-slate-200 flex items-center gap-2">
             <span>{localize(profile.language, 'Observed Learning Profile (Ethical Non-IQ Standard)', 'الملف المعرفي الملاحظ (المعيار الأخلاقي غير المرتبط بـ IQ)')}</span>
-            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#831843]/20 text-[#E5A93C] border border-[#E5A93C]/20">
               {localize(profile.language, 'Empirical Evidence', 'أدلة تفاعلية')}
             </span>
           </div>

@@ -122,13 +122,13 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
   const sandboxTier = useMemo(() => classifyHakeTier(sandboxGain), [sandboxGain]);
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8 font-sans relative">
+    <div className="w-full min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8 font-sans relative">
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-1/4 w-96 h-96 bg-[#4A1224]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Cockpit Header */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" title="Pre-calibrated 500-trial longitudinal benchmark dataset">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20" title="Pre-calibrated 500-trial longitudinal benchmark dataset">
                 <FlaskConical className="w-3.5 h-3.5" /> {isArabic ? 'بيانات معيارية تجريبية (N=500)' : 'Empirical Benchmark Baseline (N=500)'}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -166,10 +166,10 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-cyan-400" />
+              <Clock className="w-5 h-5 text-[#E5A93C]" />
               {isArabic ? 'مسار مكاسب التعلم الطولية' : 'Longitudinal Learning Velocity Trajectory'}
             </h2>
-            <span className="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-1 rounded-xl border border-slate-800">
+            <span className="text-xs font-mono text-slate-400 bg-[#0E0610]/70 px-3 py-1 rounded-xl border border-[#4A1224]/60">
               g = (Post - Pre) / (100 - Pre)
             </span>
           </div>
@@ -180,13 +180,13 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                 w.gainTier === 'high'
                   ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
                   : w.gainTier === 'medium'
-                  ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
+                  ? 'text-[#E5A93C] bg-[#4A1224]/30 border-[#E5A93C]/30'
                   : 'text-amber-400 bg-amber-500/10 border-amber-500/30';
 
               return (
                 <div
                   key={w.window}
-                  className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 relative overflow-hidden"
+                  className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 relative overflow-hidden"
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -206,14 +206,14 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800/80 text-xs space-y-1 text-slate-300">
+                  <div className="pt-3 border-t border-[#4A1224]/60 text-xs space-y-1 text-slate-300">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Sample Assessments:</span>
                       <span className="font-mono text-white">{w.sampleCount}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Top Pedagogy:</span>
-                      <span className="font-mono text-cyan-400 capitalize">{w.topPerformingStrategy.replace('_', ' ')}</span>
+                      <span className="font-mono text-[#E5A93C] capitalize">{w.topPerformingStrategy.replace('_', ' ')}</span>
                     </div>
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
         </div>
 
         {/* Section 2: Pedagogical A/B Trial Arena */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
@@ -244,7 +244,7 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
                     selectedExpId === exp.experimentId
                       ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/20'
-                      : 'bg-[#0A0C14] text-slate-400 border border-slate-800 hover:text-white'
+                      : 'bg-[#080409] text-slate-400 border border-[#4A1224]/60 hover:text-white'
                   }`}
                 >
                   {exp.conceptTitle.split('&')[0]}
@@ -254,27 +254,27 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
           </div>
 
           {/* Active Experiment Cockpit */}
-          <div className="p-6 bg-[#0A0C14] border border-slate-800 rounded-2xl space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div className="p-6 bg-[#080409] border border-[#4A1224]/60 rounded-2xl space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#4A1224]/60 pb-4">
               <div>
                 <h3 className="text-base font-bold text-white">{activeExp.conceptTitle}</h3>
                 <span className="text-xs text-slate-400 font-mono">ID: {activeExp.conceptId}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg text-xs font-mono bg-slate-900 border border-slate-800 text-slate-300">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#150917] border border-[#4A1224]/60 text-slate-300">
                   t = {activeExp.tStatistic} (df = {activeExp.degreesOfFreedom})
                 </span>
                 <span
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border ${
                     activeExp.isStatisticallySignificant
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      : 'bg-slate-800 text-slate-400 border-[#4A1224]/50'
                   }`}
                 >
                   p = {activeExp.pValue} {activeExp.isStatisticallySignificant ? '(< 0.05 PASS)' : '(Not Sig)'}
                 </span>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-mono">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/30 font-mono">
                   Cohen\'s d = {activeExp.cohensD}
                 </span>
               </div>
@@ -283,7 +283,7 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
             {/* Side by Side Strategy Head-to-Head */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Group A */}
-              <div className="p-5 bg-[#121524] border border-slate-800 rounded-2xl space-y-3">
+              <div className="p-5 bg-[#0E0610] border border-[#4A1224]/60 rounded-2xl space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-slate-800 text-slate-300">
                     Group A (Control)
@@ -294,15 +294,15 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                   {activeExp.strategyA.replace('_', ' ')}
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-xs pt-2">
-                  <div className="p-2.5 bg-[#0A0C14] rounded-xl border border-slate-800">
+                  <div className="p-2.5 bg-[#080409] rounded-xl border border-[#4A1224]/60">
                     <span className="text-slate-500 block text-[10px]">Pre &rarr; Post Mean</span>
                     <span className="text-white font-mono font-semibold">
                       {activeExp.statsA.meanPre}% &rarr; {activeExp.statsA.meanPost}%
                     </span>
                   </div>
-                  <div className="p-2.5 bg-[#0A0C14] rounded-xl border border-slate-800">
+                  <div className="p-2.5 bg-[#080409] rounded-xl border border-[#4A1224]/60">
                     <span className="text-slate-500 block text-[10px]">Hake Mean Gain (g)</span>
-                    <span className="text-cyan-400 font-mono font-bold">
+                    <span className="text-[#E5A93C] font-mono font-bold">
                       {activeExp.statsA.meanGain.toFixed(3)}
                     </span>
                   </div>
@@ -310,10 +310,10 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
               </div>
 
               {/* Group B */}
-              <div className={`p-5 bg-[#121524] rounded-2xl space-y-3 border ${
+              <div className={`p-5 bg-[#0E0610] rounded-2xl space-y-3 border ${
                 activeExp.winner === activeExp.strategyB
                   ? 'border-emerald-500/50 shadow-lg shadow-emerald-500/10'
-                  : 'border-slate-800'
+                  : 'border-[#4A1224]/60'
               }`}>
                 <div className="flex justify-between items-center">
                   <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-purple-500/20 text-purple-300">
@@ -330,13 +330,13 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                   )}
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-xs pt-2">
-                  <div className="p-2.5 bg-[#0A0C14] rounded-xl border border-slate-800">
+                  <div className="p-2.5 bg-[#080409] rounded-xl border border-[#4A1224]/60">
                     <span className="text-slate-500 block text-[10px]">Pre &rarr; Post Mean</span>
                     <span className="text-white font-mono font-semibold">
                       {activeExp.statsB.meanPre}% &rarr; {activeExp.statsB.meanPost}%
                     </span>
                   </div>
-                  <div className="p-2.5 bg-[#0A0C14] rounded-xl border border-slate-800">
+                  <div className="p-2.5 bg-[#080409] rounded-xl border border-[#4A1224]/60">
                     <span className="text-slate-500 block text-[10px]">Hake Mean Gain (g)</span>
                     <span className="text-emerald-400 font-mono font-bold">
                       {activeExp.statsB.meanGain.toFixed(3)}
@@ -374,9 +374,9 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
         </div>
 
         {/* Section 3: Interactive Hake Gain Formula Sandbox */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 text-cyan-400" />
+            <BarChart2 className="w-4 h-4 text-[#E5A93C]" />
             {isArabic ? 'حاسبة صيغة هاك التفاعلية' : 'Interactive Hake Formula Sandbox'}
           </h3>
 
@@ -401,20 +401,20 @@ export const PedagogicalEvaluationView: React.FC<PedagogicalEvaluationViewProps>
                 max="100"
                 value={sandboxPost}
                 onChange={e => setSandboxPost(Number(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#E5A93C]"
               />
             </div>
 
-            <div className="p-3.5 bg-[#0A0C14] border border-slate-800 rounded-2xl flex items-center justify-between">
+            <div className="p-3.5 bg-[#080409] border border-[#4A1224]/60 rounded-2xl flex items-center justify-between">
               <div>
                 <span className="text-[10px] text-slate-500 uppercase font-bold block">Calculated Gain</span>
-                <span className="text-xl font-bold font-mono text-cyan-400">g = {sandboxGain.toFixed(3)}</span>
+                <span className="text-xl font-bold font-mono text-[#E5A93C]">g = {sandboxGain.toFixed(3)}</span>
               </div>
               <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase border ${
                 sandboxTier === 'high'
                   ? 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10'
                   : sandboxTier === 'medium'
-                  ? 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10'
+                  ? 'text-[#E5A93C] border-[#E5A93C]/30 bg-[#4A1224]/30'
                   : 'text-amber-400 border-amber-500/30 bg-amber-500/10'
               }`}>
                 {sandboxTier}

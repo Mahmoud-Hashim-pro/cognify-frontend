@@ -25,6 +25,26 @@ export const DEFAULT_STUDENT_MEMORY: StudentMemory = {
   updatedAt: new Date().toISOString(),
 };
 
+const MEMORY_CACHE_PREFIX = 'cognify_student_memory_';
+
+export function getCachedStudentMemory(uid?: string | null): StudentMemory | null {
+  if (!uid || typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(`${MEMORY_CACHE_PREFIX}${uid}`);
+    if (!raw) return null;
+    return sanitizeMemory(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
+export function setCachedStudentMemory(uid: string | null | undefined, mem: StudentMemory): void {
+  if (!uid || typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`${MEMORY_CACHE_PREFIX}${uid}`, JSON.stringify(mem));
+  } catch {}
+}
+
 const memoryDocRef = (uid: string) => doc(db, `users/${uid}/memory/config`);
 
 function sanitizeMemory(data?: Partial<StudentMemory> | null): StudentMemory {
@@ -49,10 +69,15 @@ export async function getStudentMemory(uid?: string | null): Promise<StudentMemo
   try {
     const snap = await getDoc(memoryDocRef(uid));
     if (snap.exists()) {
-      return sanitizeMemory(snap.data() as Partial<StudentMemory>);
+      const sanitized = sanitizeMemory(snap.data() as Partial<StudentMemory>);
+      setCachedStudentMemory(uid, sanitized);
+      return sanitized;
     }
+    setCachedStudentMemory(uid, DEFAULT_STUDENT_MEMORY);
     return DEFAULT_STUDENT_MEMORY;
   } catch (err) {
+    const cached = getCachedStudentMemory(uid);
+    if (cached) return cached;
     handleFirestoreError(err, OperationType.GET, path);
     throw err;
   }
@@ -60,7 +85,8 @@ export async function getStudentMemory(uid?: string | null): Promise<StudentMemo
 
 /**
  * Subscribes to real-time updates for a user's memory configuration.
- * Returns an unsubscribe function.
+ * Uses Stale-While-Revalidate with localStorage and includes a 4.5s safety timeout
+ * to guarantee that offline or slow network conditions never hang the application.
  */
 export function subscribeToStudentMemory(
   uid?: string | null,
@@ -69,24 +95,61 @@ export function subscribeToStudentMemory(
 ): () => void {
   if (!uid) return () => {};
   const path = `users/${uid}/memory/config`;
+
+  // 1. Stale-While-Revalidate: Deliver cached memory immediately (0ms delay)
+  const cached = getCachedStudentMemory(uid);
+  if (cached) {
+    onUpdate?.(cached);
+  }
+
+  let hasEmitted = !!cached;
+
+  // 2. Safety Timeout: If Firestore doesn't respond within 4500ms, deliver fallback
+  const safetyTimer = setTimeout(() => {
+    if (!hasEmitted) {
+      hasEmitted = true;
+      console.warn(`[Cognify Memory] Firestore subscription timed out for ${path}. Emitting fallback memory.`);
+      onUpdate?.(cached || DEFAULT_STUDENT_MEMORY);
+    }
+  }, 4500);
+
   try {
-    return onSnapshot(
+    const unsub = onSnapshot(
       memoryDocRef(uid),
       (snap) => {
+        clearTimeout(safetyTimer);
+        let result: StudentMemory;
         if (snap.exists()) {
-          onUpdate?.(sanitizeMemory(snap.data() as Partial<StudentMemory>));
+          result = sanitizeMemory(snap.data() as Partial<StudentMemory>);
         } else {
-          onUpdate?.(DEFAULT_STUDENT_MEMORY);
+          result = DEFAULT_STUDENT_MEMORY;
         }
+        setCachedStudentMemory(uid, result);
+        onUpdate?.(result);
       },
       (err) => {
+        clearTimeout(safetyTimer);
         handleFirestoreError(err, OperationType.GET, path);
-        onError?.(err as Error);
+        if (cached) {
+          onUpdate?.(cached);
+        } else {
+          onError?.(err as Error);
+        }
       }
     );
+
+    return () => {
+      clearTimeout(safetyTimer);
+      unsub();
+    };
   } catch (err) {
+    clearTimeout(safetyTimer);
     handleFirestoreError(err, OperationType.GET, path);
-    onError?.(err as Error);
+    if (cached) {
+      onUpdate?.(cached);
+    } else {
+      onError?.(err as Error);
+    }
     return () => {};
   }
 }
@@ -100,11 +163,18 @@ export async function updateStudentMemory(
 ): Promise<void> {
   if (!uid || !updates) return;
   const path = `users/${uid}/memory/config`;
+
+  const updatedPayload: Partial<StudentMemory> = {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+
+  // Optimistically update local cache so UI is instantaneous and resilient
+  const currentCached = getCachedStudentMemory(uid) || DEFAULT_STUDENT_MEMORY;
+  const merged = sanitizeMemory({ ...currentCached, ...updatedPayload });
+  setCachedStudentMemory(uid, merged);
+
   try {
-    const updatedPayload: Partial<StudentMemory> = {
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
     await setDoc(memoryDocRef(uid), cleanDataForFirestore(updatedPayload), {
       merge: true,
     });
@@ -166,6 +236,7 @@ export async function deleteMemoryItem(
  */
 export async function clearStudentMemory(uid?: string | null): Promise<void> {
   if (!uid) return;
+  setCachedStudentMemory(uid, DEFAULT_STUDENT_MEMORY);
   return updateStudentMemory(uid, {
     learningGoals: [],
     knownPreferences: [],

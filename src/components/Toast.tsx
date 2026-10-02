@@ -106,8 +106,8 @@ export function ToastContainer({ rtl = false }: ToastContainerProps) {
       <AnimatePresence>
         {toasts.map(item => {
           let Icon = Info;
-          let borderAccent = "border-s-4 border-s-cyan-400 border-white/10 shadow-cyan-950/40";
-          let iconColor = "text-cyan-400";
+          let borderAccent = "border-s-4 border-s-[#E5A93C] border-[#4A1224]/60 shadow-[#4A1224]/40";
+          let iconColor = "text-[#E5A93C]";
 
           switch (item.type) {
             case "success":
@@ -137,7 +137,7 @@ export function ToastContainer({ rtl = false }: ToastContainerProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, y: -10 }}
               transition={{ type: "spring", stiffness: 400, damping: 28 }}
-              className={`pointer-events-auto flex w-full rounded-2xl shadow-2xl p-4 bg-slate-900/95 border backdrop-blur-2xl transition-all duration-300 hover:shadow-cyan-500/10 ${borderAccent}`}
+              className={`pointer-events-auto flex w-full rounded-2xl shadow-2xl p-4 bg-[#0E0610]/95 border backdrop-blur-2xl transition-all duration-300 hover:shadow-[#E5A93C]/10 ring-1 ring-[#E5A93C]/10 ${borderAccent}`}
             >
               <div className="flex gap-3 w-full">
                 <div className="flex-shrink-0 mt-0.5">

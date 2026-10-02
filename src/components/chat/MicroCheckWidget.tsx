@@ -92,21 +92,21 @@ export default function MicroCheckWidget({
   return (
     <div
       dir={isAr ? 'rtl' : 'ltr'}
-      className="my-5 p-5 rounded-3xl bg-[#0e1222]/95 border border-cyan-500/30 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all text-slate-100"
+      className="my-5 p-5 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/70 ring-1 ring-[#E5A93C]/10 shadow-2xl backdrop-blur-xl relative overflow-hidden transition-all text-slate-100"
     >
       {/* Decorative ambient gradient */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none -z-0" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#4A1224]/30 rounded-full blur-2xl pointer-events-none -z-0" />
 
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 mb-3 border-b border-slate-800/80 pb-3 relative z-10">
-        <div className="flex items-center gap-2 text-cyan-400">
-          <Brain className="w-4 h-4 text-cyan-400 animate-pulse" />
+      <div className="flex items-center justify-between gap-3 mb-3 border-b border-[#4A1224]/50 pb-3 relative z-10">
+        <div className="flex items-center gap-2 text-[#E5A93C]">
+          <Brain className="w-4 h-4 text-[#E5A93C] animate-pulse" />
           <span className="text-[11px] font-black uppercase tracking-wider">
             {isAr ? 'فحص سريع للفهم (1-Click Check)' : isFr ? 'Vérification Rapide (1-Clic)' : 'Quick Comprehension Check (1-Click)'}
           </span>
         </div>
         {conceptDisplayName && (
-          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">
+          <span className="text-[10px] font-semibold px-2.5 py-1 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]">
             {conceptDisplayName}
           </span>
         )}
@@ -123,14 +123,14 @@ export default function MicroCheckWidget({
           const isThisSelected = selectedIndex === idx;
           const isThisCorrect = idx === data.correctIndex;
 
-          let btnStyles = 'bg-[#15192e] border-slate-800 text-slate-200 hover:border-cyan-500/50 hover:bg-[#1a203a]';
+          let btnStyles = 'bg-[#150917] border-[#4A1224]/60 text-slate-200 hover:border-[#E5A93C]/50 hover:bg-[#1A0C1D]';
           if (submitted) {
             if (isThisCorrect) {
               btnStyles = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-300 font-bold shadow-lg shadow-emerald-500/10';
             } else if (isThisSelected) {
               btnStyles = 'bg-rose-500/20 border-rose-500/60 text-rose-300 font-bold';
             } else {
-              btnStyles = 'bg-[#15192e]/40 border-slate-800/50 text-slate-500 opacity-60';
+              btnStyles = 'bg-[#150917]/40 border-[#4A1224]/40 text-slate-500 opacity-60';
             }
           }
 
@@ -155,7 +155,7 @@ export default function MicroCheckWidget({
 
       {/* Post-submission Feedback & Prerequisite Gap */}
       {submitted && (
-        <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-3 text-xs leading-relaxed relative z-10 animate-fade-in">
+        <div className="mt-4 pt-3 border-t border-[#4A1224]/50 space-y-3 text-xs leading-relaxed relative z-10 animate-fade-in">
           <div className="flex items-start gap-2">
             {isCorrect ? (
               <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />

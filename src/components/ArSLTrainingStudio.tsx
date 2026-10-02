@@ -45,7 +45,8 @@ import {
   computeConfusionMatrix,
   ConfusionMatrixReport
 } from '../lib/signConfusionMatrix';
-import SignAvatar3D from './SignAvatar3D';
+
+const SignAvatar3D = React.lazy(() => import('./SignAvatar3D'));
 
 interface ArSLTrainingStudioProps {
   profile: UserProfile;
@@ -243,9 +244,9 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#090b14] text-slate-100 overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="flex-1 flex flex-col h-full bg-[#080409] text-slate-100 overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header Bar */}
-      <div className="p-3 sm:p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-3 flex-wrap shrink-0">
+      <div className="p-3 sm:p-4 bg-[#0E0610]/95 border-b border-[#4A1224]/60 flex items-center justify-between gap-3 flex-wrap shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600/40 via-indigo-600/40 to-pink-600/40 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-lg shadow-purple-950/50">
             <Sparkles className="w-5 h-5" />
@@ -266,7 +267,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-2xl border border-slate-800 text-xs font-bold flex-wrap">
+        <div className="flex items-center gap-1 bg-[#080409] p-1 rounded-2xl border border-[#4A1224]/60 text-xs font-bold flex-wrap">
           <button
             onClick={() => setActiveTab('curriculum')}
             className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
@@ -326,7 +327,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                   value={curriculumSearch}
                   onChange={(e) => setCurriculumSearch(e.target.value)}
                   placeholder={isAr ? 'ابحث في المحاضرات والمفردات...' : 'Search lectures & signs...'}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 pr-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-3 py-2 pr-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
 
@@ -342,7 +343,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                     className={`p-3 rounded-2xl border transition-all cursor-pointer text-start ${
                       selectedLectureId === lec.id
                         ? 'bg-purple-950/40 border-purple-500/60 shadow-lg shadow-purple-950/30'
-                        : 'bg-slate-900/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700'
+                        : 'bg-[#0E0610]/70 border-[#4A1224]/60 hover:bg-[#150917] hover:border-[#4A1224]/50'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -377,7 +378,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
             {/* Middle Column: Current Lecture Vocabulary (4 cols) */}
             <div className="lg:col-span-4 flex flex-col gap-3">
-              <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800">
+              <div className="p-3.5 rounded-2xl bg-[#150917] border border-[#4A1224]/60">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-xs text-purple-300 flex items-center gap-1.5">
                     <BookOpen className="w-4 h-4" />
@@ -403,7 +404,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
               {/* Signs List */}
               <div className="flex-1 overflow-y-auto space-y-2 pr-1 max-h-[500px]">
                 {lectureSigns.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800">
+                  <div className="p-6 text-center text-xs text-slate-500 bg-[#150917]/40 rounded-2xl border border-[#4A1224]/60">
                     {isAr ? 'تم فهرسة المحاضرة في المعجم. اختر إشارة من المحاضرات 3 أو 4 أو 7 أو 11 أو 15 أو 16.' : 'Select another lecture to preview signs.'}
                   </div>
                 ) : (
@@ -414,7 +415,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                       className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                         selectedSign?.id === sign.id
                           ? 'bg-gradient-to-r from-purple-950/60 to-indigo-950/60 border-purple-400 text-white shadow-md'
-                          : 'bg-slate-900/50 border-slate-800 text-slate-300 hover:bg-slate-900'
+                          : 'bg-[#150917]/50 border-[#4A1224]/60 text-slate-300 hover:bg-[#150917]'
                       }`}
                     >
                       <div>
@@ -445,15 +446,24 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
             {/* Right Column: 3D Avatar Preview & HamNoSys Inspector (4 cols) */}
             <div className="lg:col-span-4 flex flex-col gap-3">
-              <div className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden shadow-2xl relative h-72 sm:h-80">
-                <SignAvatar3D
-                  words={avatarWords}
-                  playing={isAvatarPlaying}
-                  onDone={() => setIsAvatarPlaying(false)}
-                  className="w-full h-full"
-                />
+              <div className="rounded-3xl bg-[#150917] border border-[#4A1224]/60 overflow-hidden shadow-2xl relative h-72 sm:h-80">
+                <React.Suspense
+                  fallback={
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-xs text-purple-300">
+                      <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                      <span>{isAr ? 'جاري تحميل الأفاتار ثلاثي الأبعاد...' : 'Loading 3D Sign Avatar...'}</span>
+                    </div>
+                  }
+                >
+                  <SignAvatar3D
+                    words={avatarWords}
+                    playing={isAvatarPlaying}
+                    onDone={() => setIsAvatarPlaying(false)}
+                    className="w-full h-full"
+                  />
+                </React.Suspense>
 
-                <div className="absolute bottom-3 left-3 right-3 p-2 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 flex items-center justify-between text-xs">
+                <div className="absolute bottom-3 left-3 right-3 p-2 rounded-xl bg-[#080409]/80 backdrop-blur-md border border-[#4A1224]/60 flex items-center justify-between text-xs">
                   <span className="font-bold text-purple-300">{avatarWords.join(' ')}</span>
                   <button
                     onClick={() => setIsAvatarPlaying(true)}
@@ -467,8 +477,8 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
               {/* HamNoSys Structural Breakdown */}
               {selectedSign && (
-                <div className="p-4 rounded-3xl bg-slate-900/90 border border-purple-500/30 space-y-2.5 text-xs text-start">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <div className="p-4 rounded-3xl bg-[#0E0610]/95 border border-purple-500/30 space-y-2.5 text-xs text-start">
+                  <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-2">
                     <span className="font-bold text-white flex items-center gap-1.5">
                       <FileCode className="w-4 h-4 text-purple-400" />
                       <span>{isAr ? 'الترميز اللغوي (HamNoSys)' : 'HamNoSys Structure'}</span>
@@ -479,25 +489,25 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <div className="bg-[#080409] p-2 rounded-xl border border-[#4A1224]/60">
                       <span className="text-slate-500 block">{isAr ? 'شكل اليد (Handshape):' : 'Handshape:'}</span>
                       <span className="font-mono text-purple-300 font-bold">{selectedSign.hamnosys.handshape}</span>
                     </div>
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <div className="bg-[#080409] p-2 rounded-xl border border-[#4A1224]/60">
                       <span className="text-slate-500 block">{isAr ? 'الموضع (Location):' : 'Location:'}</span>
                       <span className="font-mono text-purple-300 font-bold">{selectedSign.hamnosys.location}</span>
                     </div>
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <div className="bg-[#080409] p-2 rounded-xl border border-[#4A1224]/60">
                       <span className="text-slate-500 block">{isAr ? 'الحركة (Movement):' : 'Movement:'}</span>
                       <span className="font-mono text-purple-300 font-bold">{selectedSign.hamnosys.movement}</span>
                     </div>
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <div className="bg-[#080409] p-2 rounded-xl border border-[#4A1224]/60">
                       <span className="text-slate-500 block">{isAr ? 'تعابير الوجه (Facial):' : 'Non-manual:'}</span>
                       <span className="font-mono text-purple-300 font-bold">{selectedSign.hamnosys.nonManual || 'neutral'}</span>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-300 leading-relaxed bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                  <p className="text-[11px] text-slate-300 leading-relaxed bg-[#080409]/60 p-2.5 rounded-xl border border-[#4A1224]/60">
                     {isAr ? selectedSign.descriptionAr : selectedSign.descriptionEn}
                   </p>
                 </div>
@@ -509,7 +519,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
         {/* ── TAB 2: LIVE CAMERA ML RECOGNIZER ── */}
         {activeTab === 'camera_recognizer' && (
           <div className="max-w-4xl mx-auto space-y-4">
-            <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-between flex-wrap gap-3">
+            <div className="p-4 rounded-3xl bg-[#150917] border border-[#4A1224]/60 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h3 className="font-black text-sm sm:text-base text-white flex items-center gap-2">
                   <Camera className="w-5 h-5 text-purple-400" />
@@ -545,7 +555,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
             {/* Video & Tracking Canvas */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-3xl bg-slate-950 border border-slate-800 overflow-hidden relative min-h-[300px] flex items-center justify-center">
+              <div className="rounded-3xl bg-[#080409] border border-[#4A1224]/60 overflow-hidden relative min-h-[300px] flex items-center justify-center">
                 <video ref={videoRef} className="hidden" playsInline muted />
                 <canvas ref={canvasRef} className="w-full h-full object-cover" />
 
@@ -559,16 +569,16 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                 )}
 
                 {camStatus && (
-                  <div className="absolute top-3 left-3 right-3 p-2 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-800 text-[11px] text-purple-300 font-bold text-center">
+                  <div className="absolute top-3 left-3 right-3 p-2 rounded-xl bg-[#0E0610]/95 backdrop-blur-md border border-[#4A1224]/60 text-[11px] text-purple-300 font-bold text-center">
                     {camStatus}
                   </div>
                 )}
               </div>
 
               {/* Real-time Recognition Telemetry Card */}
-              <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 flex flex-col justify-between">
+              <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/60 space-y-4 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
                     <span className="font-bold text-xs text-slate-300">{isAr ? 'الإشارة المكتشفة حالياً:' : 'Current Detected Sign:'}</span>
                     <span className="text-[10px] font-mono text-purple-400 bg-purple-950/80 px-2 py-0.5 rounded-md border border-purple-500/30">
                       30+ FPS Inference
@@ -587,14 +597,14 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                   </div>
 
                   {/* Confidence Bar */}
-                  <div className="space-y-1.5 bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                  <div className="space-y-1.5 bg-[#080409] p-3 rounded-2xl border border-[#4A1224]/60">
                     <div className="flex justify-between text-xs">
                       <span className="text-slate-400">{isAr ? 'نسبة الثقة (Confidence):' : 'Confidence:'}</span>
                       <span className="font-mono font-bold text-purple-300">
                         {liveRecognition ? `${Math.round(liveRecognition.confidence * 100)}%` : '0%'}
                       </span>
                     </div>
-                    <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-300"
                         style={{ width: `${liveRecognition ? liveRecognition.confidence * 100 : 0}%` }}
@@ -620,7 +630,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
         {activeTab === 'training_confusion' && (
           <div className="max-w-5xl mx-auto space-y-5">
             {/* Top Control Bar */}
-            <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-between flex-wrap gap-3">
+            <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/60 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h3 className="font-black text-base text-white flex items-center gap-2">
                   <BarChart2 className="w-5 h-5 text-purple-400" />
@@ -645,7 +655,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
             {/* Confusion Matrix Heatmap Grid */}
             {confusionReport && (
-              <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+              <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/60 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <h4 className="font-bold text-xs text-slate-200">
                     {isAr ? 'مصفوفة الارتباك (الحقيقي مقابل المتوقع):' : 'Confusion Matrix (Ground Truth vs Predicted):'}
@@ -673,7 +683,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                     </thead>
                     <tbody>
                       {confusionReport.matrix.map((row, rIdx) => (
-                        <tr key={rIdx} className="border-t border-slate-800/60">
+                        <tr key={rIdx} className="border-t border-[#4A1224]/50">
                           <td className="p-1.5 text-start font-bold text-slate-300 truncate max-w-[70px]">
                             {confusionReport.classes[rIdx].ar}
                           </td>
@@ -688,10 +698,10 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                                   isDiag
                                     ? val > 0
                                       ? 'bg-emerald-500/25 text-emerald-300 font-bold border border-emerald-500/40'
-                                      : 'bg-slate-950 text-slate-600'
+                                      : 'bg-[#080409] text-slate-600'
                                     : isError
                                     ? 'bg-rose-500/25 text-rose-300 font-bold border border-rose-500/40'
-                                    : 'bg-slate-950/40 text-slate-700'
+                                    : 'bg-[#080409]/40 text-slate-700'
                                 }`}
                                 title={`Actual: ${confusionReport.classes[rIdx].ar}, Predicted: ${confusionReport.classes[cIdx].ar} (${val})`}
                               >
@@ -714,7 +724,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
                       {confusionReport.topConfusedPairs.map((pair, idx) => (
-                        <div key={idx} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                        <div key={idx} className="p-2.5 rounded-xl bg-[#080409] border border-[#4A1224]/60 space-y-1">
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-rose-400">{pair.actualAr} ➔ {pair.predictedId}</span>
                             <span className="font-mono text-amber-400">{pair.errorCount}x errors</span>

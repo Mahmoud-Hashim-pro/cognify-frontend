@@ -694,21 +694,21 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
   const activeWord = playbackProgress < sequence.length ? sequence[playbackProgress] : '';
 
   return (
-    <div className="flex-1 flex flex-col bg-[#0A0C14] text-slate-100 relative overflow-hidden h-full font-sans custom-scrollbar">
+    <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 relative overflow-hidden h-full font-sans custom-scrollbar">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#4A1224]/30 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
       </div>
 
       {!isEmbedded && (
-        <header className="p-6 md:p-10 shrink-0 flex items-center justify-between z-10 relative bg-[#0A0C14]/90 backdrop-blur-xl border-b border-slate-800/80">
+        <header className="p-6 md:p-10 shrink-0 flex items-center justify-between z-10 relative bg-[#080409]/90 backdrop-blur-xl border-b border-[#4A1224]/60">
            <div className="flex items-center gap-4">
              {onNavigateBack && (
                <button
                  onClick={onNavigateBack}
-                 className="p-2.5 text-slate-300 hover:text-white bg-[#121524] hover:bg-[#181C2E] shadow-md border border-slate-800/80 hover:border-slate-700 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+                 className="p-2.5 text-slate-300 hover:text-white bg-[#0E0610] hover:bg-[#150917] shadow-md border border-[#4A1224]/60 hover:border-[#4A1224]/50 rounded-2xl active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
                  title="Back to Assistant / العودة للمساعد"
                  aria-label="Back to Assistant / العودة للمساعد"
                >
@@ -720,30 +720,30 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
               onClick={onMenuClick}
               aria-label="Toggle menu"
               title="Open Menu"
-              className="p-2.5 text-slate-300 hover:text-white bg-[#121524] hover:bg-[#181C2E] shadow-md border border-slate-800/80 hover:border-slate-700 rounded-2xl active:scale-95 shrink-0"
+              className="p-2.5 text-slate-300 hover:text-white bg-[#0E0610] hover:bg-[#150917] shadow-md border border-[#4A1224]/60 hover:border-[#4A1224]/50 rounded-2xl active:scale-95 shrink-0"
             >
               <Menu className="w-6 h-6" />
             </button>
              <div>
                <h1 className="text-3xl font-black tracking-tight text-white flex items-center gap-3">
                  Sign Video Studio
-                 <div className="px-2.5 py-1 bg-cyan-500/15 text-cyan-400 rounded-xl text-xs font-black uppercase tracking-widest border border-cyan-500/30">Beta</div>
+                 <div className="px-2.5 py-1 bg-[#4A1224]/40 text-[#E5A93C] rounded-xl text-xs font-black uppercase tracking-widest border border-[#E5A93C]/30">Beta</div>
                </h1>
                <p className="text-sm text-slate-400 font-medium mt-1">Generate AI Sign Language videos from speech or text input.</p>
              </div>
            </div>
 
            <div className="hidden md:flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-[#121524] px-3.5 py-1.5 rounded-2xl border border-slate-800/80">
-                <div className={`w-2 h-2 rounded-full ${is3DActive ? 'bg-cyan-400 animate-pulse' : 'bg-slate-600'}`} />
+              <div className="flex items-center gap-2 bg-[#0E0610] px-3.5 py-1.5 rounded-2xl border border-[#4A1224]/60">
+                <div className={`w-2 h-2 rounded-full ${is3DActive ? 'bg-[#E5A93C] animate-pulse' : 'bg-slate-600'}`} />
                 <span className="text-[10px] font-extrabold text-slate-300 uppercase tracking-wider">3D Avatar Engine</span>
               </div>
            </div>
         </header>
       )}
 
-      <div className="bg-cyan-950/20 border-b border-cyan-500/20 text-cyan-300 text-[10px] sm:text-xs font-mono py-2 px-4 text-center flex justify-center items-center gap-2 z-20 relative w-full font-bold">
-         <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse drop-shadow-md" />
+      <div className="bg-[#4A1224]/40 border-b border-[#E5A93C]/20 text-[#E5A93C] text-[10px] sm:text-xs font-mono py-2 px-4 text-center flex justify-center items-center gap-2 z-20 relative w-full font-bold">
+         <div className="w-2 h-2 rounded-full bg-[#E5A93C] animate-pulse drop-shadow-md" />
          FINGERSPELLING ENGINE (A–Z, 0–9, ARABIC MAPPING) + WORD GESTURES — RENDERED IN REAL-TIME WEBGL.
       </div>
 
@@ -752,10 +752,10 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
 
             {/* Input Section */}
             <div className="flex flex-col gap-6 w-full h-full">
-               <div className={`bg-[#121524]/90 rounded-3xl shadow-2xl border border-slate-800/80 backdrop-blur-xl flex-1 flex flex-col ${isEmbedded ? 'p-4' : 'p-6'}`}>
+               <div className={`bg-[#0E0610]/95 rounded-3xl shadow-2xl border border-[#4A1224]/60 backdrop-blur-xl flex-1 flex flex-col ${isEmbedded ? 'p-4' : 'p-6'}`}>
                   <div className="flex items-center justify-between mb-4">
                      <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                       <FileText className="w-5 h-5 text-cyan-400" />
+                       <FileText className="w-5 h-5 text-[#E5A93C]" />
                        {t.scriptInput}
                      </h2>
 
@@ -770,7 +770,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${
                            isDirectAudioMode
                              ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
-                             : 'bg-[#0A0C14] text-slate-400 border-slate-800 hover:text-white'
+                             : 'bg-[#080409] text-slate-400 border-[#4A1224]/60 hover:text-white'
                          }`}
                        >
                           <Zap className="w-3.5 h-3.5 text-current" />
@@ -780,12 +780,12 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                   </div>
 
                   {/* Voice Language & Dialect Selector */}
-                  <div className="mb-3 flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800/80">
+                  <div className="mb-3 flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-[#4A1224]/60">
                     <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
-                      <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
+                      <Volume2 className="w-3.5 h-3.5 text-[#E5A93C]" />
                       {isArabic ? "لهجة الصوت:" : "Voice Dialect:"}
                     </span>
-                    <div className="flex items-center gap-1 bg-[#0A0C14] p-1 rounded-2xl border border-slate-800">
+                    <div className="flex items-center gap-1 bg-[#080409] p-1 rounded-2xl border border-[#4A1224]/60">
                       {[
                         { id: 'Egyptian Ammiya', label: '🇪🇬 مصري' },
                         { id: 'Arabic', label: '🇸🇦 فصحى' },
@@ -797,7 +797,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                           type="button"
                           onClick={() => setVoiceLang(id)}
                           className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all ${
-                            voiceLang === id ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                            voiceLang === id ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                           }`}
                         >
                           {label}
@@ -807,7 +807,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                   </div>
 
                   {inputMode === 'voice' && (
-                    <p className="-mt-1 mb-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-3 py-2 text-[11px] font-semibold text-cyan-200" role="status">
+                    <p className="-mt-1 mb-3 rounded-xl border border-[#E5A93C]/20 bg-[#4A1224]/20 px-3 py-2 text-[11px] font-semibold text-amber-200" role="status">
                       {isArabic
                         ? `المايك بيسمع ${isEgyptian ? 'بالمصري' : 'بالعربية الفصحى'}، وهيبعت سؤالك للـAI تلقائيًا بعد 3 ثواني من السكوت.`
                         : `Listening in ${voiceLang}. Your question is sent to AI automatically after 3 seconds of silence.`}
@@ -817,7 +817,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                   {/* Unified input-mode selector: SIGN / TYPE / SPEAK */}
                   <div className="mb-3">
                     <p className="text-[11px] font-bold text-slate-400 mb-1.5">{t.howToInput}</p>
-                    <div className="grid grid-cols-3 gap-2 p-1 bg-[#0A0C14] rounded-2xl border border-slate-800" role="tablist" aria-label={t.howToInput}>
+                    <div className="grid grid-cols-3 gap-2 p-1 bg-[#080409] rounded-2xl border border-[#4A1224]/60" role="tablist" aria-label={t.howToInput}>
                       {([
                         { id: 'sign', label: t.modeSign, Icon: Hand },
                         { id: 'text', label: t.modeText, Icon: Keyboard },
@@ -830,7 +830,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                           onClick={() => setInputMode(id)}
                           className={`flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all ${
                             inputMode === id
-                              ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20'
+                              ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md shadow-[#E5A93C]/20'
                               : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
                           }`}
                         >
@@ -856,7 +856,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                             setInputText(card.text);
                             handleAskAI(card.text);
                           }}
-                          className="px-2.5 py-1.5 bg-[#0A0C14] hover:bg-cyan-500/15 hover:text-cyan-300 hover:border-cyan-500/40 text-slate-300 text-[11px] font-semibold rounded-xl border border-slate-800 transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
+                          className="px-2.5 py-1.5 bg-[#080409] hover:bg-[#4A1224]/40 hover:text-[#E5A93C] hover:border-[#E5A93C]/40 text-slate-300 text-[11px] font-semibold rounded-xl border border-[#4A1224]/60 transition-all active:scale-95 flex items-center gap-1.5 shadow-sm"
                         >
                           <span>{card.icon}</span>
                           <span>{card.text}</span>
@@ -878,8 +878,8 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                             : '⚠️ Camera mode only recognizes English ASL letters — Arabic sign shapes aren\'t supported yet. Use Type or Speak for Arabic.'}
                         </p>
                       )}
-                    <div className="mb-4 rounded-2xl border border-slate-800 bg-[#0A0C14] overflow-hidden">
-                      <div className="relative aspect-video bg-slate-950 flex items-center justify-center">
+                    <div className="mb-4 rounded-2xl border border-[#4A1224]/60 bg-[#080409] overflow-hidden">
+                      <div className="relative aspect-video bg-[#080409] flex items-center justify-center">
                         <video
                           ref={signVideoRef}
                           autoPlay
@@ -911,7 +911,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                         <button
                           onClick={isSignCamActive ? stopSignCam : startSignCam}
                           className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                            isSignCamActive ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500'
+                            isSignCamActive ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'flex-1 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white hover:from-amber-400 hover:to-blue-500'
                           }`}
                         >
                           {isSignCamActive ? <CameraOff className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
@@ -938,7 +938,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                               className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                                 autoSpeakSign
                                   ? 'bg-emerald-600/30 border-emerald-400/50 text-emerald-300 shadow-lg shadow-emerald-950/40'
-                                  : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:text-white'
+                                  : 'bg-[#150917]/80 text-slate-400 border-[#4A1224]/50 hover:text-white'
                               }`}
                               title={isArabic ? 'نطق الكلمات والحروف تلقائياً بصوت عالي' : 'Automatically speak recognized words aloud'}
                             >
@@ -951,7 +951,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                                 if (inputText.trim()) speak(inputText.trim(), voiceLang);
                               }}
                               disabled={!inputText.trim()}
-                              className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold bg-cyan-600/30 border border-cyan-400/50 text-cyan-300 hover:bg-cyan-600/40 disabled:opacity-40 transition-all"
+                              className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold bg-[#4A1224]/40 border border-[#E5A93C]/50 text-[#E5A93C] hover:bg-[#4A1224]/40 disabled:opacity-40 transition-all"
                               title={isArabic ? 'انطق الإشارة المكتوبة بصوت عالي' : 'Speak recognized text aloud'}
                             >
                               <Volume2 className="w-4 h-4" />
@@ -983,7 +983,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                          }
                        }}
                        placeholder={t.placeholder}
-                       className="flex-1 w-full p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500/60 text-slate-100 placeholder-slate-500 font-medium custom-scrollbar"
+                       className="flex-1 w-full p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-[#E5A93C]/20 focus:border-[#E5A93C]/60 text-slate-100 placeholder-slate-500 font-medium custom-scrollbar"
                        disabled={isEnhancing}
                      />
                      <AnimatePresence>
@@ -994,7 +994,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                              exit={{ opacity: 0 }}
                              className="absolute inset-0 bg-black/80 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center gap-3 z-30"
                            >
-                              <Activity className="w-8 h-8 text-cyan-400 animate-pulse" />
+                              <Activity className="w-8 h-8 text-[#E5A93C] animate-pulse" />
                               <span className="text-xs font-bold text-slate-300 animate-bounce">{t.decodingSpeech}</span>
                            </motion.div>
                         )}
@@ -1006,18 +1006,18 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                     <motion.div 
                        initial={{ opacity: 0, y: 12 }}
                        animate={{ opacity: 1, y: 0 }}
-                       className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-cyan-950/30 to-[#0A0C14] border border-cyan-500/20 shadow-lg flex flex-col gap-2.5"
+                       className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-amber-400/30 to-[#150917] border border-[#E5A93C]/20 shadow-lg flex flex-col gap-2.5"
                     >
                         <div className="flex items-center justify-between">
-                           <span className="text-xs font-black text-cyan-400 flex items-center gap-1.5 uppercase tracking-wider">
+                           <span className="text-xs font-black text-[#E5A93C] flex items-center gap-1.5 uppercase tracking-wider">
                               <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
                               {t.aiResult}
                            </span>
                         </div>
-                        <div className="text-sm text-slate-200 font-medium leading-relaxed min-h-[50px] bg-[#121524] p-3.5 rounded-xl border border-slate-800/80 shadow-inner">
+                        <div className="text-sm text-slate-200 font-medium leading-relaxed min-h-[50px] bg-[#0E0610] p-3.5 rounded-xl border border-[#4A1224]/60 shadow-inner">
                            {isAnswering ? (
                              <div className="flex items-center gap-2 text-slate-400 text-xs font-bold">
-                               <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
+                               <RefreshCw className="w-4 h-4 animate-spin text-[#E5A93C]" />
                                {t.asking}
                              </div>
                            ) : (
@@ -1030,7 +1030,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                                      prevInputRef.current = aiResponse.trim();
                                      signText(aiResponse);
                                    }}
-                                   className="text-[10px] font-black text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-cyan-500/20 active:scale-95"
+                                   className="text-[10px] font-black text-white bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-[#E5A93C]/20 active:scale-95"
                                  >
                                    <Play className="w-3 h-3 fill-current text-white" />
                                    {t.useAnswer}
@@ -1077,7 +1077,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                         ) : (
                             <button
                               onClick={startRecording}
-                              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#0A0C14] border border-slate-800 hover:bg-slate-800/50 hover:border-slate-700 active:scale-95 transform transition-all text-slate-200 font-bold rounded-2xl shadow-sm"
+                              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#080409] border border-[#4A1224]/60 hover:bg-[#150917]/60 hover:border-[#4A1224]/50 active:scale-95 transform transition-all text-slate-200 font-bold rounded-2xl shadow-sm"
                             >
                                <Mic className="w-5 h-5 text-red-400" />
                                {t.recordSpeech}
@@ -1089,7 +1089,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                      <button
                        onClick={() => handleAskAI()}
                        disabled={!inputText.trim() || isAnswering || isGenerating || isEnhancing}
-                       className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:active:scale-100 active:scale-95 transform transition-all text-white font-black rounded-2xl shadow-lg shadow-cyan-500/20"
+                       className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 disabled:opacity-50 disabled:active:scale-100 active:scale-95 transform transition-all text-white font-black rounded-2xl shadow-lg shadow-[#E5A93C]/20"
                      >
                         {isAnswering ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Brain className="w-5 h-5 text-white" />}
                         <span>{isAnswering ? t.asking : t.askAI}</span>
@@ -1099,7 +1099,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                      <button
                        onClick={generateVideo}
                        disabled={!inputText.trim() || isGenerating || isEnhancing || isAnswering}
-                       className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 disabled:active:scale-100 active:scale-95 transform transition-all text-white font-black rounded-2xl shadow-lg shadow-indigo-600/20"
+                       className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 disabled:active:scale-100 active:scale-95 transform transition-all text-white font-black rounded-2xl shadow-lg shadow-indigo-600/20"
                      >
                         {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Video className="w-5 h-5" />}
                         {isGenerating ? t.generating : t.generate}
@@ -1109,11 +1109,11 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
             </div>
 
             {/* Output Section */}
-            <div className={`bg-[#121524]/90 rounded-3xl shadow-2xl border border-slate-800/80 backdrop-blur-xl p-2 flex flex-col relative overflow-hidden ${isEmbedded ? 'h-[min(340px,52dvh)] lg:h-[440px]' : 'h-[min(500px,60dvh)] sm:h-[500px] lg:h-full sm:min-h-[500px]'}`}>
+            <div className={`bg-[#0E0610]/95 rounded-3xl shadow-2xl border border-[#4A1224]/60 backdrop-blur-xl p-2 flex flex-col relative overflow-hidden ${isEmbedded ? 'h-[min(340px,52dvh)] lg:h-[440px]' : 'h-[min(500px,60dvh)] sm:h-[500px] lg:h-full sm:min-h-[500px]'}`}>
                {/* Player Header */}
                <div className="absolute top-4 left-6 right-6 z-40 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                     <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-sm shadow-cyan-400/50" />
+                     <div className="w-2.5 h-2.5 rounded-full bg-[#E5A93C] animate-pulse shadow-sm shadow-[#E5A93C]/20" />
                      <span className="text-xs font-black uppercase tracking-widest text-white/80 drop-shadow-md">LIVE PREVIEW</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1121,18 +1121,18 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                       onClick={() => setIs3DActive(!is3DActive)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all border ${
                         is3DActive
-                          ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-sm shadow-cyan-500/10'
+                          ? 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/50 shadow-sm shadow-[#E5A93C]/10'
                           : 'bg-black/40 text-white/40 border-white/10 hover:text-white hover:border-white/30'
                       }`}
                     >
-                      <Sparkles className={`w-3 h-3 ${is3DActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                      <Sparkles className={`w-3 h-3 ${is3DActive ? 'text-[#E5A93C]' : 'text-slate-400'}`} />
                       {is3DActive ? '3D Avatar' : '2D Mode'}
                     </button>
                   </div>
                </div>
 
                {/* Video Area */}
-               <div className="flex-1 relative flex items-center justify-center rounded-2xl overflow-hidden bg-[#0A0C14]">
+               <div className="flex-1 relative flex items-center justify-center rounded-2xl overflow-hidden bg-[#080409]">
                   {is3DActive ? (
                     <>
                       <div className="absolute inset-0 z-10">
@@ -1158,7 +1158,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                       {/* Subtitles Overlay */}
                       {sequence.length > 0 && (
                         <div className="absolute bottom-16 left-0 right-0 text-center z-30 px-8 pointer-events-none">
-                           <span className="inline-block px-4 py-2 bg-black/70 backdrop-blur-md rounded-2xl text-2xl font-black text-white uppercase tracking-widest border border-cyan-500/30 shadow-2xl">
+                           <span className="inline-block px-4 py-2 bg-black/70 backdrop-blur-md rounded-2xl text-2xl font-black text-white uppercase tracking-widest border border-[#E5A93C]/30 shadow-2xl">
                               {activeWord || "—"}
                            </span>
                         </div>
@@ -1206,7 +1206,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
 
                         {/* Subtitles Overlay */}
                         <div className="absolute bottom-20 left-0 right-0 text-center z-30 px-8">
-                           <span className="inline-block px-4 py-2 bg-black/70 backdrop-blur-md rounded-2xl text-2xl font-black text-white uppercase tracking-widest border border-cyan-500/30 shadow-2xl">
+                           <span className="inline-block px-4 py-2 bg-black/70 backdrop-blur-md rounded-2xl text-2xl font-black text-white uppercase tracking-widest border border-[#E5A93C]/30 shadow-2xl">
                               {activeWord || "—"}
                            </span>
                         </div>
@@ -1215,7 +1215,7 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                </div>
 
                {/* Player Controls Timeline */}
-               <div className="mt-2 p-4 bg-[#0A0C14] border border-slate-800/80 rounded-2xl relative z-30">
+               <div className="mt-2 p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl relative z-30">
                   <div className="flex items-center gap-4">
                      <button
                        onClick={() => {
@@ -1229,14 +1229,14 @@ export default function SignVideoStudio({ profile, onMenuClick, isEmbedded, onNa
                          }
                        }}
                        disabled={sequence.length === 0}
-                       className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center text-white hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:scale-100 active:scale-95 transition-all shadow-lg shadow-cyan-500/20"
+                       className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 flex items-center justify-center text-white hover:from-amber-400 hover:to-blue-500 disabled:opacity-50 disabled:scale-100 active:scale-95 transition-all shadow-lg shadow-[#E5A93C]/20"
                      >
                         {isPlaying ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-5 h-5 ml-1 fill-current" />}
                      </button>
 
-                     <div className="flex-1 h-3 bg-[#121524] rounded-full overflow-hidden relative border border-slate-800 cursor-pointer">
+                     <div className="flex-1 h-3 bg-[#0E0610] rounded-full overflow-hidden relative border border-[#4A1224]/60 cursor-pointer">
                         <motion.div
-                          className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full"
+                          className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 rounded-full"
                           initial={{ width: 0 }}
                           animate={{ width: sequence.length > 0 ? `${(playbackProgress / Math.max(1, sequence.length)) * 100}%` : '0%' }}
                           transition={{ duration: 0.2 }}

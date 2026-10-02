@@ -175,7 +175,7 @@ No markdown outside JSON.`;
   return (
     <div className="space-y-6">
       {/* Header & Input Card */}
-      <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+      <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
             <Layers className="w-6 h-6" />
@@ -196,7 +196,7 @@ No markdown outside JSON.`;
             value={lectureTitle}
             onChange={(e) => setLectureTitle(e.target.value)}
             placeholder={isAr ? 'عنوان المحاضرة أو رقم الشابتر (اختياري)...' : 'Lecture title or chapter number (optional)...'}
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
           />
 
           <textarea
@@ -204,7 +204,7 @@ No markdown outside JSON.`;
             onChange={(e) => setContentInput(e.target.value)}
             rows={5}
             placeholder={isAr ? 'الصق هنا نص المحاضرة، نصوص السلايدات، أو تلخيص الدكتور في القاعة...' : 'Paste lecture text, slide bullet points, or professor notes here...'}
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 leading-relaxed font-sans"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500 leading-relaxed font-sans"
           />
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
@@ -237,7 +237,7 @@ No markdown outside JSON.`;
       {digest && (
         <div className="space-y-6">
           {/* Navigation Tabs */}
-          <div className="flex gap-2 p-1.5 rounded-2xl bg-[#0A0C14] border border-slate-800 max-w-fit">
+          <div className="flex gap-2 p-1.5 rounded-2xl bg-[#150917] border border-[#4A1224]/60 max-w-fit">
             <button
               type="button"
               onClick={() => setActiveTab('capsule')}
@@ -280,10 +280,10 @@ No markdown outside JSON.`;
 
           {/* TAB 1: CAPSULE */}
           {activeTab === 'capsule' && (
-            <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+            <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-purple-400 bg-purple-500/10 border border-purple-500/30 px-3 py-1 rounded-xl">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-purple-400 bg-[#E5A93C]/10 border border-purple-500/30 px-3 py-1 rounded-xl">
                     {isAr ? 'كبسولة الزبدة والخلاصة المفيدة' : 'The Distilled Bottom Line'}
                   </span>
                   <h3 className="text-xl font-black text-white pt-2">{digest.title}</h3>
@@ -291,7 +291,7 @@ No markdown outside JSON.`;
 
                 <button
                   onClick={() => copyToClipboard(digest.capsuleSummary)}
-                  className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 text-slate-400 hover:text-white transition-colors"
                   title={isAr ? 'نسخ الخلاصة' : 'Copy'}
                 >
                   {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -313,9 +313,9 @@ No markdown outside JSON.`;
                     {digest.keyFormulasOrDefinitions.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 font-mono text-xs text-cyan-300 flex items-center gap-3"
+                        className="p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60 font-mono text-xs text-[#E5A93C] flex items-center gap-3"
                       >
-                        <span className="w-5 h-5 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center text-[10px] shrink-0 font-sans font-bold">
+                        <span className="w-5 h-5 rounded-md bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C] flex items-center justify-center text-[10px] shrink-0 font-sans font-bold">
                           {idx + 1}
                         </span>
                         <span className="flex-1 font-semibold">{item}</span>
@@ -353,14 +353,14 @@ No markdown outside JSON.`;
               {digest.predictedQuestions.map((pq, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3"
+                  className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-xl space-y-3"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-400 font-bold text-xs flex items-center justify-center font-mono">
                         Q{idx + 1}
                       </span>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-0.5 rounded-md">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 bg-[#150917] border border-[#4A1224]/60 px-2.5 py-0.5 rounded-md">
                         {pq.type.toUpperCase()}
                       </span>
                     </div>
@@ -374,7 +374,7 @@ No markdown outside JSON.`;
                     {pq.question}
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800/80 text-xs text-slate-300 space-y-1.5">
+                  <div className="p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs text-slate-300 space-y-1.5">
                     <div className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">
                       {isAr ? 'الإجابة النموذجية ومعايير الدرجة النهائية:' : 'Model Solution & Rubric Targets:'}
                     </div>
@@ -387,9 +387,9 @@ No markdown outside JSON.`;
 
           {/* TAB 3: CONCEPT MIND-MAP */}
           {activeTab === 'mindmap' && (
-            <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+            <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
               <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-xl">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#E5A93C] bg-[#4A1224]/25 border border-[#E5A93C]/30 px-3 py-1 rounded-xl">
                   {isAr ? 'خريطة الربط المفاهيمي' : 'Interactive Concept Graph'}
                 </span>
                 <h3 className="text-lg font-black text-white pt-1">
@@ -405,7 +405,7 @@ No markdown outside JSON.`;
                     className={`p-5 rounded-2xl border transition-all cursor-pointer ${
                       selectedConcept === node.id
                         ? 'bg-purple-500/20 border-purple-500 shadow-lg shadow-purple-500/10 ring-1 ring-purple-500/30'
-                        : 'bg-[#0A0C14] border-slate-800 hover:border-slate-700'
+                        : 'bg-[#150917] border-[#4A1224]/60 hover:border-[#831843]/70'
                     }`}
                   >
                     <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-1">
@@ -416,7 +416,7 @@ No markdown outside JSON.`;
                     </div>
 
                     {node.connections.length > 0 && (
-                      <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
+                      <div className="space-y-1.5 pt-2 border-t border-[#4A1224]/60">
                         <div className="text-[10px] text-slate-500 font-bold uppercase">
                           {isAr ? 'يرتبط بـ:' : 'Connects to:'}
                         </div>
@@ -424,7 +424,7 @@ No markdown outside JSON.`;
                           {node.connections.map((conn, cIdx) => (
                             <span
                               key={cIdx}
-                              className="text-[10px] text-slate-300 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-lg"
+                              className="text-[10px] text-slate-300 bg-[#150917] border border-[#4A1224]/60 px-2 py-0.5 rounded-lg"
                             >
                               {conn}
                             </span>

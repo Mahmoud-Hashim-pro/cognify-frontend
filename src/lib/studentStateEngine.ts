@@ -212,6 +212,7 @@ export class StudentStateManager {
   private pendingConcepts: Set<string> = new Set();
   private hasPendingWrites: boolean = false;
   private beforeUnloadHandler?: () => void;
+  private visibilityHandler?: () => void;
 
   constructor(uid: string, level?: string) {
     // 1) Fast paint from local device cache
@@ -225,12 +226,22 @@ export class StudentStateManager {
       this.hydrateFromFirestore(uid, level);
     }
 
-    // 3) Bind browser window beforeunload to flush any pending debounced writes
+    // 3) Bind browser window lifecycle events (pagehide, visibilitychange, beforeunload)
+    // to reliably flush any pending debounced writes across desktop and mobile devices.
     if (typeof window !== 'undefined') {
       this.beforeUnloadHandler = () => {
         this.flushPendingWrites();
       };
+      this.visibilityHandler = () => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+          this.flushPendingWrites();
+        }
+      };
       window.addEventListener('beforeunload', this.beforeUnloadHandler);
+      window.addEventListener('pagehide', this.beforeUnloadHandler);
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', this.visibilityHandler);
+      }
     }
   }
 
@@ -286,6 +297,10 @@ export class StudentStateManager {
     }
     if (this.beforeUnloadHandler && typeof window !== 'undefined') {
       window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+      window.removeEventListener('pagehide', this.beforeUnloadHandler);
+    }
+    if (this.visibilityHandler && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
     }
     this.flushPendingWrites();
     if (this.unsubscribeEventBus) {

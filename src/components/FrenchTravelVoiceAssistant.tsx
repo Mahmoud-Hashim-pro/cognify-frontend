@@ -559,21 +559,21 @@ Return STRICT JSON:
   });
 
   return (
-    <div className="flex-1 flex flex-col bg-[#0A0C14] text-slate-100 h-full overflow-hidden relative selection:bg-cyan-500/30 selection:text-white font-sans">
+    <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 h-full overflow-hidden relative selection:bg-[#E5A93C]/30 selection:text-[#E5A93C] font-sans">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#4A1224]/30 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
       </div>
 
       {/* Header */}
-      <header className="px-5 py-4 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-[#121524]/90 backdrop-blur-xl z-10">
+      <header className="px-5 py-4 border-b border-[#4A1224]/60 flex items-center justify-between shrink-0 bg-[#0E0610]/95 backdrop-blur-xl z-10">
         <div className="flex items-center gap-3">
           {onNavigateBack && (
             <button
               onClick={onNavigateBack}
-              className="p-2.5 text-slate-300 hover:text-white bg-[#181C2E] border border-slate-800 hover:border-slate-700 rounded-2xl active:scale-95 transition-all"
+              className="p-2.5 text-slate-300 hover:text-white bg-[#150917] border border-[#4A1224]/60 hover:border-[#4A1224]/50 rounded-2xl active:scale-95 transition-all"
               title={localize(profile.language, 'Back', 'رجوع')}
             >
               <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -582,7 +582,7 @@ Return STRICT JSON:
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="p-2.5 text-slate-300 hover:text-white bg-[#181C2E] border border-slate-800 hover:border-slate-700 rounded-2xl active:scale-95 transition-all md:hidden"
+              className="p-2.5 text-slate-300 hover:text-white bg-[#150917] border border-[#4A1224]/60 hover:border-[#4A1224]/50 rounded-2xl active:scale-95 transition-all md:hidden"
               title={localize(profile.language, 'Open Menu', 'فتح القائمة')}
             >
               <Menu className="w-5 h-5" />
@@ -596,7 +596,7 @@ Return STRICT JSON:
                 <h1 className="text-base font-black tracking-tight text-white">
                   {localize(profile.language, 'France Travel & Voice Companion', 'مساعد السفر والصوت لفرنسا')}
                 </h1>
-                <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
                   fr-FR HD
                 </span>
               </div>
@@ -608,12 +608,12 @@ Return STRICT JSON:
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center bg-[#0A0C14] border border-slate-800 p-1.5 rounded-2xl">
+        <div className="flex items-center bg-[#080409] border border-[#4A1224]/60 p-1.5 rounded-2xl">
           <button
             onClick={() => setActiveTab('interpreter')}
             className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'interpreter'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -624,7 +624,7 @@ Return STRICT JSON:
             onClick={() => setActiveTab('phrasebook')}
             className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'phrasebook'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
+                ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -668,7 +668,7 @@ Return STRICT JSON:
             </div>
 
             {/* Mode Switcher Pill */}
-            <div className="grid grid-cols-2 gap-3 p-1.5 bg-[#121524] border border-slate-800 rounded-2xl">
+            <div className="grid grid-cols-2 gap-3 p-1.5 bg-[#0E0610] border border-[#4A1224]/60 rounded-2xl">
               <button
                 onClick={() => {
                   setInterpreterMode('traveler-speaks');
@@ -677,7 +677,7 @@ Return STRICT JSON:
                 }}
                 className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   interpreterMode === 'traveler-speaks'
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
+                    ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -699,7 +699,7 @@ Return STRICT JSON:
                 }}
                 className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                   interpreterMode === 'local-speaks'
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
+                    ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -715,10 +715,10 @@ Return STRICT JSON:
             </div>
 
             {/* Active Voice Input Card */}
-            <div className="p-6 md:p-8 rounded-3xl bg-[#121524]/90 border border-slate-800/80 space-y-5 shadow-2xl backdrop-blur-xl">
+            <div className="p-6 md:p-8 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 space-y-5 shadow-2xl backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-sm shadow-cyan-400" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#E5A93C] animate-pulse shadow-sm shadow-[#E5A93C]/20" />
                   <h2 className="text-sm font-black uppercase tracking-wider text-slate-300">
                     {interpreterMode === 'traveler-speaks'
                       ? localize(profile.language, 'Your Spoken Message', 'رسالتك الصوتية')
@@ -756,7 +756,7 @@ Return STRICT JSON:
                           'قرّب الهاتف من الشخص الفرنسي واضغط "استمع للمتحدث الفرنسي"...'
                         )
                   }
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-sm text-white placeholder-slate-500 focus:border-cyan-500/60 outline-none resize-none leading-relaxed transition-all shadow-inner"
+                  className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-2xl p-4 text-sm text-white placeholder-slate-500 focus:border-[#E5A93C]/60 outline-none resize-none leading-relaxed transition-all shadow-inner"
                 />
 
                 {isListening && (
@@ -788,7 +788,7 @@ Return STRICT JSON:
                     className={`px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2.5 shadow-lg transition-all active:scale-95 ${
                       isListening
                         ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/30'
-                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-cyan-500/20'
+                        : 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white shadow-[#E5A93C]/20'
                     }`}
                   >
                     {isListening ? (
@@ -812,12 +812,12 @@ Return STRICT JSON:
                     type="button"
                     disabled={isTranslating || !liveTranscript.trim()}
                     onClick={() => handleTranslateAndSpeak()}
-                    className="px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-[#0A0C14] border border-slate-800 text-slate-200 hover:border-cyan-500/50 hover:text-cyan-400 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center gap-2 active:scale-95 shadow-md"
+                    className="px-6 py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider bg-[#080409] border border-[#4A1224]/60 text-slate-200 hover:border-[#E5A93C]/50 hover:text-[#E5A93C] disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center gap-2 active:scale-95 shadow-md"
                   >
                     {isTranslating ? (
                       <span className="animate-spin">⏳</span>
                     ) : (
-                      <Volume2 className="w-4 h-4 text-cyan-400" />
+                      <Volume2 className="w-4 h-4 text-[#E5A93C]" />
                     )}
                     <span>
                       {interpreterMode === 'traveler-speaks'
@@ -834,10 +834,10 @@ Return STRICT JSON:
                     onClick={() => {
                       speakText("Pouvez-vous parler plus lentement s'il vous plaît ?", 'French');
                     }}
-                    className="text-[11px] font-bold px-3.5 py-2.5 rounded-2xl bg-[#0A0C14] border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white flex items-center gap-1.5 transition-all active:scale-95"
+                    className="text-[11px] font-bold px-3.5 py-2.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-slate-300 hover:text-white flex items-center gap-1.5 transition-all active:scale-95"
                     title="Ask them to speak slower"
                   >
-                    <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
+                    <Volume2 className="w-3.5 h-3.5 text-[#E5A93C]" />
                     <span>🗣️ {localize(profile.language, 'Speak Slower', 'تحدث ببطء')}</span>
                   </button>
                   <button
@@ -845,10 +845,10 @@ Return STRICT JSON:
                     onClick={() => {
                       speakText("Excusez-moi, je ne parle pas bien français", 'French');
                     }}
-                    className="text-[11px] font-bold px-3.5 py-2.5 rounded-2xl bg-[#0A0C14] border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white flex items-center gap-1.5 transition-all active:scale-95"
+                    className="text-[11px] font-bold px-3.5 py-2.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-slate-300 hover:text-white flex items-center gap-1.5 transition-all active:scale-95"
                     title="Say: I don't speak French well"
                   >
-                    <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
+                    <Volume2 className="w-3.5 h-3.5 text-[#E5A93C]" />
                     <span>🇫🇷 {localize(profile.language, "I don't speak French", 'لا أتحدث الفرنسية')}</span>
                   </button>
                 </div>
@@ -857,9 +857,9 @@ Return STRICT JSON:
 
             {/* Translation Output Card */}
             {translatedResult && (
-              <div className="p-6 md:p-8 rounded-3xl bg-[#121524]/90 border border-cyan-500/30 space-y-5 shadow-2xl backdrop-blur-xl animate-fadeIn">
+              <div className="p-6 md:p-8 rounded-3xl bg-[#0E0610]/95 border border-[#E5A93C]/30 space-y-5 shadow-2xl backdrop-blur-xl animate-fadeIn">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#E5A93C] flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     {interpreterMode === 'traveler-speaks'
                       ? localize(profile.language, 'French Translation (Spoken Aloud)', 'الترجمة الفرنسية (المنطوقة)')
@@ -869,7 +869,7 @@ Return STRICT JSON:
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleCopy(interpreterMode === 'traveler-speaks' ? translatedResult.frText : (isAr ? translatedResult.arText : translatedResult.enText))}
-                      className="p-2.5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-slate-700 transition-all active:scale-95 shadow-inner"
+                      className="p-2.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-slate-400 hover:text-[#E5A93C] hover:border-[#4A1224]/50 transition-all active:scale-95 shadow-inner"
                       title="Copy"
                     >
                       {copiedText ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -883,7 +883,7 @@ Return STRICT JSON:
                           arPhonetic: translatedResult.phonetic
                         })
                       }
-                      className="p-2.5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-slate-700 transition-all flex items-center gap-1.5 text-xs font-bold active:scale-95 shadow-inner"
+                      className="p-2.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-slate-400 hover:text-[#E5A93C] hover:border-[#4A1224]/50 transition-all flex items-center gap-1.5 text-xs font-bold active:scale-95 shadow-inner"
                       title="Show Giant Fullscreen Card to French person"
                     >
                       <Maximize2 className="w-4 h-4" />
@@ -895,7 +895,7 @@ Return STRICT JSON:
                 </div>
 
                 {/* Big Display Text */}
-                <div className="p-6 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-4 shadow-inner">
+                <div className="p-6 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-4 shadow-inner">
                   <div className="text-xl md:text-3xl font-black text-white leading-relaxed tracking-tight">
                     {translatedResult.frText}
                   </div>
@@ -907,7 +907,7 @@ Return STRICT JSON:
                     </div>
                   )}
 
-                  <div className="border-t border-slate-800 pt-3 text-sm flex flex-col gap-1">
+                  <div className="border-t border-[#4A1224]/60 pt-3 text-sm flex flex-col gap-1">
                     <div className="font-semibold text-slate-200">{translatedResult.arText}</div>
                     <div className="text-xs text-slate-400">{translatedResult.enText}</div>
                   </div>
@@ -917,7 +917,7 @@ Return STRICT JSON:
                 <div className="flex justify-end">
                   <button
                     onClick={() => speakText(translatedResult.frText, 'French')}
-                    className="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center gap-2"
+                    className="px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white shadow-lg shadow-[#E5A93C]/20 active:scale-95 transition-all flex items-center gap-2"
                   >
                     <Volume2 className="w-4 h-4" />
                     <span>{localize(profile.language, 'Repeat in French', 'إعادة النطق بالفرنسية')}</span>
@@ -949,8 +949,8 @@ Return STRICT JSON:
                   onClick={() => setSelectedCategory(id)}
                   className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-2xl whitespace-nowrap transition-all active:scale-95 ${
                     selectedCategory === id
-                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20'
-                      : 'bg-[#121524] border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                      ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-lg shadow-[#E5A93C]/20'
+                      : 'bg-[#0E0610] border border-[#4A1224]/60 text-slate-400 hover:text-white hover:border-[#4A1224]/50'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -970,7 +970,7 @@ Return STRICT JSON:
                   'Search in French, Arabic or English (e.g. café, metro, addition, صيدلية, حساب)...',
                   'ابحث بالفرنسية أو العربية أو الإنجليزية (مثلاً: قهوة، مترو، حساب، l\'addition)...'
                 )}
-                className="w-full bg-[#121524]/90 border border-slate-800 text-white placeholder-slate-500 rounded-2xl px-5 py-3.5 text-xs focus:border-cyan-500/60 outline-none shadow-xl transition-all"
+                className="w-full bg-[#0E0610]/95 border border-[#4A1224]/60 text-white placeholder-slate-500 rounded-2xl px-5 py-3.5 text-xs focus:border-[#E5A93C]/60 outline-none shadow-xl transition-all"
               />
             </div>
 
@@ -979,7 +979,7 @@ Return STRICT JSON:
               {filteredPhrases.map((phrase) => (
                 <div
                   key={phrase.id}
-                  className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 hover:border-cyan-500/40 transition-all flex flex-col justify-between space-y-4 shadow-xl backdrop-blur-xl"
+                  className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 hover:border-[#E5A93C]/40 transition-all flex flex-col justify-between space-y-4 shadow-xl backdrop-blur-xl"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
@@ -992,8 +992,8 @@ Return STRICT JSON:
                           onClick={() => handleSpeakPhrase(phrase)}
                           className={`p-2.5 rounded-xl transition-all active:scale-95 ${
                             speakingPhraseId === phrase.id
-                              ? 'bg-cyan-500 text-slate-900 shadow-lg shadow-cyan-500/20'
-                              : 'bg-[#0A0C14] border border-slate-800 hover:border-cyan-500/40 hover:text-cyan-400 text-slate-400'
+                              ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-900 shadow-lg shadow-[#E5A93C]/20'
+                              : 'bg-[#080409] border border-[#4A1224]/60 hover:border-[#E5A93C]/40 hover:text-[#E5A93C] text-slate-400'
                           }`}
                           title="Listen in French"
                         >
@@ -1001,7 +1001,7 @@ Return STRICT JSON:
                         </button>
                         <button
                           onClick={() => setFullscreenCard(phrase)}
-                          className="p-2.5 rounded-xl bg-[#0A0C14] border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all active:scale-95"
+                          className="p-2.5 rounded-xl bg-[#080409] border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-slate-400 hover:text-white transition-all active:scale-95"
                           title="Show Fullscreen Card"
                         >
                           <Maximize2 className="w-4 h-4" />
@@ -1027,8 +1027,8 @@ Return STRICT JSON:
                   </div>
 
                   {phrase.notes && (
-                    <div className="text-[11px] text-cyan-400 bg-cyan-500/5 border border-cyan-500/20 rounded-xl px-3.5 py-2 flex items-center gap-2">
-                      <Info className="w-3.5 h-3.5 shrink-0 text-cyan-400" />
+                    <div className="text-[11px] text-[#E5A93C] bg-[#4A1224]/20 border border-[#E5A93C]/20 rounded-xl px-3.5 py-2 flex items-center gap-2">
+                      <Info className="w-3.5 h-3.5 shrink-0 text-[#E5A93C]" />
                       <span className="font-medium">{phrase.notes}</span>
                     </div>
                   )}
@@ -1061,7 +1061,7 @@ Return STRICT JSON:
             </div>
 
             {/* Spoken SOS Broadcast */}
-            <div className="p-6 md:p-8 rounded-3xl bg-[#121524]/90 border border-slate-800/80 space-y-5 shadow-2xl backdrop-blur-xl">
+            <div className="p-6 md:p-8 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 space-y-5 shadow-2xl backdrop-blur-xl">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <h3 className="text-base font-black text-white">
@@ -1087,7 +1087,7 @@ Return STRICT JSON:
                 </button>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs font-mono text-slate-400 space-y-1.5 shadow-inner">
+              <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-xs font-mono text-slate-400 space-y-1.5 shadow-inner">
                 <div className="text-white font-bold">
                   "Bonjour, c'est une urgence médicale, nous avons besoin d'aide immédiatement s'il vous plaît !"
                 </div>
@@ -1102,7 +1102,7 @@ Return STRICT JSON:
               {EMERGENCY_SERVICES.map((srv) => (
                 <div
                   key={srv.number}
-                  className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 hover:border-slate-700 transition-all flex items-center justify-between gap-4 shadow-xl backdrop-blur-xl"
+                  className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 hover:border-[#4A1224]/50 transition-all flex items-center justify-between gap-4 shadow-xl backdrop-blur-xl"
                 >
                   <div className="space-y-1">
                     <div className="text-3xl font-black text-white font-mono">{srv.number}</div>
@@ -1113,7 +1113,7 @@ Return STRICT JSON:
 
                   <a
                     href={`tel:${srv.number}`}
-                    className="p-3.5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-white shadow-md hover:border-slate-700 hover:scale-105 active:scale-95 transition-all shrink-0 flex items-center gap-2 text-xs font-black"
+                    className="p-3.5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-white shadow-md hover:border-[#4A1224]/50 hover:scale-105 active:scale-95 transition-all shrink-0 flex items-center gap-2 text-xs font-black"
                   >
                     <Phone className="w-4 h-4 text-emerald-400" />
                     <span>{localize(profile.language, 'Call', 'اتصال')}</span>
@@ -1132,7 +1132,7 @@ Return STRICT JSON:
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 bg-[#0A0C14]/98 backdrop-blur-2xl flex flex-col justify-between p-6 md:p-12 animate-fadeIn"
+          className="fixed inset-0 z-50 bg-[#080409]/98 backdrop-blur-2xl flex flex-col justify-between p-6 md:p-12 animate-fadeIn"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-slate-400 text-xs font-bold">
@@ -1166,7 +1166,7 @@ Return STRICT JSON:
               </div>
             )}
 
-            <div className="space-y-2 pt-4 border-t border-slate-800">
+            <div className="space-y-2 pt-4 border-t border-[#4A1224]/60">
               <div className="text-lg md:text-2xl text-slate-200 font-bold">
                 {fullscreenCard.ar}
               </div>
@@ -1179,7 +1179,7 @@ Return STRICT JSON:
           <div className="flex justify-center gap-4">
             <button
               onClick={() => speakText(fullscreenCard.fr, 'French')}
-              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-black uppercase tracking-wider flex items-center gap-3 shadow-2xl shadow-cyan-500/25 hover:scale-105 active:scale-95 transition-all"
+              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white text-sm font-black uppercase tracking-wider flex items-center gap-3 shadow-2xl shadow-[#E5A93C]/20 hover:scale-105 active:scale-95 transition-all"
             >
               <Volume2 className="w-5 h-5" />
               <span>{localize(profile.language, 'Speak in French Aloud', 'نطق بالفرنسية بصوت عالٍ')}</span>

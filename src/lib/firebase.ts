@@ -22,34 +22,96 @@ import firebaseConfig from '../../firebase-applet-config.json';
 const app = initializeApp(firebaseConfig);
 
 // Helper functions to safely probe storage capabilities inside sandboxed/restricted iframe environments
+const isIframeOrRestricted = (): boolean => {
+  try {
+    if (typeof window === 'undefined') return true;
+    // 1. Sandboxed / cross-origin iframe detection
+    if (window.self !== window.top) return true;
+    // 2. Sandboxed null/opaque origin check
+    if (window.location && window.location.origin === 'null') return true;
+    return false;
+  } catch {
+    // Accessing window.top or window.location threw a SecurityError -> restricted environment
+    return true;
+  }
+};
+
+/**
+ * Synchronous check for Firestore initialization.
+ * Prevents false positives in restricted/sandboxed iframes by verifying environment boundaries
+ * before attempting persistent cache, avoiding async persistence failures.
+ */
 const isIndexedDBSupported = (): boolean => {
   try {
     if (typeof window === 'undefined' || !window.indexedDB) {
       return false;
     }
-    const req = window.indexedDB.open('__firebase_probe__');
+    if (isIframeOrRestricted()) {
+      return false;
+    }
+    const idb = window.indexedDB;
+    if (typeof idb.open !== 'function') {
+      return false;
+    }
+    const req = idb.open('__firebase_probe__');
     req.onsuccess = () => {
       try {
-        req.result.close();
-        window.indexedDB.deleteDatabase('__firebase_probe__');
+        req.result?.close();
+        idb.deleteDatabase('__firebase_probe__');
       } catch {}
     };
-    req.onerror = (e) => { e.preventDefault(); };
+    req.onerror = (e) => {
+      try {
+        e.preventDefault();
+        e.stopPropagation?.();
+      } catch {}
+    };
+    req.onblocked = (e) => {
+      try {
+        e.preventDefault();
+      } catch {}
+    };
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };
 
+/**
+ * Asynchronous probe for explicit IndexedDB verification (e.g. diagnostics / health checks)
+ */
+export const probeIndexedDBAsync = (): Promise<boolean> =>
+  new Promise((resolve) => {
+    try {
+      if (typeof window === 'undefined' || !window.indexedDB || isIframeOrRestricted()) {
+        return resolve(false);
+      }
+      const req = window.indexedDB.open('__firebase_probe__');
+      req.onsuccess = () => {
+        try {
+          req.result.close();
+          window.indexedDB.deleteDatabase('__firebase_probe__');
+        } catch {}
+        resolve(true);
+      };
+      req.onerror = (e) => {
+        e.preventDefault();
+        resolve(false);
+      };
+    } catch {
+      resolve(false);
+    }
+  });
+
 const isLocalStorageSupported = (): boolean => {
   try {
-    if (typeof window === 'undefined' || !window.localStorage) {
+    if (typeof window === 'undefined' || !window.localStorage || isIframeOrRestricted()) {
       return false;
     }
     window.localStorage.setItem('__firebase_probe__', '1');
     window.localStorage.removeItem('__firebase_probe__');
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };

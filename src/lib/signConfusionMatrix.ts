@@ -113,7 +113,7 @@ export function computeConfusionMatrix(
           actualId: classes[r].id,
           actualAr: classes[r].ar,
           predictedId: classes[c].id,
-          predictedAr: classes[c].en,
+          predictedAr: classes[c].ar,
           errorCount: matrix[r][c],
           phonologicalCause: cause,
         });

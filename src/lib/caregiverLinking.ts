@@ -15,6 +15,8 @@ import {
   setDoc,
   updateDoc,
   onSnapshot,
+  query,
+  where,
   serverTimestamp,
   arrayUnion,
   arrayRemove,
@@ -66,17 +68,30 @@ export function listenPendingCaregiverRequests(
   onChange: (requests: CaregiverLinkRequest[]) => void
 ): () => void {
   if (!childUid) return () => {};
-  const q = collection(db, 'caregiverLinkRequests');
-  // Filtered client-side after fetch would need a composite index for a
-  // where() + orderBy(); keeping this simple, onSnapshot on the collection
-  // is fine at this app's scale and avoids an index deploy step.
-  return onSnapshot(q, (snap) => {
-    const all = snap.docs
-      .map((d) => d.data() as CaregiverLinkRequest)
-      .filter((r) => r.childUid === childUid && r.status === 'pending')
-      .sort((a, b) => b.timestamp - a.timestamp);
-    onChange(all);
-  });
+  // CRITICAL SECURITY & QUERY FIX:
+  // In Firestore, queries are not filters. A collection-wide query without where()
+  // fails against security rules requiring (resource.data.childUid == request.auth.uid)
+  // because the query could potentially match other children's requests.
+  // The where('childUid', '==', childUid) constraint guarantees the query conforms to the rule.
+  const q = query(
+    collection(db, 'caregiverLinkRequests'),
+    where('childUid', '==', childUid)
+  );
+
+  return onSnapshot(
+    q,
+    (snap) => {
+      const all = snap.docs
+        .map((d) => d.data() as CaregiverLinkRequest)
+        .filter((r) => r.status === 'pending')
+        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      onChange(all);
+    },
+    (err) => {
+      console.warn('[caregiverLinking] Failed to listen to pending requests:', err);
+      onChange([]);
+    }
+  );
 }
 
 /**

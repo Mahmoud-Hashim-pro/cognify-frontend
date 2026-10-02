@@ -137,7 +137,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-slate-900/60 rounded-3xl border border-slate-800">
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0E0610]/70 rounded-3xl border border-[#4A1224]/60">
           <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-bold text-sm">
             {isArabic ? 'جاري تجهيز القصة والأسئلة الشيقة...' : 'Preparing a fun story and questions for you...'}
@@ -145,7 +145,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
         </div>
       ) : currentExercise ? (
         <div className="flex flex-col gap-5">
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-yellow-500/30 shadow-2xl backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0610]/95 border-2 border-yellow-500/30 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-3 mb-4">
               <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 font-black text-xs flex items-center gap-1.5 border border-yellow-500/30">
                 <Lightbulb className="w-3.5 h-3.5" />
@@ -155,7 +155,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowVisualStory(!showVisualStory)}
-                  className="px-3 py-1 rounded-full bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 text-xs font-bold flex items-center gap-1 border border-indigo-500/30 transition-all"
+                  className="px-3 py-1 rounded-full bg-[#4A1224]/40 hover:bg-indigo-500/30 text-indigo-300 text-xs font-bold flex items-center gap-1 border border-[#4A1224]/60 transition-all"
                 >
                   <ImageIcon className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'قصة مرئية' : 'Visual Story'}</span>
@@ -163,7 +163,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
 
                 <button
                   onClick={() => speakText(currentExercise.question)}
-                  className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all"
+                  className="p-2 rounded-xl bg-[#150917]/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-[#4A1224]/50 transition-all"
                   title={isArabic ? 'استمع للقصة' : 'Listen'}
                 >
                   <Volume2 className="w-4 h-4" />
@@ -172,7 +172,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
             </div>
 
             {/* Story / Passage Box */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 my-3 leading-relaxed">
+            <div className="p-5 rounded-2xl bg-[#080409]/80 border border-[#4A1224]/60 my-3 leading-relaxed">
               <h4 className="text-lg sm:text-xl font-black text-yellow-300 mb-3">
                 {isArabic
                   ? currentExercise.questionArabic || currentExercise.question
@@ -207,7 +207,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
                   const isSelected = selectedOption === originalOpt;
                   const isCorrect = originalOpt === currentExercise.correctAnswer;
 
-                  let buttonStyle = 'bg-slate-950/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-yellow-500/50';
+                  let buttonStyle = 'bg-[#080409]/80 hover:bg-slate-800/90 border-[#4A1224]/60 text-slate-200 hover:border-yellow-500/50';
 
                   if (isAnswered) {
                     if (isCorrect) {
@@ -215,7 +215,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
                     } else if (isSelected) {
                       buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300';
                     } else {
-                      buttonStyle = 'bg-slate-950/40 border-slate-800 text-slate-500 opacity-60';
+                      buttonStyle = 'bg-[#080409]/40 border-[#4A1224]/60 text-slate-500 opacity-60';
                     }
                   }
 
@@ -227,7 +227,7 @@ export const ComprehensionModule: React.FC<ComprehensionModuleProps> = ({
                       className={`p-4 rounded-2xl border-2 text-left font-black text-base sm:text-lg transition-all flex items-center justify-between shadow-md active:scale-95 ${buttonStyle}`}
                     >
                       <span>{opt}</span>
-                      <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className="w-6 h-6 rounded-full border border-[#4A1224]/50 flex items-center justify-center text-xs font-bold shrink-0">
                         {String.fromCharCode(65 + idx)}
                       </div>
                     </button>

@@ -122,22 +122,22 @@ export default function CognitiveGym({
   };
 
   return (
-    <div className="flex-1 h-screen overflow-y-auto bg-[#0A0C14] text-slate-100 relative selection:bg-cyan-500/30 selection:text-white overflow-x-hidden font-sans custom-scrollbar p-6 md:p-10">
+    <div className="flex-1 h-screen overflow-y-auto bg-[#080409] text-slate-100 relative selection:bg-[#4A1224]/30 selection:text-[#E5A93C] overflow-x-hidden font-sans custom-scrollbar p-6 md:p-10">
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
       </div>
 
       <div className="max-w-5xl mx-auto space-y-6 pb-20">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#4A1224]/50 pb-6">
           <div className="flex items-center gap-3.5">
             {onNavigateBack && (
               <button
                 onClick={onNavigateBack}
-                className="p-2.5 text-slate-300 hover:text-white bg-[#121524]/90 shadow-md border border-slate-800 hover:border-slate-700 hover:bg-[#181C2E] rounded-2xl active:scale-95 transition-all flex items-center gap-2 shrink-0"
+                className="p-2.5 text-slate-300 hover:text-white bg-[#0E0610]/90 shadow-md border border-[#4A1224]/50 hover:border-[#E5A93C]/40 hover:bg-[#1A0C1D] rounded-2xl active:scale-95 transition-all flex items-center gap-2 shrink-0"
                 title={localize(profile.language, 'Back to Assistant', 'العودة للمساعد')}
               >
                 <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
@@ -147,7 +147,7 @@ export default function CognitiveGym({
             {onMenuClick && (
               <button
                 onClick={onMenuClick}
-                className="p-2.5 text-slate-300 hover:text-white bg-[#121524]/90 shadow-md border border-slate-800 hover:border-slate-700 hover:bg-[#181C2E] rounded-2xl active:scale-95 shrink-0 transition-all"
+                className="p-2.5 text-slate-300 hover:text-white bg-[#0E0610]/90 shadow-md border border-[#4A1224]/50 hover:border-[#E5A93C]/40 hover:bg-[#1A0C1D] rounded-2xl active:scale-95 shrink-0 transition-all"
                 aria-label={localize(profile.language, 'Toggle menu', 'القائمة')}
                 title={localize(profile.language, 'Open Menu', 'فتح القائمة')}
               >
@@ -177,7 +177,7 @@ export default function CognitiveGym({
           {/* Action button to open full IQ test modal */}
           <button
             onClick={onOpenIqModal}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-cyan-500/20 active:scale-95 transition-all shrink-0"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#E5A93C] to-[#831843] hover:from-[#E5A93C] hover:to-[#4A1224] text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-[#E5A93C]/10 active:scale-95 transition-all shrink-0"
           >
             <Brain className="w-4 h-4" />
             {localize(profile.language, 'Scientific IQ Test', 'اختبار الذكاء المعياري')}
@@ -187,7 +187,7 @@ export default function CognitiveGym({
         {/* KPI Stats Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Streak */}
-          <div className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-slate-700 transition-all">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/90 border border-[#4A1224]/50 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-[#E5A93C]/40 transition-all">
             <div className="space-y-1">
               <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
                 {localize(profile.language, 'Daily Streak', 'سلسلة الأيام')}
@@ -202,45 +202,45 @@ export default function CognitiveGym({
           </div>
 
           {/* Gym Points */}
-          <div className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-slate-700 transition-all">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/90 border border-[#4A1224]/50 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-[#E5A93C]/40 transition-all">
             <div className="space-y-1">
               <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
                 {localize(profile.language, 'Gym Points', 'نقاط الجيم')}
               </span>
-              <div className="text-3xl font-black text-cyan-400 font-mono tracking-tight">
+              <div className="text-3xl font-black text-[#E5A93C] font-mono tracking-tight">
                 {profile.gymPoints || 0} PTS
               </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <div className="p-3.5 rounded-2xl bg-[#4A1224]/20 border border-[#E5A93C]/30 text-[#E5A93C]">
               <Sparkles className="w-6 h-6" />
             </div>
           </div>
 
           {/* IQ Calibration Status */}
-          <div className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-slate-700 transition-all">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/90 border border-[#4A1224]/50 shadow-xl backdrop-blur-xl flex items-center justify-between hover:border-[#E5A93C]/40 transition-all">
             <div className="space-y-1">
               <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
                 {localize(profile.language, 'Standardized Score', 'الدرجة المعيارية')}
               </span>
-              <div className="text-3xl font-black text-indigo-400 font-mono tracking-tight">
+              <div className="text-3xl font-black text-[#E5A93C]/80 font-mono tracking-tight">
                 {profile.iqScore ? profile.iqScore : '—'}
               </div>
             </div>
-            <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <div className="p-3.5 rounded-2xl bg-[#4A1224]/20 border border-[#831843]/50 text-[#E5A93C]/80">
               <Brain className="w-6 h-6" />
             </div>
           </div>
         </div>
 
         {/* Today's Daily 3-Minute Challenge Card */}
-        <div className="p-6 md:p-8 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-6">
+        <div className="p-6 md:p-8 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-2xl bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C] flex items-center justify-center font-bold">
                 <Zap className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-black text-cyan-400 tracking-wider uppercase">
+                <span className="text-[10px] font-black text-[#E5A93C] tracking-wider uppercase">
                   {localize(profile.language, 'Daily Workout', 'تمرين اليوم')} • +{challenge.pointsReward} PTS
                 </span>
                 <h3 className="text-lg font-black text-white tracking-tight">
@@ -258,7 +258,7 @@ export default function CognitiveGym({
           </div>
 
           {/* Challenge Prompt */}
-          <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-sm font-semibold text-slate-200 leading-relaxed shadow-inner">
+          <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-sm font-semibold text-slate-200 leading-relaxed shadow-inner">
             {challenge.question}
           </div>
 
@@ -267,7 +267,7 @@ export default function CognitiveGym({
             {challenge.options.map((opt, idx) => {
               const isSelected = selectedIdx === idx;
               const isCorrectOption = idx === challenge.correctIndex;
-              let btnClasses = 'border-slate-800 bg-[#0A0C14] text-slate-300 hover:border-slate-700 hover:bg-[#181C2E]/60';
+              let btnClasses = 'border-[#4A1224]/60 bg-[#080409] text-slate-300 hover:border-[#4A1224]/50 hover:bg-[#150917]/80';
 
               if (isAnswerSubmitted) {
                 if (isCorrectOption) {
@@ -276,7 +276,7 @@ export default function CognitiveGym({
                   btnClasses = 'border-rose-500/60 bg-rose-500/15 text-rose-300 font-bold';
                 }
               } else if (isSelected) {
-                btnClasses = 'border-cyan-500/60 bg-cyan-500/10 text-cyan-400 ring-2 ring-cyan-500/20 shadow-sm';
+                btnClasses = 'border-[#E5A93C]/60 bg-[#4A1224]/30 text-[#E5A93C] ring-2 ring-[#E5A93C]/20 shadow-sm';
               }
 
               return (
@@ -294,7 +294,7 @@ export default function CognitiveGym({
 
           {/* Explanation upon completion */}
           {isAnswerSubmitted && (
-            <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs text-slate-400 space-y-1.5 shadow-inner">
+            <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-xs text-slate-400 space-y-1.5 shadow-inner">
               <span className="font-bold text-white">
                 {localize(profile.language, 'Explanation:', 'التوضيح:')}
               </span>
@@ -308,7 +308,7 @@ export default function CognitiveGym({
               <button
                 onClick={handleSubmitAnswer}
                 disabled={selectedIdx === null || isSubmitting}
-                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider hover:bg-primary-press disabled:opacity-40 shadow-xl shadow-cyan-500/20 active:scale-95 transition-all"
+                className="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:opacity-95 text-white text-xs font-black uppercase tracking-wider hover:bg-primary-press disabled:opacity-40 shadow-xl shadow-[#E5A93C]/20 active:scale-95 transition-all"
               >
                 {localize(profile.language, 'Submit Workout', 'إرسال الإجابة')}
               </button>
@@ -317,10 +317,10 @@ export default function CognitiveGym({
         </div>
 
         {/* 4 Cognitive Sub-Domains Radar / Progress */}
-        <div className="p-6 md:p-8 rounded-3xl bg-[#121524]/90 border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-6">
+        <div className="p-6 md:p-8 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h3 className="text-base font-black text-white flex items-center gap-2.5">
-              <span className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+              <span className="p-2 rounded-xl bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C]">
                 <Target className="w-5 h-5" />
               </span>
               {localize(profile.language, 'Cognitive Domain Metrics', 'مقاييس القدرات المعرفية')}
@@ -333,42 +333,42 @@ export default function CognitiveGym({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-2.5 shadow-inner">
+            <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5 shadow-inner">
               <div className="flex justify-between text-xs font-bold text-white">
                 <span>{localize(profile.language, 'Fluid Reasoning (Gf)', 'الاستدلال المرن')}</span>
-                <span className="font-mono text-cyan-400">{domains.fluidReasoning}%</span>
+                <span className="font-mono text-[#E5A93C]">{domains.fluidReasoning}%</span>
               </div>
-              <div className="w-full h-2 bg-[#121524] border border-slate-800/60 rounded-full overflow-hidden">
-                <div className="h-full bg-cyan-400 rounded-full shadow-sm" style={{ width: `${domains.fluidReasoning}%` }} />
+              <div className="w-full h-2 bg-[#0E0610] border border-[#4A1224]/50 rounded-full overflow-hidden">
+                <div className="h-full bg-[#E5A93C] rounded-full shadow-sm" style={{ width: `${domains.fluidReasoning}%` }} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-2.5 shadow-inner">
+            <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5 shadow-inner">
               <div className="flex justify-between text-xs font-bold text-white">
                 <span>{localize(profile.language, 'Quantitative Logic (Gq)', 'المنطق الكمي')}</span>
-                <span className="font-mono text-indigo-400">{domains.quantitativeLogic}%</span>
+                <span className="font-mono text-[#E5A93C]">{domains.quantitativeLogic}%</span>
               </div>
-              <div className="w-full h-2 bg-[#121524] border border-slate-800/60 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#0E0610] border border-[#4A1224]/50 rounded-full overflow-hidden">
                 <div className="h-full bg-indigo-500 rounded-full shadow-sm" style={{ width: `${domains.quantitativeLogic}%` }} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-2.5 shadow-inner">
+            <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5 shadow-inner">
               <div className="flex justify-between text-xs font-bold text-white">
                 <span>{localize(profile.language, 'Working Memory (Gwm)', 'الذاكرة العاملة')}</span>
                 <span className="font-mono text-violet-400">{domains.workingMemory}%</span>
               </div>
-              <div className="w-full h-2 bg-[#121524] border border-slate-800/60 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#0E0610] border border-[#4A1224]/50 rounded-full overflow-hidden">
                 <div className="h-full bg-violet-500 rounded-full shadow-sm" style={{ width: `${domains.workingMemory}%` }} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-2.5 shadow-inner">
+            <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-2.5 shadow-inner">
               <div className="flex justify-between text-xs font-bold text-white">
                 <span>{localize(profile.language, 'Processing Speed (Gs)', 'سرعة المعالجة')}</span>
                 <span className="font-mono text-amber-400">{domains.processingSpeed}%</span>
               </div>
-              <div className="w-full h-2 bg-[#121524] border border-slate-800/60 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-[#0E0610] border border-[#4A1224]/50 rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500 rounded-full shadow-sm" style={{ width: `${domains.processingSpeed}%` }} />
               </div>
             </div>

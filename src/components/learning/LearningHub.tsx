@@ -162,23 +162,23 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
   };
 
   return (
-    <div className={`flex-1 flex flex-col h-full bg-[#0A0C14] text-slate-100 overflow-y-auto relative p-3 sm:p-5 lg:p-8 select-none custom-scrollbar ${
+    <div className={`flex-1 flex flex-col h-full bg-[#080409] text-slate-100 overflow-y-auto relative p-3 sm:p-5 lg:p-8 select-none custom-scrollbar ${
       learningProfile.dyslexiaFont ? 'font-mono tracking-wide' : 'font-sans'
     }`}>
       {/* Ambient Lighting Orbs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#4A1224]/30 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px]" />
       </div>
 
       {/* Top Banner & Header */}
-      <header className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800/80 flex-wrap">
+      <header className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-[#4A1224]/60 flex-wrap">
         <div className="flex items-center gap-3">
           {onNavigateBack && (
             <button
               onClick={onNavigateBack}
-              className="p-2.5 rounded-2xl bg-[#121524] hover:bg-[#181C2E] border border-slate-800/80 hover:border-slate-700 text-slate-300 hover:text-white flex items-center gap-1.5 font-bold text-xs transition-all shadow-md active:scale-95 shrink-0"
+              className="p-2.5 rounded-2xl bg-[#0E0610] hover:bg-[#150917] border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-slate-300 hover:text-white flex items-center gap-1.5 font-bold text-xs transition-all shadow-md active:scale-95 shrink-0"
               title={isArabic ? 'العودة للمساعد' : 'Back to Assistant'}
             >
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
@@ -189,7 +189,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="p-2.5 rounded-2xl bg-[#121524] hover:bg-[#181C2E] border border-slate-800/80 text-slate-400 hover:text-white shrink-0 active:scale-95"
+              className="p-2.5 rounded-2xl bg-[#0E0610] hover:bg-[#150917] border border-[#4A1224]/60 text-slate-400 hover:text-white shrink-0 active:scale-95"
               aria-label={isArabic ? 'القائمة' : 'Menu'}
               title={isArabic ? 'فتح القائمة' : 'Open Menu'}
             >
@@ -200,20 +200,20 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
           {activeSubject || isReviewingMistakes ? (
             <button
               onClick={handleBackToHub}
-              className="p-2.5 rounded-2xl bg-[#121524] hover:bg-[#181C2E] border border-slate-800/80 text-slate-300 hover:text-white flex items-center gap-2 font-bold text-xs transition-all shadow-md active:scale-95"
+              className="p-2.5 rounded-2xl bg-[#0E0610] hover:bg-[#150917] border border-[#4A1224]/60 text-slate-300 hover:text-white flex items-center gap-2 font-bold text-xs transition-all shadow-md active:scale-95"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{isArabic ? 'العودة للمركز' : 'Back to Hub'}</span>
             </button>
           ) : (
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4A1224] via-[#831843] to-[#E5A93C] flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
                   <span>{isArabic ? 'مركز التعلّم الذكي' : 'Adaptive Learning Hub'}</span>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 font-extrabold border border-indigo-500/30">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#4A1224]/40 text-[#E5A93C] font-extrabold border border-[#4A1224]/60">
                     AI Tutor
                   </span>
                 </h1>
@@ -233,7 +233,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
             onClick={handleToggleMute}
             className={`p-2.5 rounded-2xl border transition-all shadow-md active:scale-95 ${
               isMuted
-                ? 'bg-slate-900 border-slate-800 text-slate-500'
+                ? 'bg-[#150917] border-[#4A1224]/60 text-slate-500'
                 : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
             }`}
             title={isArabic ? (isMuted ? 'تشغيل المؤثرات الصوتية' : 'كتم الصوت') : (isMuted ? 'Unmute audio' : 'Mute audio')}
@@ -248,7 +248,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
             className={`px-3 py-1.5 rounded-2xl border text-xs font-black flex items-center gap-1.5 transition-all shadow-md active:scale-95 ${
               learningProfile.dyslexiaFont
                 ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 ring-2 ring-purple-500/20'
-                : 'bg-[#121524] border-slate-800 text-slate-400 hover:text-white'
+                : 'bg-[#0E0610] border-[#4A1224]/60 text-slate-400 hover:text-white'
             }`}
             title={isArabic ? 'تبديل خط عسر القراءة (Dyslexia-friendly)' : 'Toggle Dyslexia-friendly font'}
           >
@@ -257,15 +257,15 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
           </button>
 
           {/* Curriculum Stage Selector */}
-          <div className="flex items-center gap-1 bg-[#121524] border border-slate-800 rounded-2xl p-1">
-            <Layers className="w-3.5 h-3.5 text-indigo-400 mx-1" />
+          <div className="flex items-center gap-1 bg-[#0E0610] border border-[#4A1224]/60 rounded-2xl p-1">
+            <Layers className="w-3.5 h-3.5 text-[#E5A93C] mx-1" />
             <select
               value={learningProfile.curriculumLevel || 'elementary'}
               onChange={(e) => handleSelectCurriculumLevel(e.target.value as CurriculumLevel)}
               className="bg-transparent text-xs font-bold text-slate-200 outline-none pr-2 py-0.5 cursor-pointer"
             >
               {CURRICULUM_LEVELS.map((lvl) => (
-                <option key={lvl.id} value={lvl.id} className="bg-[#121524] text-white">
+                <option key={lvl.id} value={lvl.id} className="bg-[#0E0610] text-white">
                   {isArabic ? lvl.labelAr : lvl.labelEn}
                 </option>
               ))}
@@ -287,9 +287,9 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
           {/* Parent Portal Button */}
           <button
             onClick={() => setIsParentDashboardOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-[#121524] hover:bg-[#181C2E] border border-slate-700/80 text-slate-300 hover:text-white font-black text-xs transition-all shadow-md active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-[#0E0610] hover:bg-[#150917] border border-[#4A1224]/60 text-slate-300 hover:text-white font-black text-xs transition-all shadow-md active:scale-95"
           >
-            <ShieldCheck className="w-4 h-4 text-indigo-400" />
+            <ShieldCheck className="w-4 h-4 text-[#E5A93C]" />
             <span className="hidden sm:inline">{isArabic ? 'لوحة الأهل' : 'Parent'}</span>
           </button>
         </div>
@@ -300,9 +300,9 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
         /* Subject Selection Grid */
         <div className="flex-1 flex flex-col">
           {/* Welcome Banner */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-indigo-950/50 via-purple-950/40 to-[#121524]/90 border border-indigo-500/30 shadow-2xl backdrop-blur-xl mb-6 flex items-center justify-between gap-6 flex-wrap">
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-indigo-950/50 via-purple-950/40 to-[#0E0610]/90 border border-[#4A1224]/60 shadow-2xl backdrop-blur-xl mb-6 flex items-center justify-between gap-6 flex-wrap">
             <div className="max-w-xl">
-              <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 font-black text-xs border border-indigo-500/30 mb-3 inline-block">
+              <span className="px-3 py-1 rounded-full bg-[#4A1224]/40 text-indigo-300 font-black text-xs border border-[#4A1224]/60 mb-3 inline-block">
                 ✨ {isArabic ? 'معلم الذكاء الاصطناعي الخاص بك' : 'Your Personal AI Tutor'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-black text-white mb-2 leading-tight">
@@ -317,7 +317,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
               </p>
             </div>
 
-            <div className="flex items-center gap-3 bg-[#0A0C14]/80 p-4 rounded-2xl border border-slate-800 shadow-inner">
+            <div className="flex items-center gap-3 bg-[#080409]/80 p-4 rounded-2xl border border-[#4A1224]/60 shadow-inner">
               <HeartHandshake className="w-8 h-8 text-pink-400" />
               <div>
                 <p className="text-xs font-bold text-slate-400">{isArabic ? 'النمط التعليمي' : 'Learning Style'}</p>
@@ -328,7 +328,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
 
           {/* Smart Mistake Review Banner (Spaced Repetition Deck) */}
           {learningProfile.mistakeQueue && learningProfile.mistakeQueue.length > 0 && (
-            <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950/40 via-purple-950/30 to-[#121524] border-2 border-amber-500/40 shadow-xl mb-6 flex items-center justify-between gap-4 flex-wrap animate-in fade-in">
+            <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-950/40 via-purple-950/30 to-[#0E0610] border-2 border-amber-500/40 shadow-xl mb-6 flex items-center justify-between gap-4 flex-wrap animate-in fade-in">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0">
                   <Target className="w-6 h-6" />
@@ -379,7 +379,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
         /* Mistake Review Arena */
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full py-4 animate-in fade-in">
           {/* Deck Status Bar */}
-          <div className="flex items-center justify-between gap-4 mb-6 bg-[#121524] p-4 rounded-2xl border border-amber-500/30">
+          <div className="flex items-center justify-between gap-4 mb-6 bg-[#0E0610] p-4 rounded-2xl border border-amber-500/30">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
                 <Target className="w-5 h-5" />
@@ -413,7 +413,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
 
           {!currentMistake || !learningProfile.mistakeQueue || learningProfile.mistakeQueue.length === 0 ? (
             /* Empty / Victory State */
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-[#121524]/60 border border-emerald-500/30 rounded-3xl">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-[#0E0610]/70 border border-emerald-500/30 rounded-3xl">
               <div className="w-20 h-20 rounded-3xl bg-emerald-500/20 border-2 border-emerald-500/50 flex items-center justify-center text-emerald-400 mb-4 animate-bounce">
                 <Sparkles className="w-10 h-10" />
               </div>
@@ -434,11 +434,11 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
             </div>
           ) : (
             /* Active Mistake Challenge Card */
-            <div className="flex-1 flex flex-col bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+            <div className="flex-1 flex flex-col bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
               {/* Challenge Header Tags */}
               <div className="flex items-center justify-between gap-2 mb-6 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-extrabold text-xs uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-xl bg-[#4A1224]/40 border border-[#4A1224]/60 text-indigo-300 font-extrabold text-xs uppercase tracking-wider">
                     {currentMistake.subject}
                   </span>
                   <span className="px-3 py-1 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs">
@@ -468,14 +468,14 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
                     const isSelected = reviewSelectedOption === option;
                     const isCorrectAnswer = option.trim().toLowerCase() === currentMistake.correctAnswer.trim().toLowerCase();
 
-                    let optionStyle = 'bg-[#0A0C14] border-slate-800 text-slate-200 hover:border-indigo-500/50 hover:bg-[#15192c]';
+                    let optionStyle = 'bg-[#080409] border-[#4A1224]/60 text-slate-200 hover:border-indigo-500/50 hover:bg-[#15192c]';
                     if (reviewIsSubmitted) {
                       if (isCorrectAnswer) {
                         optionStyle = 'bg-emerald-500/20 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30';
                       } else if (isSelected) {
                         optionStyle = 'bg-rose-500/20 border-rose-500 text-rose-200 ring-2 ring-rose-500/30';
                       } else {
-                        optionStyle = 'bg-[#0A0C14]/60 border-slate-800 text-slate-500 opacity-60';
+                        optionStyle = 'bg-[#080409]/60 border-[#4A1224]/60 text-slate-500 opacity-60';
                       }
                     }
 
@@ -498,7 +498,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
                   })}
                 </div>
               ) : (
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 mb-6">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 mb-6">
                   <p className="text-xs text-slate-400 mb-2">{isArabic ? 'الإجابة النموذجية:' : 'Correct Solution:'}</p>
                   <p className="text-lg font-black text-emerald-400">{currentMistake.correctAnswer}</p>
                 </div>
@@ -533,7 +533,7 @@ export const LearningHub: React.FC<LearningHubProps> = ({ profile, onMenuClick, 
               )}
 
               {/* Footer Controls: Previous, Next, Mastery Claim */}
-              <div className="mt-auto pt-4 border-t border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+              <div className="mt-auto pt-4 border-t border-[#4A1224]/60 flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handlePrevMistake}

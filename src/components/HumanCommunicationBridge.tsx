@@ -215,7 +215,7 @@ export default function HumanCommunicationBridge({ profile }: HumanCommunication
     academic: {
       label: isArabic ? 'جامعة ومحاضرات 🎓' : isFrench ? 'Université & Cours 🎓' : 'University & Lectures 🎓',
       icon: GraduationCap,
-      color: 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10',
+      color: 'border-[#E5A93C]/30 text-[#E5A93C] bg-indigo-500/10',
       phrases: isEgyptian ? [
         { text: 'عندي سؤال بخصوص نقطة البحث يا دكتور', icon: '🙋‍♂️' },
         { text: 'ممكن إعادة النقطة الأخيرة بطريقة أبسط؟', icon: '🔄' },
@@ -248,7 +248,7 @@ export default function HumanCommunicationBridge({ profile }: HumanCommunication
     daily: {
       label: isArabic ? 'مصالح وتعاملات يومية 🏪' : isFrench ? 'Vie Quotidienne & Services 🏪' : 'Daily Life & Services 🏪',
       icon: Store,
-      color: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
+      color: 'border-[#E5A93C]/40 text-[#E5A93C] bg-[#4A1224]/30',
       phrases: isEgyptian ? [
         { text: 'أين أقرب محطة مترو أو صيدلية؟', icon: '🚇' },
         { text: 'بكم سعر الحاجة دي لو سمحت؟', icon: '💵' },
@@ -531,13 +531,13 @@ Question: "${q}"`;
       className="flex-1 flex flex-col bg-[#0b0f19] text-slate-100 relative overflow-hidden h-full p-2.5 sm:p-3 select-none"
     >
       {/* ── TOP UNIFIED SLIM BAR WITH MODE TABS & DIALECT CONTROLS ── */}
-      <div className="shrink-0 mb-2 flex flex-wrap items-center justify-between gap-2 bg-[#13182b] p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-800 shadow-md">
+      <div className="shrink-0 mb-2 flex flex-wrap items-center justify-between gap-2 bg-[#13182b] p-2 sm:px-3 sm:py-1.5 rounded-xl border border-[#4A1224]/60 shadow-md">
         {/* Left: Mode Switcher */}
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center text-white shadow-sm shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-rose-600 flex items-center justify-center text-white shadow-sm shrink-0">
             <MessageSquare className="w-3.5 h-3.5" />
           </div>
-          <div className="flex items-center bg-slate-900/90 p-0.5 rounded-lg border border-slate-800">
+          <div className="flex items-center bg-[#0E0610]/95 p-0.5 rounded-lg border border-[#4A1224]/60">
             <button
               onClick={() => setActiveMode('bridge')}
               className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
@@ -565,7 +565,7 @@ Question: "${q}"`;
 
         {/* Right: Dialect & Speed */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-slate-900/90 p-0.5 rounded-lg border border-slate-800">
+          <div className="flex items-center gap-1 bg-[#0E0610]/95 p-0.5 rounded-lg border border-[#4A1224]/60">
             <span className="text-[10px] text-slate-400 px-1">🗣️</span>
             {[
               { id: 'Egyptian Ammiya', label: '🇪🇬 مصري' },
@@ -587,7 +587,7 @@ Question: "${q}"`;
             ))}
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 bg-slate-900/90 px-1.5 py-0.5 rounded-lg border border-slate-800 text-[11px]">
+          <div className="hidden sm:flex items-center gap-1 bg-[#0E0610]/95 px-1.5 py-0.5 rounded-lg border border-[#4A1224]/60 text-[11px]">
             <span className="text-[10px] text-slate-400 font-bold">{t.speed}</span>
             {[0.8, 1.0, 1.25].map((rate) => (
               <button
@@ -604,11 +604,23 @@ Question: "${q}"`;
         </div>
       </div>
 
+      {/* ── CLINICAL ACCREDITATION & STATUTORY ASSISTIVE DISCLAIMER ── */}
+      <div className="shrink-0 mb-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-2 text-[11px] text-amber-200/90 shadow-sm">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-amber-400">⚖️ {isArabic ? 'تنبيه سريري وقانوني:' : 'Clinical Disclaimer:'}</span>
+          <span>
+            {isArabic
+              ? 'أداة مساعدة رقمية داعمة للتواصل والتعليم — ليست بديلاً عن مترجم لغة الإشارة البشري المعتمد في التحقيقات القضائية أو الإجراءات الطبية الحرجة.'
+              : 'Assistive educational tool for daily communication — not a certified legal substitute for human sign interpreters in judicial or critical medical procedures.'}
+          </span>
+        </div>
+      </div>
+
       {/* ── TWO-COLUMN INTERACTIVE WORKSPACE (ZERO SCROLL) ── */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2.5 min-h-0 overflow-hidden">
         
         {/* ── COLUMN A: DEAF CONSOLE / AI TUTOR ── */}
-        <div className="bg-[#13182b] rounded-2xl border border-slate-800 p-2.5 sm:p-3 shadow-xl flex flex-col justify-between min-h-0 overflow-hidden relative">
+        <div className="bg-[#13182b] rounded-2xl border border-[#4A1224]/60 p-2.5 sm:p-3 shadow-xl flex flex-col justify-between min-h-0 overflow-hidden relative">
           
           {activeMode === 'bridge' ? (
             <div className="flex flex-col h-full justify-between min-h-0">
@@ -626,10 +638,10 @@ Question: "${q}"`;
                   className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 ${
                     showAacDrawer
                       ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-slate-700'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-300 hover:text-white hover:border-[#4A1224]/50'
                   }`}
                 >
-                  <Layers className="w-3 h-3 text-cyan-400" />
+                  <Layers className="w-3 h-3 text-[#E5A93C]" />
                   <span>{isArabic ? 'عبارات AAC' : isFrench ? 'Phrases AAC' : 'AAC Phrases'}</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${showAacDrawer ? 'rotate-180' : ''}`} />
                 </button>
@@ -645,7 +657,7 @@ Question: "${q}"`;
                       handleSignText(g.text);
                     }}
                     title={g.text}
-                    className="py-1 px-0.5 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-indigo-500/50 hover:bg-indigo-950/40 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0.5"
+                    className="py-1 px-0.5 rounded-lg bg-[#0E0610]/95 border border-[#4A1224]/60 hover:border-indigo-500/50 hover:bg-indigo-950/40 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0.5"
                   >
                     <span className="text-xs">{g.icon}</span>
                     <span className="text-[9px] font-bold text-slate-300 truncate w-full">{g.label}</span>
@@ -660,7 +672,7 @@ Question: "${q}"`;
                     initial={{ opacity: 0, y: -8, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                    className="absolute inset-x-2.5 top-11 z-30 bg-[#0e1324]/95 backdrop-blur-md border border-slate-700 rounded-xl p-2.5 shadow-2xl flex flex-col max-h-[220px]"
+                    className="absolute inset-x-2.5 top-11 z-30 bg-[#0e1324]/95 backdrop-blur-md border border-[#4A1224]/50 rounded-xl p-2.5 shadow-2xl flex flex-col max-h-[220px]"
                   >
                     <div className="flex items-center justify-between mb-1.5 shrink-0">
                       <div className="flex items-center gap-1 overflow-x-auto pb-0.5 scrollbar-none">
@@ -674,7 +686,7 @@ Question: "${q}"`;
                               className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all shrink-0 border ${
                                 isActive
                                   ? `${cat.color} font-black`
-                                  : 'bg-slate-900 border-slate-800 text-slate-400'
+                                  : 'bg-[#150917] border-[#4A1224]/60 text-slate-400'
                               }`}
                             >
                               {cat.label}
@@ -700,7 +712,7 @@ Question: "${q}"`;
                             handleSignText(phrase.text);
                             setShowAacDrawer(false);
                           }}
-                          className="p-1.5 rounded-lg bg-slate-900 hover:bg-indigo-900/40 border border-slate-800/80 text-start text-[11px] font-bold text-slate-200 transition-all active:scale-95 flex items-center gap-1.5 truncate"
+                          className="p-1.5 rounded-lg bg-[#150917] hover:bg-indigo-900/40 border border-[#4A1224]/60 text-start text-[11px] font-bold text-slate-200 transition-all active:scale-95 flex items-center gap-1.5 truncate"
                         >
                           <span className="text-xs shrink-0">{phrase.icon}</span>
                           <span className="truncate">{phrase.text}</span>
@@ -724,7 +736,7 @@ Question: "${q}"`;
                     }
                   }}
                   placeholder={t.typePlaceholder}
-                  className="w-full flex-1 p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 text-slate-100 font-medium text-xs sm:text-sm leading-relaxed"
+                  className="w-full flex-1 p-2.5 bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 text-slate-100 font-medium text-xs sm:text-sm leading-relaxed"
                 />
               </div>
 
@@ -765,7 +777,7 @@ Question: "${q}"`;
                   <p className="text-xs sm:text-sm font-medium text-slate-200 leading-relaxed">{aiAnswerText}</p>
                 </div>
               ) : (
-                <div className="flex-1 min-h-0 flex items-center justify-center text-center p-3 text-slate-400 text-xs bg-slate-900/40 rounded-xl border border-slate-800/80 mb-2">
+                <div className="flex-1 min-h-0 flex items-center justify-center text-center p-3 text-slate-400 text-xs bg-[#150917]/40 rounded-xl border border-[#4A1224]/60 mb-2">
                   {isArabic
                     ? 'اكتب سؤالك وسيقوم المعلم الذكي بشرحه فوراً بالنطق الصوتي وترجمته بلغة الإشارة 3D.'
                     : isFrench
@@ -785,13 +797,13 @@ Question: "${q}"`;
                     }
                   }}
                   placeholder={t.askAiPlaceholder}
-                  className="w-full h-[58px] p-2 bg-slate-900 border border-slate-800 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-slate-100 font-medium text-xs mb-1.5"
+                  className="w-full h-[58px] p-2 bg-[#150917] border border-[#4A1224]/60 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/50 text-slate-100 font-medium text-xs mb-1.5"
                 />
 
                 <button
                   onClick={handleAskAiTutor}
                   disabled={!aiQuestion.trim() || isAiAnswering}
-                  className="w-full py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:brightness-110 disabled:opacity-40 text-white font-black rounded-xl shadow-md transition-all active:scale-98 flex items-center justify-center gap-1.5 text-xs"
+                  className="w-full py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-rose-600 hover:brightness-110 disabled:opacity-40 text-white font-black rounded-xl shadow-md transition-all active:scale-98 flex items-center justify-center gap-1.5 text-xs"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>{isAiAnswering ? t.aiThinking : t.askAiBtn}</span>
@@ -803,7 +815,7 @@ Question: "${q}"`;
         </div>
 
         {/* ── COLUMN B: UNIFIED 3D SIGN AVATAR STAGE & PARTNER MIC ── */}
-        <div className="bg-[#13182b] rounded-2xl border border-slate-800 p-2.5 sm:p-3 shadow-xl flex flex-col justify-between min-h-0 overflow-hidden">
+        <div className="bg-[#13182b] rounded-2xl border border-[#4A1224]/60 p-2.5 sm:p-3 shadow-xl flex flex-col justify-between min-h-0 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between mb-1.5 shrink-0">
             <div className="flex items-center gap-1.5">
@@ -818,7 +830,7 @@ Question: "${q}"`;
           </div>
 
           {/* Master 3D Sign Avatar Viewport */}
-          <div className="flex-1 min-h-[140px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 mb-2 flex items-center justify-center relative">
+          <div className="flex-1 min-h-[140px] bg-[#080409] rounded-xl overflow-hidden border border-[#4A1224]/60 mb-2 flex items-center justify-center relative">
             <React.Suspense fallback={
               <div className="text-center p-3">
                 <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-1.5" />
@@ -844,7 +856,7 @@ Question: "${q}"`;
           </div>
 
           {/* Live Partner Captions */}
-          <div className="shrink-0 bg-slate-900/90 border border-slate-800 p-2 rounded-xl mb-2 min-h-[42px] max-h-[50px] overflow-hidden flex flex-col justify-center">
+          <div className="shrink-0 bg-[#0E0610]/95 border border-[#4A1224]/60 p-2 rounded-xl mb-2 min-h-[42px] max-h-[50px] overflow-hidden flex flex-col justify-center">
             <span className="text-[9px] text-slate-400 font-bold block leading-none mb-0.5">{t.partnerTag}:</span>
             <p className="text-xs font-bold text-emerald-400 truncate leading-snug">
               {partnerTranscript || (isListeningPartner ? t.listeningActive : t.partnerPlaceholder)}
@@ -857,7 +869,7 @@ Question: "${q}"`;
             className={`shrink-0 w-full py-2.5 rounded-xl font-black transition-all shadow-md text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-98 ${
               isListeningPartner
                 ? 'bg-rose-600 hover:bg-rose-700 text-white animate-pulse'
-                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white'
+                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-600 hover:from-indigo-600 hover:to-rose-600 text-white'
             }`}
           >
             {isListeningPartner ? <Square className="w-3.5 h-3.5 fill-current" /> : <Mic className="w-3.5 h-3.5" />}
@@ -868,21 +880,21 @@ Question: "${q}"`;
       </div>
 
       {/* ── LIVE TWO-WAY DIALOGUE SLIM TICKER ── */}
-      <div className="shrink-0 bg-[#13182b] border border-slate-800 rounded-xl px-3 py-1.5 mt-2 flex items-center justify-between gap-2.5">
+      <div className="shrink-0 bg-[#13182b] border border-[#4A1224]/60 rounded-xl px-3 py-1.5 mt-2 flex items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Clock className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+          <Clock className="w-3.5 h-3.5 text-[#E5A93C] shrink-0" />
           <button
             onClick={() => setShowFullTimeline(true)}
             className="text-xs font-bold text-slate-300 hover:text-white flex items-center gap-1.5 shrink-0"
           >
             <span>{t.timelineTitle}</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#150917] border border-[#4A1224]/60 text-slate-400 font-mono">
               {dialogueLog.length}
             </span>
           </button>
           
           {dialogueLog.length > 0 && (
-            <span className="text-[11px] text-slate-400 truncate hidden md:inline border-s border-slate-800 ps-2">
+            <span className="text-[11px] text-slate-400 truncate hidden md:inline border-s border-[#4A1224]/60 ps-2">
               <strong className="text-slate-300">
                 {dialogueLog[dialogueLog.length - 1].sender === 'user' ? t.meTag : dialogueLog[dialogueLog.length - 1].sender === 'ai' ? t.aiTag : t.partnerTag}:
               </strong>{' '}
@@ -900,21 +912,21 @@ Question: "${q}"`;
           </button>
           <button
             onClick={handleCopyTranscript}
-            className="p-1 px-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-all"
+            className="p-1 px-2 rounded-lg bg-[#150917] border border-[#4A1224]/60 hover:bg-slate-800 text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-all"
           >
             {copiedTranscript ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
             <span className="hidden sm:inline">{t.copy}</span>
           </button>
           <button
             onClick={handleExportTranscript}
-            className="p-1 px-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-all"
+            className="p-1 px-2 rounded-lg bg-[#150917] border border-[#4A1224]/60 hover:bg-slate-800 text-slate-300 text-[11px] font-bold flex items-center gap-1 transition-all"
           >
             <Download className="w-3 h-3" />
             <span className="hidden sm:inline">{t.saveTxt}</span>
           </button>
           <button
             onClick={() => setDialogueLog([])}
-            className="p-1 px-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-rose-950/40 hover:text-rose-400 text-slate-500 text-[11px] transition-all"
+            className="p-1 px-1.5 rounded-lg bg-[#150917] border border-[#4A1224]/60 hover:bg-rose-950/40 hover:text-rose-400 text-slate-500 text-[11px] transition-all"
             title={t.clear}
           >
             <Trash2 className="w-3 h-3" />
@@ -925,18 +937,18 @@ Question: "${q}"`;
       {/* ── FULL DIALOGUE TIMELINE MODAL ── */}
       <AnimatePresence>
         {showFullTimeline && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+          <div className="fixed inset-0 z-50 bg-[#080409]/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-[#13182b] border border-slate-700 rounded-2xl w-full max-w-lg p-4 shadow-2xl flex flex-col max-h-[85vh]"
+              className="bg-[#13182b] border border-[#4A1224]/50 rounded-2xl w-full max-w-lg p-4 shadow-2xl flex flex-col max-h-[85vh]"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+              <div className="flex items-center justify-between pb-3 border-b border-[#4A1224]/60 mb-3">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-indigo-400" />
+                  <Clock className="w-4 h-4 text-[#E5A93C]" />
                   <h4 className="text-sm font-black text-white">{t.timelineTitle}</h4>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#150917] border border-[#4A1224]/60 text-slate-400 font-mono">
                     {dialogueLog.length}
                   </span>
                 </div>
@@ -990,18 +1002,18 @@ Question: "${q}"`;
                 <div ref={dialogueEndRef} />
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-between pt-2 border-t border-[#4A1224]/60">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleCopyTranscript}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                    className="px-3 py-1.5 rounded-lg bg-[#150917] border border-[#4A1224]/60 hover:bg-slate-800 text-slate-300 text-xs font-bold flex items-center gap-1.5 transition-all"
                   >
                     {copiedTranscript ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{t.copy}</span>
                   </button>
                   <button
                     onClick={handleExportTranscript}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                    className="px-3 py-1.5 rounded-lg bg-[#150917] border border-[#4A1224]/60 hover:bg-slate-800 text-slate-300 text-xs font-bold flex items-center gap-1.5 transition-all"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>{t.saveTxt}</span>

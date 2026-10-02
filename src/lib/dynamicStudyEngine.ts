@@ -41,15 +41,31 @@ export function getAvailableDates(startDate: Date, endDate: Date): string[] {
  * Generate a comprehensive, balanced dynamic study plan.
  */
 export function createDynamicStudyPlan(
-  examDate: string,
-  topics: DynamicStudyTopic[],
+  examDate?: string,
+  topics: DynamicStudyTopic[] = [],
   targetCourses: string[] = [],
   dailyHoursCap: number = 4
 ): DynamicStudyPlan {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const targetDate = parseLocalDate(examDate);
-  targetDate.setHours(0, 0, 0, 0);
+
+  // If examDate is not provided or empty, calculate dynamic completion horizon
+  // based on total topic hours + spaced repetition buffer + 2 review/mock days
+  let targetDate: Date;
+  let effectiveExamDate: string;
+
+  if (examDate && examDate.trim()) {
+    targetDate = parseLocalDate(examDate);
+    targetDate.setHours(0, 0, 0, 0);
+    effectiveExamDate = examDate;
+  } else {
+    const totalHours = topics.reduce((acc, t) => acc + (t.estimatedHours || 2), 0);
+    const studyDaysNeeded = Math.max(3, Math.ceil(totalHours / Math.max(1, dailyHoursCap - 1)));
+    const totalDaysSpan = Math.max(7, studyDaysNeeded + 3);
+    targetDate = new Date(today);
+    targetDate.setDate(targetDate.getDate() + totalDaysSpan);
+    effectiveExamDate = formatDateIso(targetDate);
+  }
 
   const availableDates = getAvailableDates(today, targetDate);
   const slots: DynamicStudySlot[] = [];
@@ -57,7 +73,7 @@ export function createDynamicStudyPlan(
   if (availableDates.length === 0 || topics.length === 0) {
     return {
       id: `plan-${Date.now()}`,
-      examDate,
+      examDate: effectiveExamDate,
       targetCourses,
       topics,
       dailySlots: [],
@@ -127,7 +143,7 @@ export function createDynamicStudyPlan(
 
   return {
     id: `plan-${Date.now()}`,
-    examDate,
+    examDate: effectiveExamDate,
     targetCourses,
     topics,
     dailySlots: slots,
@@ -147,9 +163,23 @@ export function rebalanceStudyPlan(
   dailyHoursCap: number = 4
 ): DynamicStudyPlan {
   const today = parseLocalDate(todayStr);
-  const examDate = parseLocalDate(plan.examDate);
+  const examDate = plan.examDate
+    ? parseLocalDate(plan.examDate)
+    : (() => {
+        const lastSlotDate = plan.dailySlots.map((s) => s.date).sort().pop();
+        if (lastSlotDate) return parseLocalDate(lastSlotDate);
+        const d = new Date(today);
+        d.setDate(d.getDate() + 14);
+        return d;
+      })();
 
-  const futureDates = getAvailableDates(today, examDate);
+  let futureDates = getAvailableDates(today, examDate);
+  if (futureDates.length === 0) {
+    const uncompletedCount = plan.dailySlots.filter((s) => !s.completed).length;
+    const extendedEnd = new Date(today);
+    extendedEnd.setDate(extendedEnd.getDate() + Math.max(7, uncompletedCount + 2));
+    futureDates = getAvailableDates(today, extendedEnd);
+  }
   if (futureDates.length === 0) {
     return plan;
   }

@@ -20,7 +20,6 @@ const DIS_ICON: Record<string, typeof Eye> = {
   'Visual Impairment': Eye,
   'Hearing Impairment': Ear,
   'Speech Impairment': Mic,
-  'Motor Impairment': Accessibility,
   'Cognitive/Learning Disability': Brain,
   'Other': UserIcon,
 };
@@ -112,7 +111,7 @@ export default function OrgDashboard({ profile }: OrgDashboardProps) {
             { label: L("Active · 7 days", "نشطون · ٧ أيام"), value: active7, Icon: Activity, cls: "bg-emerald-500/15 text-emerald-400" },
             { label: L("Need follow-up", "محتاجون متابعة"), value: idle14.length, Icon: AlertTriangle, cls: "bg-amber-500/15 text-amber-400" },
           ].map(({ label, value, Icon, cls }) => (
-            <div key={label} className="bg-[#121524]/90 border border-slate-800/80 shadow-lg backdrop-blur-md rounded-2xl p-4 flex items-center gap-3">
+            <div key={label} className="bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-lg backdrop-blur-md rounded-2xl p-4 flex items-center gap-3">
               <div className={`p-2.5 rounded-xl ${cls}`}><Icon className="w-5 h-5" /></div>
               <div>
                 <div className="text-2xl font-black text-white leading-none tabular-nums">{value}</div>
@@ -128,11 +127,11 @@ export default function OrgDashboard({ profile }: OrgDashboardProps) {
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
           </div>
         ) : (
-          <div className="bg-[#121524]/90 border border-slate-800/80 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md">
             <div className="overflow-x-auto">
               <table className="w-full text-start border-collapse">
                 <thead>
-                  <tr className="bg-[#0A0C14]/80 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-slate-800/80">
+                  <tr className="bg-[#080409]/80 text-[10px] uppercase font-black tracking-widest text-slate-400 border-b border-[#4A1224]/60">
                     <th className="p-4 text-start">{L("User", "المستخدم")}</th>
                     <th className="p-4 text-start">{L("Disability", "نوع الإعاقة")}</th>
                     <th className="p-4 text-start">{L("Mode", "الوضع")}</th>
@@ -150,8 +149,8 @@ export default function OrgDashboard({ profile }: OrgDashboardProps) {
                       <tr key={u.uid} className={idle ? "bg-amber-500/5 hover:bg-white/[0.02]" : "hover:bg-white/[0.02]"}>
                         <td className="p-4 font-bold text-white">{u.name || u.email?.split('@')[0] || L("Unnamed", "بدون اسم")}</td>
                         <td className="p-4">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-slate-800/80 text-slate-200 border border-slate-700/50">
-                            <DisIcon className="w-3.5 h-3.5 text-cyan-400" /> {u.disabilityType || L("Other", "أخرى")}
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-[#150917]/80 text-slate-200 border border-[#4A1224]/50/50">
+                            <DisIcon className="w-3.5 h-3.5 text-[#E5A93C]" /> {u.disabilityType || L("Other", "أخرى")}
                           </span>
                         </td>
                         <td className="p-4 text-xs font-bold text-slate-400">{u.accessibilityMode || '—'}</td>
@@ -172,7 +171,7 @@ export default function OrgDashboard({ profile }: OrgDashboardProps) {
                         <td className="p-4 text-end">
                           <a
                             href={`mailto:${u.email}`}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-slate-700"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-[#4A1224]/50"
                           >
                             <Mail className="w-3 h-3" /> {L("Email", "إيميل")}
                           </a>

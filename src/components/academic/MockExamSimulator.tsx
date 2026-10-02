@@ -262,9 +262,9 @@ Respond with ONLY valid JSON strictly matching this schema:
   // 1. CONFIGURATION VIEW
   if (phase === 'config') {
     return (
-      <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+      <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-[#E5A93C]/30 flex items-center justify-center text-[#E5A93C]">
             <Award className="w-6 h-6" />
           </div>
           <div>
@@ -288,7 +288,7 @@ Respond with ONLY valid JSON strictly matching this schema:
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
                 placeholder={isAr ? 'مثال: خوارزميات وهياكل بيانات، كيمياء حيوية...' : 'e.g. Data Structures, Macroeconomics...'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all"
               />
             </div>
             <div>
@@ -300,7 +300,7 @@ Respond with ONLY valid JSON strictly matching this schema:
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder={isAr ? 'مثال: Binary Search Trees & AVL Balances' : 'e.g. Binary Search Trees & AVL Balances'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all"
               />
             </div>
           </div>
@@ -318,8 +318,8 @@ Respond with ONLY valid JSON strictly matching this schema:
                     onClick={() => setQuestionCount(cnt)}
                     className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all ${
                       questionCount === cnt
-                        ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                        : 'bg-[#0A0C14] text-slate-400 border-slate-800 hover:border-slate-700'
+                        ? 'bg-[#4A1224]/50 text-indigo-300 border-indigo-500/40'
+                        : 'bg-[#150917] text-slate-400 border-[#4A1224]/60 hover:border-[#831843]/70'
                     }`}
                   >
                     {cnt} {isAr ? 'أسئلة' : 'Q'}
@@ -340,8 +340,8 @@ Respond with ONLY valid JSON strictly matching this schema:
                     onClick={() => setDifficulty(diff)}
                     className={`flex-1 py-2 text-xs font-bold rounded-xl border capitalize transition-all ${
                       difficulty === diff
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'bg-[#0A0C14] text-slate-400 border-slate-800 hover:border-slate-700'
+                        ? 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/40'
+                        : 'bg-[#150917] text-slate-400 border-[#4A1224]/60 hover:border-[#831843]/70'
                     }`}
                   >
                     {isAr ? (diff === 'easy' ? 'سهل' : diff === 'medium' ? 'متوسط' : 'جامعي / صعب') : diff}
@@ -363,7 +363,7 @@ Respond with ONLY valid JSON strictly matching this schema:
                     className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all ${
                       timerMinutes === mins
                         ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                        : 'bg-[#0A0C14] text-slate-400 border-slate-800 hover:border-slate-700'
+                        : 'bg-[#150917] text-slate-400 border-[#4A1224]/60 hover:border-[#831843]/70'
                     }`}
                   >
                     {mins} {isAr ? 'د' : 'min'}
@@ -376,7 +376,7 @@ Respond with ONLY valid JSON strictly matching this schema:
           <div className="pt-4 flex justify-end">
             <button
               onClick={handleStartExam}
-              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-black text-sm shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+              className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-rose-600 hover:from-indigo-400 hover:to-rose-600 text-white font-black text-sm shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
             >
               <Sparkles className="w-4 h-4" />
               {isAr ? 'بدء الامتحان التجريبي الآن' : 'Start Mock Exam Now'}
@@ -390,9 +390,9 @@ Respond with ONLY valid JSON strictly matching this schema:
   // 2. GENERATING / GRADING LOADER
   if (phase === 'generating' || phase === 'grading') {
     return (
-      <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-12 backdrop-blur-xl text-center shadow-2xl">
-        <div className="w-16 h-16 mx-auto rounded-3xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 animate-pulse">
-          <RefreshCw className="w-8 h-8 text-indigo-400 animate-spin" />
+      <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-12 backdrop-blur-xl text-center shadow-2xl">
+        <div className="w-16 h-16 mx-auto rounded-3xl bg-[#4A1224]/25 border border-indigo-500/20 flex items-center justify-center mb-4 animate-pulse">
+          <RefreshCw className="w-8 h-8 text-[#E5A93C] animate-spin" />
         </div>
         <h3 className="text-lg font-black text-white">
           {phase === 'generating'
@@ -412,24 +412,24 @@ Respond with ONLY valid JSON strictly matching this schema:
     const isAnswered = Boolean(answers[currQ.id]);
 
     return (
-      <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+      <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
         {/* Top bar: Question navigation & Timer */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#4A1224]/60">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-xl">
+            <span className="text-xs font-black uppercase tracking-wider text-[#E5A93C] bg-[#4A1224]/25 border border-[#E5A93C]/30 px-3 py-1 rounded-xl">
               {isAr ? `سؤال ${currentIdx + 1} من ${questions.length}` : `Question ${currentIdx + 1} of ${questions.length}`}
             </span>
             <span className="text-xs text-slate-400 font-bold">
               ({currQ.points} {isAr ? 'درجة' : 'pts'})
             </span>
-            <span className="text-[11px] font-black uppercase text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-lg">
+            <span className="text-[11px] font-black uppercase text-[#E5A93C] bg-[#831843]/20 border border-[#E5A93C]/20 px-2.5 py-0.5 rounded-lg">
               {currQ.type.toUpperCase()}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-sm font-black border ${
-              timeLeftSeconds < 180 ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse' : 'bg-slate-900 text-amber-400 border-slate-800'
+              timeLeftSeconds < 180 ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse' : 'bg-[#150917] text-amber-400 border-[#4A1224]/60'
             }`}>
               <Clock className="w-4 h-4" />
               <span>{formatTimer(timeLeftSeconds)}</span>
@@ -463,12 +463,12 @@ Respond with ONLY valid JSON strictly matching this schema:
                     onClick={() => setAnswers({ ...answers, [currQ.id]: opt })}
                     className={`flex items-center gap-3 p-4 rounded-2xl border text-start text-sm font-semibold transition-all ${
                       isSelected
-                        ? 'bg-indigo-500/20 border-indigo-500 text-indigo-200 shadow-md shadow-indigo-500/10'
-                        : 'bg-[#0A0C14] border-slate-800 text-slate-300 hover:border-slate-700'
+                        ? 'bg-[#4A1224]/50 border-indigo-500 text-indigo-200 shadow-md shadow-indigo-500/10'
+                        : 'bg-[#150917] border-[#4A1224]/60 text-slate-300 hover:border-[#831843]/70'
                     }`}
                   >
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black border ${
-                      isSelected ? 'bg-indigo-500 text-white border-indigo-400' : 'border-slate-700 text-slate-500'
+                      isSelected ? 'bg-indigo-500 text-white border-indigo-400' : 'border-[#4A1224]/60 text-slate-500'
                     }`}>
                       {String.fromCharCode(65 + oIdx)}
                     </div>
@@ -487,19 +487,19 @@ Respond with ONLY valid JSON strictly matching this schema:
                 onChange={(e) => setAnswers({ ...answers, [currQ.id]: e.target.value })}
                 rows={5}
                 placeholder={isAr ? 'اكتب شرحك هنا وسيقوم المصحح الذكي بتقييم الكلمات المفتاحية والمفاهيم...' : 'Type your explanation here. The AI grader will evaluate your key concepts and logic...'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 leading-relaxed font-sans"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 leading-relaxed font-sans"
               />
             </div>
           )}
         </div>
 
         {/* Navigation buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-800/80">
+        <div className="flex items-center justify-between pt-4 border-t border-[#4A1224]/60">
           <button
             type="button"
             disabled={currentIdx === 0}
             onClick={() => setCurrentIdx((i) => Math.max(0, i - 1))}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0A0C14] border border-slate-800 text-slate-400 hover:text-white disabled:opacity-30 text-xs font-bold transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 text-slate-400 hover:text-white disabled:opacity-30 text-xs font-bold transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
             {isAr ? 'السابق' : 'Previous'}
@@ -515,7 +515,7 @@ Respond with ONLY valid JSON strictly matching this schema:
                     ? 'bg-indigo-500 text-white shadow'
                     : answers[q.id]
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                    : 'bg-slate-900 text-slate-500 border border-slate-800'
+                    : 'bg-[#150917] text-slate-500 border border-[#4A1224]/60'
                 }`}
               >
                 {idx + 1}
@@ -527,7 +527,7 @@ Respond with ONLY valid JSON strictly matching this schema:
             type="button"
             disabled={currentIdx === questions.length - 1}
             onClick={() => setCurrentIdx((i) => Math.min(questions.length - 1, i + 1))}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0A0C14] border border-slate-800 text-slate-400 hover:text-white disabled:opacity-30 text-xs font-bold transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 text-slate-400 hover:text-white disabled:opacity-30 text-xs font-bold transition-all"
           >
             {isAr ? 'التالي' : 'Next'}
             <ChevronRight className="w-4 h-4" />
@@ -542,7 +542,7 @@ Respond with ONLY valid JSON strictly matching this schema:
     return (
       <div className="space-y-6">
         {/* Score Header Card */}
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1 text-center md:text-start">
               <span className="text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-xl">
@@ -555,7 +555,7 @@ Respond with ONLY valid JSON strictly matching this schema:
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-center min-w-[110px]">
+              <div className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-center min-w-[110px]">
                 <div className="text-[10px] uppercase font-bold text-slate-400">{isAr ? 'الدرجة' : 'Score'}</div>
                 <div className="font-mono text-3xl font-black text-emerald-400">
                   {submission.totalScore}<span className="text-sm text-slate-500">/{submission.maxPossibleScore}</span>
@@ -563,19 +563,19 @@ Respond with ONLY valid JSON strictly matching this schema:
                 <div className="text-[10px] font-bold text-slate-500">{submission.percentage}%</div>
               </div>
 
-              <div className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-center min-w-[110px]">
+              <div className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-center min-w-[110px]">
                 <div className="text-[10px] uppercase font-bold text-slate-400">{isAr ? 'المعدل المعادل' : 'GPA Equiv'}</div>
-                <div className="font-mono text-2xl font-black text-cyan-400">
+                <div className="font-mono text-2xl font-black text-[#E5A93C]">
                   {submission.gpaEquivalent}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 flex gap-3 justify-end border-t border-slate-800/80 mt-6">
+          <div className="pt-6 flex gap-3 justify-end border-t border-[#4A1224]/60 mt-6">
             <button
               onClick={() => setPhase('config')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4A1224]/50 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition-all"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               {isAr ? 'إنشاء امتحان جديد' : 'New Mock Exam'}
@@ -596,11 +596,11 @@ Respond with ONLY valid JSON strictly matching this schema:
             return (
               <div
                 key={res.questionId}
-                className="bg-[#121524]/80 border border-slate-800/80 rounded-2xl p-5 space-y-3 backdrop-blur-md"
+                className="bg-[#0E0610]/90 border border-[#4A1224]/60 rounded-2xl p-5 space-y-3 backdrop-blur-md"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-xs font-mono font-bold text-slate-300">
+                    <span className="w-6 h-6 rounded-lg bg-[#150917] border border-[#4A1224]/60 flex items-center justify-center text-xs font-mono font-bold text-slate-300">
                       {idx + 1}
                     </span>
                     <span className="text-sm font-bold text-slate-200">
@@ -617,7 +617,7 @@ Respond with ONLY valid JSON strictly matching this schema:
                 </div>
 
                 {/* Student Answer */}
-                <div className="bg-[#0A0C14] rounded-xl p-3 border border-slate-800/60 text-xs">
+                <div className="bg-[#150917] rounded-xl p-3 border border-[#4A1224]/50 text-xs">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                     {isAr ? 'إجابتك المسجلة:' : 'Your Answer:'}
                   </div>
@@ -656,8 +656,8 @@ Respond with ONLY valid JSON strictly matching this schema:
                 </div>
 
                 {/* Model Answer */}
-                <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-xs">
-                  <div className="text-[10px] font-bold uppercase text-indigo-400 flex items-center gap-1.5 mb-1">
+                <div className="bg-[#4A1224]/25 border border-indigo-500/20 rounded-xl p-3 text-xs">
+                  <div className="text-[10px] font-bold uppercase text-[#E5A93C] flex items-center gap-1.5 mb-1">
                     <Sparkles className="w-3.5 h-3.5" />
                     {isAr ? 'الإجابة النموذجية الكاملة (Model Answer):' : 'Full Model Answer:'}
                   </div>

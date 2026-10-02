@@ -44,11 +44,11 @@ function MarkdownImage({ src, alt, ...props }: { src?: string; alt?: string; [ke
   };
 
   return (
-    <div className="my-5 max-w-2xl rounded-3xl overflow-hidden border border-slate-800/80 bg-[#0A0C14] shadow-2xl backdrop-blur-xl group transition-all hover:border-cyan-500/40">
-      <div className="relative min-h-[220px] flex items-center justify-center bg-[#07090F] overflow-hidden">
+    <div className="my-5 max-w-2xl rounded-3xl overflow-hidden border border-[#4A1224]/50 bg-[#150917] shadow-2xl backdrop-blur-xl group transition-all hover:border-[#E5A93C]/40">
+      <div className="relative min-h-[220px] flex items-center justify-center bg-[#080409] overflow-hidden">
         {!loaded && !error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-cyan-400 bg-[#0A0C14]/90 backdrop-blur-md">
-            <Sparkles className="w-6 h-6 animate-spin text-cyan-400" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-[#E5A93C] bg-[#0E0610]/90 backdrop-blur-md">
+            <Sparkles className="w-6 h-6 animate-spin text-[#E5A93C]" />
             <span className="text-xs font-black uppercase tracking-wider text-slate-300">
               Generating & Rendering Visual…
             </span>
@@ -61,7 +61,7 @@ function MarkdownImage({ src, alt, ...props }: { src?: string; alt?: string; [ke
               <button
                 type="button"
                 onClick={handleManualRetry}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-xl font-bold text-xs transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1224]/20 hover:bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/30 rounded-xl font-bold text-xs transition-all cursor-pointer"
               >
                 <RefreshCw className="w-3 h-3" />
                 <span>Retry Generation</span>
@@ -70,7 +70,7 @@ function MarkdownImage({ src, alt, ...props }: { src?: string; alt?: string; [ke
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-cyan-400 underline hover:text-cyan-300 font-bold text-xs"
+                className="text-[#E5A93C] underline hover:text-[#E5A93C]/80 font-bold text-xs"
               >
                 Open direct image link ↗
               </a>
@@ -91,13 +91,13 @@ function MarkdownImage({ src, alt, ...props }: { src?: string; alt?: string; [ke
         )}
       </div>
       {alt && (
-        <div className="px-4 py-2.5 bg-[#121524]/90 border-t border-slate-800/80 flex items-center justify-between text-xs">
+        <div className="px-4 py-2.5 bg-[#0E0610]/90 border-t border-[#4A1224]/50 flex items-center justify-between text-xs">
           <span className="font-semibold text-slate-200 truncate pr-2">{alt}</span>
           <a
             href={src}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 hover:underline shrink-0"
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#E5A93C] hover:text-[#E5A93C]/80 hover:underline shrink-0"
           >
             <span>Full Size</span>
             <ExternalLink className="w-3 h-3" />
@@ -186,18 +186,18 @@ export default function MarkdownMessage({
             key={i}
             remarkPlugins={[remarkGfm]}
             components={{
-              h1: ({ node, ...p }: any) => <h2 className="text-xl font-black text-cyan-400 border-b border-slate-800/80 pb-2 mb-3 pt-4 tracking-tight" {...p} />,
-              h2: ({ node, ...p }: any) => <h2 className="text-xl font-black text-cyan-400 border-b border-slate-800/80 pb-2 mb-3 pt-4 tracking-tight" {...p} />,
+              h1: ({ node, ...p }: any) => <h2 className="text-xl font-black text-[#E5A93C] border-b border-[#4A1224]/50 pb-2 mb-3 pt-4 tracking-tight" {...p} />,
+              h2: ({ node, ...p }: any) => <h2 className="text-xl font-black text-[#E5A93C] border-b border-[#4A1224]/50 pb-2 mb-3 pt-4 tracking-tight" {...p} />,
               h3: ({ node, ...p }: any) => <h3 className="text-lg font-bold text-white mb-2 pt-3" {...p} />,
               p: ({ node, ...p }: any) => <p className="mb-4 leading-relaxed text-slate-200" {...p} />,
-              ul: ({ node, ...p }: any) => <ul className="list-disc ms-6 mb-4 space-y-1.5 marker:text-cyan-400 text-slate-200" {...p} />,
-              ol: ({ node, ...p }: any) => <ol className="list-decimal ms-6 mb-4 space-y-1.5 marker:text-cyan-400 text-slate-200" {...p} />,
+              ul: ({ node, ...p }: any) => <ul className="list-disc ms-6 mb-4 space-y-1.5 marker:text-[#E5A93C] text-slate-200" {...p} />,
+              ol: ({ node, ...p }: any) => <ol className="list-decimal ms-6 mb-4 space-y-1.5 marker:text-[#E5A93C] text-slate-200" {...p} />,
               li: ({ node, ...p }: any) => <li className="leading-relaxed" {...p} />,
               a: ({ node, href, ...p }: any) => {
                 const isSafe = href && !href.trim().toLowerCase().startsWith('javascript:') && !href.trim().toLowerCase().startsWith('data:');
                 return (
                   <a
-                    className="text-cyan-400 underline underline-offset-4 decoration-cyan-500/40 hover:text-cyan-300 transition-colors font-semibold"
+                    className="text-[#E5A93C] underline underline-offset-4 decoration-[#E5A93C]/40 hover:text-amber-300 transition-colors font-semibold"
                     target="_blank"
                     rel="noopener noreferrer"
                     href={isSafe ? href : '#'}
@@ -207,20 +207,20 @@ export default function MarkdownMessage({
               },
               strong: ({ node, ...p }: any) => <strong className="font-black text-white" {...p} />,
               em: ({ node, ...p }: any) => <em className="italic text-slate-300" {...p} />,
-              hr: ({ node, ...p }: any) => <hr className="my-5 border-slate-800" {...p} />,
-              blockquote: ({ node, ...p }: any) => <blockquote className="border-s-4 border-cyan-500/60 bg-[#0A0C14]/80 px-4 py-3 rounded-e-2xl italic text-slate-300 my-4 shadow-inner" {...p} />,
-              pre: ({ node, ...p }: any) => <pre className="bg-[#0B0E17] text-cyan-300 border border-slate-800/90 rounded-2xl p-4 overflow-x-auto text-xs my-4 shadow-2xl custom-scrollbar" {...p} />,
+              hr: ({ node, ...p }: any) => <hr className="my-5 border-[#4A1224]/50" {...p} />,
+              blockquote: ({ node, ...p }: any) => <blockquote className="border-s-4 border-[#E5A93C] bg-[#150917]/80 px-4 py-3 rounded-e-2xl italic text-slate-200 my-4 shadow-inner border border-[#4A1224]/40" {...p} />,
+              pre: ({ node, ...p }: any) => <pre className="bg-[#0E0610] text-[#E5A93C] border border-[#4A1224]/70 rounded-2xl p-4 overflow-x-auto text-xs my-4 shadow-2xl custom-scrollbar ring-1 ring-[#E5A93C]/10" {...p} />,
               code: ({ node, className, children, ...p }: any) => {
                 const isBlock = (className && className.includes('language-')) || String(children).includes('\n');
                 return isBlock ? (
-                  <code className={`font-mono text-cyan-300 ${className || ''}`} {...p}>{children}</code>
+                  <code className={`font-mono text-[#E5A93C] ${className || ''}`} {...p}>{children}</code>
                 ) : (
-                  <code className="px-2 py-0.5 rounded-lg bg-[#0A0C14] border border-slate-800 text-cyan-300 text-[0.85em] font-mono shadow-inner" {...p}>{children}</code>
+                  <code className="px-2 py-0.5 rounded-lg bg-[#150917] border border-[#4A1224]/60 text-[#E5A93C] text-[0.85em] font-mono shadow-inner" {...p}>{children}</code>
                 );
               },
-              table: ({ node, ...p }: any) => <div className="overflow-x-auto my-5 rounded-2xl border border-slate-800 bg-[#0A0C14]/60"><table className="w-full text-xs text-slate-200 border-collapse" {...p} /></div>,
-              th: ({ node, ...p }: any) => <th className="border-b border-slate-800 bg-[#0E111D] px-4 py-3 text-start font-black text-cyan-300 uppercase tracking-wider" {...p} />,
-              td: ({ node, ...p }: any) => <td className="border-b border-slate-800/50 px-4 py-2.5" {...p} />,
+              table: ({ node, ...p }: any) => <div className="overflow-x-auto my-5 rounded-2xl border border-[#4A1224]/60 bg-[#0E0610]/80"><table className="w-full text-xs text-slate-200 border-collapse" {...p} /></div>,
+              th: ({ node, ...p }: any) => <th className="border-b border-[#4A1224]/60 bg-[#150917] px-4 py-3 text-start font-black text-[#E5A93C] uppercase tracking-wider" {...p} />,
+              td: ({ node, ...p }: any) => <td className="border-b border-[#4A1224]/30 px-4 py-2.5" {...p} />,
               img: ({ node, ...p }: any) => <MarkdownImage {...p} />,
             }}
           >

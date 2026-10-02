@@ -293,8 +293,9 @@ export function generatePersonalLearningProfile(
   const totalConfidenceSum = Object.values(conceptProfiles).reduce((acc, c) => acc + c.confidencePercentage, 0);
   const totalConcepts = Object.keys(conceptProfiles).length;
 
-  const overallMasteryPercentage = totalConcepts > 0 ? Math.round(totalMasterySum / totalConcepts) : 70;
-  const overallConfidencePercentage = totalConcepts > 0 ? Math.round(totalConfidenceSum / totalConcepts) : 75;
+  const isAssessed = totalConcepts > 0;
+  const overallMasteryPercentage = isAssessed ? Math.round(totalMasterySum / totalConcepts) : 0;
+  const overallConfidencePercentage = isAssessed ? Math.round(totalConfidenceSum / totalConcepts) : 0;
 
   return {
     uid: state.uid,
@@ -302,6 +303,7 @@ export function generatePersonalLearningProfile(
     generatedAt: now,
     overallMasteryPercentage,
     overallConfidencePercentage,
+    isAssessed,
     primaryPreferredStrategy: plm.primaryPreferredStrategy || bestStrategyKey,
     secondaryPreferredStrategy: plm.secondaryPreferredStrategy,
     conceptProfiles,

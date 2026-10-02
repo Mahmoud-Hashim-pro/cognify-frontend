@@ -34,7 +34,7 @@ export const AriaButton = React.forwardRef<HTMLButtonElement, AriaButtonProps>(
           cn(
             // Baseline focus-visible ring so keyboard/screen-reader users always
             // get a visible indicator, even if a caller's className omits one.
-            'outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-cyan-400 data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-slate-950',
+            'outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-[#E5A93C] data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-[#080409]',
             'data-[pressed]:scale-[0.98] transition-transform',
             'data-[disabled]:opacity-60 data-[disabled]:cursor-not-allowed',
             typeof className === 'function'

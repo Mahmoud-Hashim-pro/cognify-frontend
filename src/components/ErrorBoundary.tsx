@@ -105,10 +105,10 @@ class ErrorBoundary extends Component<Props, State> {
 
       if (isChunk) {
         return (
-          <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 font-sans">
-            <div className="max-w-md w-full bg-slate-900 border border-cyan-500/30 rounded-2xl p-8 shadow-2xl shadow-cyan-500/10 text-center">
-              <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-8 h-8 text-cyan-400" />
+          <div className="min-h-screen bg-[#080409] flex items-center justify-center p-6 font-sans">
+            <div className="max-w-md w-full bg-[#0E0610] border border-[#4A1224]/70 ring-1 ring-[#E5A93C]/20 rounded-2xl p-8 shadow-2xl shadow-[#E5A93C]/10 text-center">
+              <div className="w-16 h-16 bg-[#4A1224]/40 border border-[#E5A93C]/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="w-8 h-8 text-[#E5A93C]" />
               </div>
               
               <h1 className="text-xl font-semibold text-white mb-2">New Version Available</h1>
@@ -118,7 +118,7 @@ class ErrorBoundary extends Component<Props, State> {
 
               <button
                 onClick={this.handleReset}
-                className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
+                className="w-full py-3 px-4 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:opacity-95 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#E5A93C]/20"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Update & Reload
@@ -137,8 +137,8 @@ class ErrorBoundary extends Component<Props, State> {
         "Something went wrong on our side. Please reload and try again.";
 
       return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 font-sans" dir="rtl">
-          <div className="max-w-md w-full bg-slate-900 border border-red-500/20 rounded-2xl p-8 shadow-2xl shadow-red-500/5 text-center">
+        <div className="min-h-screen bg-[#080409] flex items-center justify-center p-6 font-sans" dir="rtl">
+          <div className="max-w-md w-full bg-[#0E0610] border border-red-500/20 rounded-2xl p-8 shadow-2xl shadow-red-500/5 text-center">
             <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-8 h-8 text-red-500" />
             </div>
@@ -156,7 +156,7 @@ class ErrorBoundary extends Component<Props, State> {
               إعادة تحميل الصفحة · Reload
             </button>
 
-            <div className="mt-5 text-xs text-rose-300 tracking-wide font-mono bg-slate-950/80 p-3 rounded-xl border border-rose-500/20 text-left select-all" dir="ltr">
+            <div className="mt-5 text-xs text-rose-300 tracking-wide font-mono bg-[#080409]/80 p-3 rounded-xl border border-rose-500/20 text-left select-all" dir="ltr">
               <div className="font-bold text-rose-400">Ref: {this.state.error?.name || "APP_ERROR"}: {this.state.error?.message}</div>
               {this.state.error?.stack && (
                 <div className="mt-2 text-[10px] text-slate-400 whitespace-pre-wrap max-h-24 overflow-y-auto">

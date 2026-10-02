@@ -210,8 +210,8 @@ export function diagnosePrerequisiteGap(
       hasPrerequisiteGap: false,
       targetConceptId,
       missingPrerequisites: [],
-      explanationEn: 'Concept not found in registry.',
-      explanationAr: 'المفهوم غير مسجل في شبكة المعرفة.',
+      explanationEn: 'Concept currently outside automated prerequisite diagnostics.',
+      explanationAr: 'المفهوم التعليمي خارج نطاق شبكة التشخيص الآلي حالياً.',
     };
   }
 

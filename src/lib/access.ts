@@ -8,7 +8,7 @@ export type AppView =
   | 'admin' | 'goals' | 'gpa' | 'analytics' | 'planner' | 'support' | 'memory'
   | 'gym' | 'iq' | 'institution' | 'france' | 'privacy' | 'intelligence'
   | 'teacher' | 'parent' | 'privacy_security' | 'evaluation' | 'ai_quality'
-  | 'resilience' | 'tenancy' | 'developer_api';
+  | 'resilience' | 'tenancy' | 'developer_api' | 'retention';
 
 /** A user counts as an accessibility user if they picked the Special Needs path
  *  OR have a real accessibility mode enabled. */
@@ -23,18 +23,13 @@ export function sectionOf(profile: Pick<UserProfile, 'accountPath'>): AccountPat
   return profile.accountPath || 'Normal';
 }
 
-/** Views an accessibility (Special Needs) user is allowed to open — their world
- *  is the disability center plus personal/account screens and adaptive learning hub. */
-const ACCESSIBILITY_ALLOWED: AppView[] = ['disability', 'video', 'learning', 'intelligence', 'profile', 'settings', 'support', 'memory', 'gym', 'iq', 'france', 'privacy'];
-
 /**
  * Can this profile open the given view?
- *  - Admins can open anything (incl. the admin dashboard).
- *  - The disability section and sign video studio are only for accessibility users.
- *  - Accessibility users are kept inside their simplified world and can't cross
- *    into the full "normal"/graduation experience.
- *  - Everyone else (Normal / Graduation Project) can open the standard views but
- *    NOT the disability section or sign video studio.
+ * - Admins bypass section scoping and can open all views.
+ * - The institution hub requires admin privileges or organization manager role.
+ * - Specialized enterprise/developer views require admin privileges.
+ * - Standard learning, communication, and accessibility views are inclusive
+ *   and adapt dynamically to the user's educational stage and accessibility profile.
  */
 export function canAccessView(
   profile: UserProfile | null | undefined,
@@ -44,10 +39,9 @@ export function canAccessView(
   if (!profile) return false;
   if (view === 'admin') return isAdmin;
   if (view === 'institution') return isAdmin || profile.isOrgManager === true;
-  if (isAdmin) return true; // admins/testers bypass section scoping
+  if (['resilience', 'tenancy', 'developer_api', 'ai_quality'].includes(view)) return isAdmin;
+  if (isAdmin) return true;
 
-  // All features (chat, disability, video, learning, planner, goals, gpa, analytics, etc.)
-  // are freely accessible to all users so nobody gets blocked or bounced unexpectedly!
   return true;
 }
 

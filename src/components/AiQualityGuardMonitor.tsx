@@ -54,13 +54,13 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
   }, [inputText, selectedStage]);
 
   return (
-    <div className="w-full min-h-screen bg-[#0A0C14] text-slate-100 p-4 sm:p-8 font-sans relative">
+    <div className="w-full min-h-screen bg-[#080409] text-slate-100 p-4 sm:p-8 font-sans relative">
       <div className="absolute top-0 right-1/3 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#4A1224]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
         {/* Cockpit Header */}
-        <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
                 setInputText(preset.text);
                 setSelectedStage(preset.stage);
               }}
-              className="py-1.5 px-3.5 bg-[#121524] border border-slate-800 hover:border-slate-700 text-slate-300 text-xs rounded-xl font-medium transition hover:text-white"
+              className="py-1.5 px-3.5 bg-[#0E0610] border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-slate-300 text-xs rounded-xl font-medium transition hover:text-white"
             >
               {preset.label}
             </button>
@@ -117,11 +117,11 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
         {/* Live Interactive Playground */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Raw AI Output Input */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 flex flex-col justify-between">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Code2 className="w-4 h-4 text-cyan-400" />
+                  <Code2 className="w-4 h-4 text-[#E5A93C]" />
                   Raw Model Stream / Output
                 </h3>
 
@@ -130,7 +130,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
                   <select
                     value={selectedStage}
                     onChange={e => setSelectedStage(e.target.value as CognitiveStage)}
-                    className="bg-[#0A0C14] border border-slate-800 rounded-xl px-2.5 py-1 text-cyan-400 font-bold text-xs"
+                    className="bg-[#080409] border border-[#4A1224]/60 rounded-xl px-2.5 py-1 text-[#E5A93C] font-bold text-xs"
                   >
                     <option value="foundational">Foundational</option>
                     <option value="developing">Developing</option>
@@ -145,7 +145,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
                 value={inputText}
                 onChange={e => setInputText(e.target.value)}
                 placeholder="Paste raw AI generated response or prompt here..."
-                className="w-full p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs font-mono text-slate-200 focus:border-cyan-500/50 transition outline-none resize-none leading-relaxed"
+                className="w-full p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl text-xs font-mono text-slate-200 focus:border-[#E5A93C]/40 transition outline-none resize-none leading-relaxed"
               />
             </div>
 
@@ -156,7 +156,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
           </div>
 
           {/* Right: Guard Repaired & Sanitized Output */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 flex flex-col justify-between">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-4 flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -168,7 +168,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
                 </span>
               </div>
 
-              <div className="p-4 bg-[#0A0C14] border border-slate-800 rounded-2xl text-xs font-mono text-slate-200 h-60 overflow-y-auto leading-relaxed whitespace-pre-wrap">
+              <div className="p-4 bg-[#080409] border border-[#4A1224]/60 rounded-2xl text-xs font-mono text-slate-200 h-60 overflow-y-auto leading-relaxed whitespace-pre-wrap">
                 {guardResult.repairedText}
               </div>
             </div>
@@ -186,12 +186,12 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
         {/* Detailed Guard Diagnostics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Self-Healing Repairs */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Code2 className="w-4 h-4 text-cyan-400" /> Syntax Healing
+                <Code2 className="w-4 h-4 text-[#E5A93C]" /> Syntax Healing
               </span>
-              <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-mono text-[#E5A93C] bg-[#4A1224]/30 px-2 py-0.5 rounded-md">
                 {guardResult.repairs.length} fixes
               </span>
             </div>
@@ -201,7 +201,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
             ) : (
               <div className="space-y-2 pt-1">
                 {guardResult.repairs.map((r, i) => (
-                  <div key={i} className="p-2.5 bg-[#0A0C14] rounded-xl border border-slate-800 text-[11px] space-y-1">
+                  <div key={i} className="p-2.5 bg-[#080409] rounded-xl border border-[#4A1224]/60 text-[11px] space-y-1">
                     <span className="text-emerald-400 font-bold block">{r.description}</span>
                     <span className="text-slate-400 font-mono text-[10px] block truncate">{r.repairedSnippet}</span>
                   </div>
@@ -211,7 +211,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
           </div>
 
           {/* Card 2: Adversarial Defense */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-purple-400" /> Injection Shield
@@ -244,7 +244,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
           </div>
 
           {/* Card 3: Readability & Cognitive Load */}
-          <div className="bg-[#121524]/90 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
+          <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 backdrop-blur-xl shadow-2xl space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <BookOpen className="w-4 h-4 text-emerald-400" /> Readability & Stage
@@ -267,7 +267,7 @@ export const AiQualityGuardMonitor: React.FC<AiQualityGuardMonitorProps> = ({
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Readability Index (ARI):</span>
-                <span className="font-mono text-cyan-400">
+                <span className="font-mono text-[#E5A93C]">
                   {guardResult.readability.readabilityIndex} / 100
                 </span>
               </div>

@@ -68,6 +68,7 @@ import { cleanVisionDescription } from '../lib/visionCleaner';
 export { exportToWordDocument, DOC_HISTORY_KEY } from './DocumentStudioModal';
 export type { SavedDocItem, DocChatMessage } from './DocumentStudioModal';
 import DocumentStudioModal from './DocumentStudioModal';
+import SpatialMemoryTrajectoryView from './SpatialMemoryTrajectoryView';
 
 export default function VisionCompanionView({ profile, setProfile }: VisionCompanionViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,6 +85,7 @@ export default function VisionCompanionView({ profile, setProfile }: VisionCompa
   const [labelInput, setLabelInput] = useState('');
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showGuestAuthCard, setShowGuestAuthCard] = useState(false);
 
   // Read Mode: focuses the AI on reading visible text or summarizing lectures/documents.
   const [readMode, setReadMode] = useState(false);
@@ -286,8 +288,74 @@ export default function VisionCompanionView({ profile, setProfile }: VisionCompa
     }
   }, [profile, setProfile]);
 
+  const playDemoSample = useCallback((lang: 'ar' | 'en' | 'fr' = companionLang) => {
+    let sampleText = '';
+    if (currencyMode) {
+      sampleText =
+        lang === 'ar'
+          ? 'ورقة نقدية فئة خمسين جنيهاً مصرياً، الورقة سليمة وجاهزة للاستخدام.'
+          : lang === 'fr'
+          ? 'Billet de cinquante Livres Égyptiennes, en excellent état.'
+          : 'Fifty Egyptian Pounds banknote, in crisp condition.';
+    } else if (navGuideMode) {
+      sampleText =
+        lang === 'ar'
+          ? 'المسار سالك أمامك لحوالي ثلاث خطوات. انتبه، يوجد كرسي على يسارك عند الساعة العاشرة، وباب الغرفة مفتوح على بعد مترين.'
+          : lang === 'fr'
+          ? 'Chemin dégagé sur environ trois pas. Attention, une chaise sur votre gauche à dix heures, porte ouverte à deux mètres.'
+          : 'Clear pathway ahead for three steps. Caution, chair on your left at 10 o\'clock, doorway open two meters ahead.';
+    } else if (faceMode) {
+      sampleText =
+        lang === 'ar'
+          ? 'شخص يقف أمامك على بعد متر ونصف، في أواخر العشرينات يرتدي نظارة ويبتسم إليك.'
+          : lang === 'fr'
+          ? 'Une personne se tient devant vous à un mètre et demi, fin vingtaine, portant des lunettes et vous souriant.'
+          : 'A person is standing one and a half meters in front of you, late twenties, wearing glasses and smiling at you.';
+    } else if (shoppingMode) {
+      sampleText =
+        lang === 'ar'
+          ? 'علبة لبن جهينة كامل الدسم سعة واحد لتر، تاريخ الصلاحية ساري حتى نهاية الشهر القادم.'
+          : lang === 'fr'
+          ? 'Brique de lait entier un litre, date de péremption valide jusqu\'au mois prochain.'
+          : 'One liter full cream milk carton, expiration date valid through next month.';
+    } else if (readMode) {
+      sampleText =
+        lang === 'ar'
+          ? 'المفيد من هذا المستند: موعد المحاضرة القادمة يوم الأحد الساعة العاشرة صباحاً في القاعة الرئيسية.'
+          : lang === 'fr'
+          ? 'L\'essentiel : le prochain cours aura lieu dimanche à dix heures dans l\'amphithéâtre principal.'
+          : 'Core takeaway: next lecture is scheduled for Sunday at 10:00 AM in the main auditorium.';
+    } else {
+      sampleText =
+        lang === 'ar'
+          ? 'مفيش أخطار حواليك. قدامك مكتب عمل عليه لابتوب مفتوح وكوب ماء على يمينك، والمسار أمامك سالك تماماً.'
+          : lang === 'fr'
+          ? 'Aucun danger autour de vous. Devant vous se trouve un bureau avec un ordinateur portable ouvert et un verre d\'eau sur votre droite, le passage est libre.'
+          : 'No hazards around you. Directly in front of you is a work desk with an open laptop and a cup of water on your right, the pathway is clear.';
+    }
+
+    setShowGuestAuthCard(false);
+    setLastDescription(sampleText);
+    setStatus('ready');
+    setAnnounce(sampleText);
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+    }
+
+    const voiceLang = lang === 'ar' ? 'Arabic' : lang === 'fr' ? 'French' : 'English';
+    setTimeout(() => {
+      speak(sampleText, voiceLang, {
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+      });
+    }, 60);
+  }, [companionLang, currencyMode, navGuideMode, faceMode, shoppingMode, readMode]);
+
   // Spatial memory drawer state
   const [showSpatialMemory, setShowSpatialMemory] = useState(false);
+  const [showTrajectoryV2, setShowTrajectoryV2] = useState(false);
   const [spatialRecords, setSpatialRecords] = useState<SpatialObjectRecord[]>(() =>
     profile?.uid ? getSpatialObjects(profile.uid) : []
   );
@@ -791,6 +859,46 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
       );
 
       if (!isMountedRef.current) return;
+      const isAuthNotice =
+        result.includes('المعاينة') ||
+        result.includes('تسجيل الدخول') ||
+        result.includes('Preview Mode') ||
+        result.includes('Mode Aperçu') ||
+        result.includes('Authentication') ||
+        result.includes('401') ||
+        result.includes('المصادقة');
+
+      if (isAuthNotice) {
+        setShowGuestAuthCard(true);
+        setStatus('ready');
+        const cleaned = cleanVisionDescription(result, targetLang);
+        setLastDescription(cleaned);
+
+        const spokenNotice =
+          targetLang === 'ar'
+            ? 'أهلاً بك في المعاينة التجريبية لمنصة كوجنيفاي. ميزات الذكاء الاصطناعي السحابية تتطلب تسجيل الدخول. يمكنك تسجيل حسابك مجاناً لتفعيل الكاميرا الذكية بكامل قدراتها، أو تجربة عينة صوتية حية.'
+            : targetLang === 'fr'
+            ? "Bienvenue sur l'aperçu Cognify. Les fonctionnalités d'IA cloud nécessitent une connexion. Veuillez vous connecter ou créer un compte gratuit pour activer la caméra intelligente, ou écouter un exemple audio."
+            : 'Welcome to Cognify preview mode. Cloud AI vision requires an account. Please sign in or create a free account to activate live camera intelligence, or try a live audio walkthrough.';
+
+        setAnnounce(spokenNotice);
+
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+        }
+
+        const voiceLang = targetLang === 'ar' ? 'Arabic' : targetLang === 'fr' ? 'French' : 'English';
+        setTimeout(() => {
+          speak(spokenNotice, voiceLang, {
+            onStart: () => setIsSpeaking(true),
+            onEnd: () => setIsSpeaking(false),
+          });
+        }, 60);
+        return;
+      }
+
+      setShowGuestAuthCard(false);
       const cleaned = cleanVisionDescription(result, targetLang);
       setLastDescription(cleaned);
       setStatus('ready');
@@ -966,6 +1074,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
     cancelSpeech();
     setIsSpeaking(false);
     setLastDescription('');
+    setShowGuestAuthCard(false);
     setLastSnapshot(null);
   };
 
@@ -1136,8 +1245,8 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               aria-label={t('Indoor Cane & Nav', 'عصا الملاحة', 'Canne virtuelle')}
               className={`px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl backdrop-blur-xl border shadow-lg active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold ${
                 navGuideMode
-                  ? 'bg-cyan-500/90 border-cyan-300 text-black shadow-cyan-950/50 animate-pulse'
-                  : 'bg-black/75 border-cyan-500/40 text-white hover:bg-black/90'
+                  ? 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600/90 border-[#E5A93C]/40 text-black shadow-[#E5A93C]/20 animate-pulse'
+                  : 'bg-black/75 border-[#E5A93C]/40 text-white hover:bg-black/90'
               }`}
               title={t(
                 'Indoor Cane: detect pathway, obstacles, and steps with haptic vibration',
@@ -1145,7 +1254,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 'Canne virtuelle : obstacles et marches avec vibrations haptiques'
               )}
             >
-              <Compass className={`w-4 h-4 shrink-0 ${navGuideMode ? 'text-black' : 'text-cyan-400'}`} />
+              <Compass className={`w-4 h-4 shrink-0 ${navGuideMode ? 'text-black' : 'text-[#E5A93C]'}`} />
               <span className="hidden xl:inline">{t('Cane', 'عصا', 'Canne')}</span>
             </button>
 
@@ -1224,7 +1333,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 'Studio documents : PDF, Word, enregistrement audio, traduction, dictée'
               )}
             >
-              <FileText className="w-4 h-4 text-indigo-400 shrink-0" />
+              <FileText className="w-4 h-4 text-[#E5A93C] shrink-0" />
               <span className="hidden xl:inline">{t('Docs & PDF', 'مستندات', 'Documents')}</span>
               <span className="px-1.5 py-0.2 rounded-full bg-indigo-500/30 text-[10px] text-indigo-300 font-mono">PDF</span>
             </button>
@@ -1329,11 +1438,73 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
           )}
 
           {lastDescription && status !== 'analyzing' && (
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="relative w-full max-w-2xl pointer-events-auto"
-            >
+            showGuestAuthCard ? (
+              <motion.div
+                initial={{ y: 20, opacity: 0, scale: 0.95 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                className="relative w-full max-w-xl pointer-events-auto"
+              >
+                <button
+                  onClick={closeDescription}
+                  aria-label={t('Close', 'إغلاق', 'Fermer')}
+                  title={companionLang === 'ar' ? 'إغلاق' : companionLang === 'fr' ? 'Fermer' : 'Close'}
+                  className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-red-500 hover:bg-red-400 border-2 border-white text-white flex items-center justify-center shadow-xl transition-colors z-20"
+                >
+                  <X className="w-5 h-5" strokeWidth={3} />
+                </button>
+
+                <div className="bg-[#120816]/95 backdrop-blur-2xl border-2 border-[#E5A93C]/60 text-white rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 ring-1 ring-[#E5A93C]/30">
+                  <div className="flex items-center justify-between gap-2 border-b border-[#4A1224]/80 pb-3">
+                    <div className="flex items-center gap-2 text-[#E5A93C]">
+                      <Sparkles className="w-5 h-5 text-[#E5A93C]" />
+                      <span className="font-black text-sm sm:text-base">
+                        {companionLang === 'ar'
+                          ? 'المعاينة التجريبية — الرفيق البصري'
+                          : companionLang === 'fr'
+                          ? 'Aperçu Démo — Compagnon Visuel'
+                          : 'Guest Preview — Vision Companion'}
+                      </span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#E5A93C]/20 border border-[#E5A93C]/40 text-[#E5A93C] text-[11px] font-bold">
+                      {companionLang === 'ar' ? 'تسجيل الدخول مطلوب' : companionLang === 'fr' ? 'Connexion requise' : 'Sign In Required'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
+                    {lastDescription}
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <button
+                      onClick={() => {
+                        try {
+                          sessionStorage.removeItem('cognify_guest_preview');
+                          localStorage.removeItem('cognify_guest_preview');
+                          window.location.hash = '';
+                        } catch {}
+                        window.location.reload();
+                      }}
+                      className="px-4 py-3 rounded-2xl bg-gradient-to-r from-[#E5A93C] to-[#d6982b] text-slate-950 font-black text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg shadow-[#E5A93C]/20 flex items-center justify-center gap-2 active:scale-95 text-center"
+                    >
+                      <span>{companionLang === 'ar' ? 'تسجيل الدخول / إنشاء حساب مجاني' : companionLang === 'fr' ? 'Se connecter / Compte gratuit' : 'Sign In / Create Free Account'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => playDemoSample(companionLang)}
+                      className="px-4 py-3 rounded-2xl bg-[#4A1224]/80 hover:bg-[#4A1224] border border-[#E5A93C]/40 text-[#E5A93C] font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95 text-center"
+                    >
+                      <Volume2 className="w-4 h-4 text-[#E5A93C] shrink-0" />
+                      <span>{companionLang === 'ar' ? 'اسمع عينة صوتية حية 🔊' : companionLang === 'fr' ? 'Écouter une démo vocale 🔊' : 'Hear Audio Demo Sample 🔊'}</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="relative w-full max-w-2xl pointer-events-auto"
+              >
               <button
                 onClick={closeDescription}
                 aria-label={t('Close', 'إغلاق', 'Fermer')}
@@ -1416,7 +1587,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 </p>
               </div>
             </motion.div>
-          )}
+          ))}
 
         </div>
 
@@ -1429,7 +1600,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               const getCfg = () => {
                 if (lectureMode) return {
                   icon: <GraduationCap className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-800 hover:from-purple-600 hover:to-cyan-700 border border-purple-400/40 shadow-purple-950/60',
+                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-rose-600 hover:from-purple-600 hover:to-rose-600 border border-purple-400/40 shadow-purple-950/60',
                   title: '🇪🇬 مسح السبورة والمحاضرة',
                   subtitle: 'استخراج القوانين والشرح الأكاديمي بالصوت',
                 };
@@ -1453,7 +1624,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 };
                 if (navGuideMode) return {
                   icon: <Compass className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-cyan-600 to-teal-700 hover:from-cyan-500 hover:to-teal-600 border border-cyan-400/40 shadow-cyan-950/60 animate-pulse',
+                  gradient: 'bg-gradient-to-r from-amber-400 to-teal-700 hover:from-amber-400 hover:to-teal-600 border border-[#E5A93C]/40 shadow-[#E5A93C]/20 animate-pulse',
                   title: '🇪🇬 فحص المسار والعوائق',
                   subtitle: 'العصا الافتراضية مع تنبيه اهتزازي',
                 };
@@ -1496,7 +1667,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               const getCfg = () => {
                 if (lectureMode) return {
                   icon: <GraduationCap className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-800 hover:from-purple-600 hover:to-cyan-700 border border-purple-400/40 shadow-purple-950/60',
+                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-rose-600 hover:from-purple-600 hover:to-rose-600 border border-purple-400/40 shadow-purple-950/60',
                   title: '🇬🇧 Scan Lecture Board & Slides',
                   subtitle: 'Extract formulas, diagrams & academic digest',
                 };
@@ -1520,7 +1691,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 };
                 if (navGuideMode) return {
                   icon: <Compass className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-cyan-600 to-teal-700 hover:from-cyan-500 hover:to-teal-600 border border-cyan-400/40 shadow-cyan-950/60 animate-pulse',
+                  gradient: 'bg-gradient-to-r from-amber-400 to-teal-700 hover:from-amber-400 hover:to-teal-600 border border-[#E5A93C]/40 shadow-[#E5A93C]/20 animate-pulse',
                   title: '🇬🇧 Scan Pathway & Obstacles',
                   subtitle: 'Virtual cane with haptic feedback',
                 };
@@ -1563,7 +1734,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               const getCfg = () => {
                 if (lectureMode) return {
                   icon: <GraduationCap className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-cyan-800 hover:from-purple-600 hover:to-cyan-700 border border-purple-400/40 shadow-purple-950/60',
+                  gradient: 'bg-gradient-to-r from-purple-700 via-indigo-700 to-rose-600 hover:from-purple-600 hover:to-rose-600 border border-purple-400/40 shadow-purple-950/60',
                   title: '🇫🇷 Scanner Tableau & Cours',
                   subtitle: 'Formules, schémas et synthèse académique',
                 };
@@ -1587,7 +1758,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 };
                 if (navGuideMode) return {
                   icon: <Compass className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-cyan-600 to-teal-700 hover:from-cyan-500 hover:to-teal-600 border border-cyan-400/40 shadow-cyan-950/60 animate-pulse',
+                  gradient: 'bg-gradient-to-r from-amber-400 to-teal-700 hover:from-amber-400 hover:to-teal-600 border border-[#E5A93C]/40 shadow-[#E5A93C]/20 animate-pulse',
                   title: '🇫🇷 Scanner Chemin & Obstacles',
                   subtitle: 'Canne virtuelle avec retour haptique',
                 };
@@ -1605,7 +1776,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                 };
                 return {
                   icon: <Camera className="w-5 h-5 shrink-0" />,
-                  gradient: 'bg-gradient-to-r from-blue-600 to-cyan-700 hover:from-blue-500 hover:to-cyan-600 border border-blue-400/40 shadow-blue-950/60',
+                  gradient: 'bg-gradient-to-r from-blue-600 to-rose-600 hover:from-blue-500 hover:to-rose-600 border border-blue-400/40 shadow-blue-950/60',
                   title: '🇫🇷 Que vois-je ?',
                   subtitle: 'Vocal en français',
                 };
@@ -1681,7 +1852,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                   true
                 );
               }}
-              className="px-3 min-h-[46px] rounded-xl bg-black/70 hover:bg-black/90 backdrop-blur-xl border border-indigo-500/40 text-indigo-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-lg active:scale-95"
+              className="px-3 min-h-[46px] rounded-xl bg-black/70 hover:bg-black/90 backdrop-blur-xl border border-[#E5A93C]/30 text-[#E5A93C] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-lg active:scale-95"
               title={companionLang === 'ar' ? 'المستندات وتلخيص المحاضرات' : 'Docs & Lectures'}
             >
               <FileText className="w-4 h-4" />
@@ -1707,7 +1878,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               initial={{ y: 30, opacity: 0, scale: 0.95 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 30, opacity: 0 }}
-              className="w-full max-w-sm bg-slate-900 rounded-3xl p-6 space-y-5 border border-slate-800 shadow-2xl text-white text-center"
+              className="w-full max-w-sm bg-[#150917] rounded-3xl p-6 space-y-5 border border-[#4A1224]/60 shadow-2xl text-white text-center"
             >
               <div className="space-y-1.5">
                 <h3 id="lang-picker-title" className="font-black text-lg">
@@ -1744,7 +1915,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                     chooseLang('fr');
                     toast.success('Langue française sélectionnée 🇫🇷');
                   }}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-700 hover:from-blue-500 hover:to-cyan-600 text-white font-black text-base flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-all"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-rose-600 hover:from-blue-500 hover:to-rose-600 text-white font-black text-base flex items-center justify-center gap-2 shadow-xl active:scale-[0.98] transition-all"
                 >
                   <span>🇫🇷</span>
                   <span>Français</span>
@@ -1773,9 +1944,9 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 40, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full sm:max-w-md bg-slate-900 rounded-3xl p-5 sm:p-6 space-y-4 border border-slate-800 shadow-2xl text-white"
+              className="w-full sm:max-w-md bg-[#150917] rounded-3xl p-5 sm:p-6 space-y-4 border border-[#4A1224]/60 shadow-2xl text-white"
             >
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
                 <h3 id="save-dialog-title" className="font-bold text-base text-white flex items-center gap-2">
                   <BookmarkPlus className="w-5 h-5 text-amber-400" />
                   {companionLang === 'ar' ? 'احفظ العنصر أو الشخص باسم...' : companionLang === 'fr' ? 'Enregistrer cet élément comme...' : 'Remember this as...'}
@@ -1790,7 +1961,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               </div>
 
               {/* Type Switcher: Object vs Person */}
-              <div className="flex gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+              <div className="flex gap-2 p-1 bg-[#080409] rounded-xl border border-[#4A1224]/60">
                 <button
                   type="button"
                   onClick={() => setIsSavingPerson(false)}
@@ -1825,7 +1996,7 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
                     ? (companionLang === 'ar' ? 'اسم الشخص (مثلاً: "ماما"، "أحمد"، "دكتور طارق")' : companionLang === 'fr' ? 'Nom de la personne (ex. "Maman", "Ahmed")' : 'Person name (e.g. "Mom", "Ahmed")')
                     : (companionLang === 'ar' ? 'مثلاً: "دوا الضغط" أو "مفاتيحي"' : companionLang === 'fr' ? 'ex. "Mes clés", "Médicament"' : 'e.g. "My Keys", "Coffee Mug"')
                 }
-                className="w-full px-4 py-3 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-[#4A1224]/50 bg-[#080409] text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none text-sm"
               />
 
               <div className="flex gap-2.5">
@@ -1866,128 +2037,149 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 40, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full sm:max-w-lg bg-slate-900 rounded-3xl p-5 sm:p-6 space-y-4 border border-slate-800 shadow-2xl text-white max-h-[85vh] flex flex-col"
+              className="w-full sm:max-w-lg bg-[#150917] rounded-3xl p-5 sm:p-6 space-y-4 border border-[#4A1224]/60 shadow-2xl text-white max-h-[85vh] flex flex-col"
             >
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-emerald-400" />
                   <h3 id="spatial-dialog-title" className="font-bold text-base text-white">
                     {companionLang === 'ar' ? 'الذاكرة المكانية للأشياء' : companionLang === 'fr' ? 'Mémoire Spatiale des Objets' : 'Spatial Memory of Objects'}
                   </h3>
                 </div>
-                <button
-                  onClick={() => setShowSpatialMemory(false)}
-                  aria-label={t('Close', 'إغلاق', 'Fermer')}
-                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Query Input */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-semibold">
-                  {companionLang === 'ar'
-                    ? 'اسأل عن مكان أي شيء (مثلاً: "فين الريموت؟" أو "فين المفاتيح؟"):'
-                    : companionLang === 'fr'
-                    ? "Demandez où se trouve un objet (ex. 'Où est la télécommande ?') :"
-                    : "Ask where an item is located (e.g. 'Where is the remote?'):"}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={spatialQueryInput}
-                    onChange={(e) => setSpatialQueryInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleSearchSpatial();
-                    }}
-                    placeholder={
-                      companionLang === 'ar'
-                        ? 'فين ريموت التلفزيون؟'
-                        : companionLang === 'fr'
-                        ? 'Où est la télécommande ?'
-                        : 'Where is the TV remote?'
-                    }
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={handleSearchSpatial}
-                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-lg active:scale-95 transition-all"
+                    onClick={() => setShowTrajectoryV2((v) => !v)}
+                    className="text-xs px-2.5 py-1 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all font-semibold"
                   >
-                    <Search className="w-4 h-4" />
-                    <span>{companionLang === 'ar' ? 'بحث' : companionLang === 'fr' ? 'Chercher' : 'Search'}</span>
+                    {showTrajectoryV2
+                      ? (companionLang === 'ar' ? 'البحث السريع' : companionLang === 'fr' ? 'Recherche rapide' : 'Quick Search')
+                      : (companionLang === 'ar' ? 'مسار الحركة (V2)' : companionLang === 'fr' ? 'Trajectoire V2' : 'Trajectory V2')}
+                  </button>
+                  <button
+                    onClick={() => setShowSpatialMemory(false)}
+                    aria-label={t('Close', 'إغلاق', 'Fermer')}
+                    className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
               </div>
 
-              {spatialQueryResult && (
-                <div className="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-200 text-sm leading-relaxed flex items-start gap-2.5">
-                  <Volume2 className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="font-semibold">{spatialQueryResult}</p>
-                    <button
-                      onClick={() => speak(spatialQueryResult, companionLang === 'ar' ? 'Arabic' : companionLang === 'fr' ? 'French' : 'English')}
-                      className="mt-2 text-xs font-bold text-emerald-300 hover:text-emerald-100 underline flex items-center gap-1"
-                    >
-                      <span>{companionLang === 'ar' ? 'استمع مرة أخرى' : companionLang === 'fr' ? 'Réécouter' : 'Listen again'}</span>
-                    </button>
-                  </div>
+              {showTrajectoryV2 ? (
+                <div className="flex-1 overflow-y-auto custom-scrollbar min-h-[300px]">
+                  <SpatialMemoryTrajectoryView
+                    uid={profile?.uid || 'guest'}
+                    lang={companionLang === 'ar' ? 'ar' : companionLang === 'fr' ? 'fr' : 'en'}
+                  />
                 </div>
-              )}
-
-              {/* List of remembered items */}
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[140px]">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-                  <span>{companionLang === 'ar' ? 'الأشياء المرصودة مؤخراً' : companionLang === 'fr' ? 'Objets récemment observés' : 'Recently Observed Items'}</span>
-                  <span className="text-[11px] font-mono text-emerald-400">{spatialRecords.length} items</span>
-                </div>
-
-                {spatialRecords.length === 0 ? (
-                  <div className="text-center py-6 text-slate-500 text-xs">
-                    {companionLang === 'ar'
-                      ? 'لم يتم رصد أي أشياء بعد. وجّه الكاميرا إلى الغرفة واضغط على زر الفحص لتسجيل الأماكن تلقائياً.'
-                      : companionLang === 'fr'
-                      ? 'Aucun objet observé pour le moment. Pointez la caméra et appuyez sur "Que vois-je ?" pour mémoriser les emplacements.'
-                      : 'No objects observed yet. Point the camera and tap any scan button to record locations automatically.'}
+              ) : (
+                <>
+                  {/* Query Input */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-slate-400 font-semibold">
+                      {companionLang === 'ar'
+                        ? 'اسأل عن مكان أي شيء (مثلاً: "فين الريموت؟" أو "فين المفاتيح؟"):'
+                        : companionLang === 'fr'
+                        ? "Demandez où se trouve un objet (ex. 'Où est la télécommande ?') :"
+                        : "Ask where an item is located (e.g. 'Where is the remote?'):"}
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={spatialQueryInput}
+                        onChange={(e) => setSpatialQueryInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSearchSpatial();
+                        }}
+                        placeholder={
+                          companionLang === 'ar'
+                            ? 'فين ريموت التلفزيون؟'
+                            : companionLang === 'fr'
+                            ? 'Où est la télécommande ?'
+                            : 'Where is the TV remote?'
+                        }
+                        className="flex-1 px-4 py-2.5 rounded-xl border border-[#4A1224]/50 bg-[#080409] text-white placeholder-slate-500 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                      <button
+                        onClick={handleSearchSpatial}
+                        className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-lg active:scale-95 transition-all"
+                      >
+                        <Search className="w-4 h-4" />
+                        <span>{companionLang === 'ar' ? 'بحث' : companionLang === 'fr' ? 'Chercher' : 'Search'}</span>
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  spatialRecords.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        const query = querySpatialMemory(profile?.uid || '', item.objectName, companionLang);
-                        setSpatialQueryResult(query.message);
-                        speak(query.message, companionLang === 'ar' ? 'Arabic' : companionLang === 'fr' ? 'French' : 'English');
-                      }}
-                      className="w-full text-start p-3 rounded-2xl bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 flex items-center justify-between gap-3 group transition-all"
-                    >
-                      <div className="space-y-0.5">
-                        <div className="font-bold text-sm text-white group-hover:text-emerald-400 flex items-center gap-2">
-                          <span>{item.objectName}</span>
-                          {item.relativePosition?.direction && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-normal">
-                              {item.relativePosition.direction}
+
+                  {spatialQueryResult && (
+                    <div className="p-3.5 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-200 text-sm leading-relaxed flex items-start gap-2.5">
+                      <Volume2 className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-semibold">{spatialQueryResult}</p>
+                        <button
+                          onClick={() => speak(spatialQueryResult, companionLang === 'ar' ? 'Arabic' : companionLang === 'fr' ? 'French' : 'English')}
+                          className="mt-2 text-xs font-bold text-emerald-300 hover:text-emerald-100 underline flex items-center gap-1"
+                        >
+                          <span>{companionLang === 'ar' ? 'استمع مرة أخرى' : companionLang === 'fr' ? 'Réécouter' : 'Listen again'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* List of remembered items */}
+                  <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[140px]">
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                      <span>{companionLang === 'ar' ? 'الأشياء المرصودة مؤخراً' : companionLang === 'fr' ? 'Objets récemment observés' : 'Recently Observed Items'}</span>
+                      <span className="text-[11px] font-mono text-emerald-400">{spatialRecords.length} items</span>
+                    </div>
+
+                    {spatialRecords.length === 0 ? (
+                      <div className="text-center py-6 text-slate-500 text-xs">
+                        {companionLang === 'ar'
+                          ? 'لم يتم رصد أي أشياء بعد. وجّه الكاميرا إلى الغرفة واضغط على زر الفحص لتسجيل الأماكن تلقائياً.'
+                          : companionLang === 'fr'
+                          ? 'Aucun objet observé pour le moment. Pointez la caméra et appuyez sur "Que vois-je ?" pour mémoriser les emplacements.'
+                          : 'No objects observed yet. Point the camera and tap any scan button to record locations automatically.'}
+                      </div>
+                    ) : (
+                      spatialRecords.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            const query = querySpatialMemory(profile?.uid || '', item.objectName, companionLang);
+                            setSpatialQueryResult(query.message);
+                            speak(query.message, companionLang === 'ar' ? 'Arabic' : companionLang === 'fr' ? 'French' : 'English');
+                          }}
+                          className="w-full text-start p-3 rounded-2xl bg-slate-800/70 hover:bg-slate-800 border border-[#4A1224]/50 flex items-center justify-between gap-3 group transition-all"
+                        >
+                          <div className="space-y-0.5">
+                            <div className="font-bold text-sm text-white group-hover:text-emerald-400 flex items-center gap-2">
+                              <span>{item.objectName}</span>
+                              {item.relativePosition?.direction && (
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 font-normal">
+                                  {item.relativePosition.direction}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              <span>{item.surface || 'Table'}</span>
+                              {item.room && <span> • {item.room}</span>}
+                            </div>
+                          </div>
+                          <div className="text-end shrink-0">
+                            <span className="text-[10px] text-slate-500 block">
+                              {new Date(item.lastSeenTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          <span>{item.surface || 'Table'}</span>
-                          {item.room && <span> • {item.room}</span>}
-                        </div>
-                      </div>
-                      <div className="text-end shrink-0">
-                        <span className="text-[10px] text-slate-500 block">
-                          {new Date(item.lastSeenTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <span className="text-xs text-emerald-400 font-semibold group-hover:underline flex items-center justify-end gap-1">
-                          <Volume2 className="w-3.5 h-3.5" />
-                          {companionLang === 'ar' ? 'اسمع المكان' : companionLang === 'fr' ? 'Écouter' : 'Hear'}
-                        </span>
-                      </div>
-                    </button>
-                  ))
-                )}
-              </div>
+                            <span className="text-xs text-emerald-400 font-semibold group-hover:underline flex items-center justify-end gap-1">
+                              <Volume2 className="w-3.5 h-3.5" />
+                              {companionLang === 'ar' ? 'اسمع المكان' : companionLang === 'fr' ? 'Écouter' : 'Hear'}
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}

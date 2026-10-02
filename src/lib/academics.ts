@@ -1,20 +1,20 @@
 import { EducationLevel } from '../types';
 
-// Academic section ids (match the view ids used in App/Sidebar).
-export type AcademicSection = 'goals' | 'gpa' | 'analytics' | 'planner';
+export type AcademicSection = 'goals' | 'gpa' | 'analytics' | 'planner' | 'retention' | 'evaluation';
 
 /**
  * Which academic sections each education level sees:
- *  - University → full set (GPA/CGPA, learning analytics, planner, goals).
- *  - School (Primary/Secondary) & Professional → lighter set: goals, planner.
+ *  - University → full set (GPA/CGPA, learning analytics, planner, goals, retention flashcards, pedagogical evaluation).
+ *  - Secondary / Professional → goals, planner, retention, evaluation.
+ *  - Primary → goals, planner, retention.
  */
 export function visibleAcademicSections(level?: EducationLevel): AcademicSection[] {
   switch (level) {
     case 'University':
-      return ['goals', 'gpa', 'analytics', 'planner'];
+      return ['goals', 'gpa', 'planner'];
     case 'Professional':
-    case 'Primary':
     case 'Secondary':
+    case 'Primary':
     default:
       return ['goals', 'planner'];
   }

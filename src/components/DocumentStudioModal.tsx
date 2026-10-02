@@ -992,13 +992,13 @@ ${currentDoc.summary}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 30, opacity: 0, scale: 0.98 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-4xl bg-slate-900 rounded-3xl border border-slate-700/80 shadow-2xl text-white max-h-[92vh] flex flex-col overflow-hidden"
+            className="w-full max-w-4xl bg-[#150917] rounded-3xl border border-[#4A1224]/60 shadow-2xl text-white max-h-[92vh] flex flex-col overflow-hidden"
             dir={companionLang === 'ar' ? 'rtl' : 'ltr'}
           >
             {/* Header */}
-            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3 flex-wrap bg-slate-950/70">
+            <div className="p-4 sm:p-5 border-b border-[#4A1224]/60 flex items-center justify-between gap-3 flex-wrap bg-[#080409]/70">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-indigo-400">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center text-[#E5A93C]">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -1019,8 +1019,8 @@ ${currentDoc.summary}
 
               <div className="flex items-center gap-2">
                 {/* Target Translation Language Selector */}
-                <div className="flex items-center bg-slate-900 border border-slate-700 p-1 rounded-xl text-xs font-bold">
-                  <Languages className="w-3.5 h-3.5 text-indigo-400 mr-1.5 ml-1" />
+                <div className="flex items-center bg-[#150917] border border-[#4A1224]/50 p-1 rounded-xl text-xs font-bold">
+                  <Languages className="w-3.5 h-3.5 text-[#E5A93C] mr-1.5 ml-1" />
                   <button
                     type="button"
                     onClick={() => setDocTargetLang('ar')}
@@ -1067,13 +1067,13 @@ ${currentDoc.summary}
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex border-b border-slate-800 px-4 gap-1 sm:gap-2 overflow-x-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-slate-950/40">
+            <div className="flex border-b border-[#4A1224]/60 px-4 gap-1 sm:gap-2 overflow-x-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-[#080409]/40">
               <button
                 type="button"
                 onClick={() => setDocStudioTab('pdf')}
                 className={`py-3 px-3 sm:px-4 text-xs sm:text-sm font-bold flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
                   docStudioTab === 'pdf'
-                    ? 'border-indigo-500 text-indigo-400'
+                    ? 'border-indigo-500 text-[#E5A93C]'
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -1131,7 +1131,7 @@ ${currentDoc.summary}
               {docStudioTab === 'pdf' && (
                 <div className="space-y-5">
                   {/* Upload Card */}
-                  <div className="border-2 border-dashed border-indigo-500/40 hover:border-indigo-400 rounded-3xl p-6 sm:p-8 bg-slate-950/40 text-center transition-all">
+                  <div className="border-2 border-dashed border-[#E5A93C]/30 hover:border-indigo-400 rounded-3xl p-6 sm:p-8 bg-[#080409]/40 text-center transition-all">
                     <input
                       type="file"
                       id="vision-doc-file-upload-modal"
@@ -1147,7 +1147,7 @@ ${currentDoc.summary}
                       htmlFor="vision-doc-file-upload-modal"
                       className="cursor-pointer flex flex-col items-center justify-center space-y-3"
                     >
-                      <div className="w-16 h-16 rounded-3xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shadow-xl group-hover:scale-105 transition-transform">
+                      <div className="w-16 h-16 rounded-3xl bg-indigo-600/20 border border-[#E5A93C]/30 flex items-center justify-center text-[#E5A93C] shadow-xl group-hover:scale-105 transition-transform">
                         <FileUp className="w-8 h-8" />
                       </div>
                       <div className="space-y-1">
@@ -1170,8 +1170,8 @@ ${currentDoc.summary}
 
                   {/* Loading State */}
                   {docLoading && (
-                    <div className="p-6 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 text-center space-y-3">
-                      <Loader2 className="w-8 h-8 text-indigo-400 animate-spin mx-auto" />
+                    <div className="p-6 rounded-2xl bg-indigo-950/40 border border-[#E5A93C]/30 text-center space-y-3">
+                      <Loader2 className="w-8 h-8 text-[#E5A93C] animate-spin mx-auto" />
                       <p className="font-bold text-sm sm:text-base text-indigo-200">
                         {docStatusText || (companionLang === 'ar' ? 'جاري فحص وتلخيص المستند بالذكاء الاصطناعي...' : 'Processing document with AI...')}
                       </p>
@@ -1180,9 +1180,9 @@ ${currentDoc.summary}
 
                   {/* Document Display Result */}
                   {currentDoc && !docLoading && (
-                    <div className="space-y-4 rounded-3xl bg-slate-950/70 border border-slate-800 p-4 sm:p-6 shadow-xl">
+                    <div className="space-y-4 rounded-3xl bg-[#080409]/70 border border-[#4A1224]/60 p-4 sm:p-6 shadow-xl">
                       {/* Title & Action Bar */}
-                      <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-4 flex-wrap">
+                      <div className="flex items-center justify-between gap-3 border-b border-[#4A1224]/60 pb-4 flex-wrap">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <span className="px-2 py-0.5 rounded-lg bg-indigo-600/30 text-indigo-300 font-mono text-[10px] uppercase font-bold">
@@ -1199,7 +1199,7 @@ ${currentDoc.summary}
 
                         <div className="flex items-center gap-2 flex-wrap">
                           {/* 4-way Mode Toggle: Summary | Full | Quiz | Flashcards */}
-                          <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 text-xs font-bold overflow-x-auto max-w-full">
+                          <div className="flex p-1 bg-[#150917] rounded-xl border border-[#4A1224]/60 text-xs font-bold overflow-x-auto max-w-full">
                             <button
                               type="button"
                               onClick={() => setDocViewMode('summary')}
@@ -1353,7 +1353,7 @@ ${currentDoc.summary}
                       </div>
 
                       {/* Smart Audio Scrubbing Navigation Bar */}
-                      <div className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-slate-900/90 border border-slate-800 flex-wrap text-xs font-bold">
+                      <div className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 flex-wrap text-xs font-bold">
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
@@ -1387,7 +1387,7 @@ ${currentDoc.summary}
                         </div>
 
                         {/* Playback Speed selector */}
-                        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px]">
+                        <div className="flex items-center gap-1.5 bg-[#080409] p-1 rounded-xl border border-[#4A1224]/60 text-[11px]">
                           <span className="text-slate-500 px-1">⚡ {companionLang === 'ar' ? 'السرعة:' : 'Speed:'}</span>
                           {[0.8, 1.0, 1.25, 1.5].map((rate) => (
                             <button
@@ -1409,7 +1409,7 @@ ${currentDoc.summary}
 
                       {/* 3D Sign Avatar Video Floating Panel */}
                       {showSignAvatarInDoc && (
-                        <div className="p-4 rounded-3xl bg-slate-900 border border-purple-500/40 relative space-y-3">
+                        <div className="p-4 rounded-3xl bg-[#150917] border border-purple-500/40 relative space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-purple-300 flex items-center gap-2">
                               <Accessibility className="w-4 h-4 text-purple-400" />
@@ -1423,7 +1423,7 @@ ${currentDoc.summary}
                               <X className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="h-64 rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-slate-800">
+                          <div className="h-64 rounded-2xl overflow-hidden bg-[#080409] flex items-center justify-center border border-[#4A1224]/60">
                             <React.Suspense fallback={<div className="text-xs text-purple-300 font-bold animate-pulse">جاري تحميل مجسم الإشارة ثلاثي الأبعاد...</div>}>
                               <SignAvatar3D
                                 words={avatarSigningWords}
@@ -1436,7 +1436,7 @@ ${currentDoc.summary}
                       )}
 
                       {/* Content Viewer Box */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 max-h-80 overflow-y-auto leading-relaxed text-sm sm:text-base text-slate-100 font-medium">
+                      <div className="p-4 sm:p-5 rounded-2xl bg-[#150917] border border-[#4A1224]/60 max-h-80 overflow-y-auto leading-relaxed text-sm sm:text-base text-slate-100 font-medium">
                         {docViewMode === 'summary' && (
                           <div className="space-y-2">
                             <span className="text-xs font-bold text-amber-400 block mb-1">
@@ -1448,7 +1448,7 @@ ${currentDoc.summary}
 
                         {docViewMode === 'full' && (
                           <div className="space-y-2">
-                            <span className="text-xs font-bold text-indigo-400 block mb-1">
+                            <span className="text-xs font-bold text-[#E5A93C] block mb-1">
                               {companionLang === 'ar' ? '📝 تفاصيل النص المستخرج كاملاً:' : '📝 Full Extracted Content:'}
                             </span>
                             <p className="whitespace-pre-wrap font-mono text-xs sm:text-sm">
@@ -1459,7 +1459,7 @@ ${currentDoc.summary}
 
                         {docViewMode === 'quiz' && (
                           <div className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-2">
                               <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                                 <HelpCircle className="w-4 h-4" />
                                 {companionLang === 'ar' ? '📝 بنك أسئلة واختبار فهم المحاضرة:' : '📝 Interactive Lecture Quiz:'}
@@ -1493,7 +1493,7 @@ ${currentDoc.summary}
                             ) : (
                               <div className="space-y-4">
                                 {docQuiz.map((q, qIdx) => (
-                                  <div key={qIdx} className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+                                  <div key={qIdx} className="p-4 rounded-2xl bg-[#080409]/60 border border-[#4A1224]/60 space-y-3">
                                     <p className="font-bold text-sm text-white">
                                       س {qIdx + 1}: {q.question}
                                     </p>
@@ -1503,7 +1503,7 @@ ${currentDoc.summary}
                                         const isAnswer = optIdx === q.answerIndex;
                                         const hasAnswered = q.selectedOption !== undefined;
 
-                                        let btnClass = 'border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-850';
+                                        let btnClass = 'border-[#4A1224]/60 bg-[#150917] text-slate-300 hover:bg-slate-850';
                                         if (hasAnswered) {
                                           if (isAnswer) btnClass = 'border-emerald-500 bg-emerald-950/50 text-emerald-200 ring-2 ring-emerald-500/50';
                                           else if (isSelected && !isAnswer) btnClass = 'border-red-500 bg-red-950/50 text-red-200 ring-2 ring-red-500/50';
@@ -1524,7 +1524,7 @@ ${currentDoc.summary}
                                       })}
                                     </div>
                                     {q.selectedOption !== undefined && (
-                                      <p className="text-xs text-indigo-300 bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-500/30">
+                                      <p className="text-xs text-indigo-300 bg-indigo-950/40 p-2.5 rounded-xl border border-[#4A1224]/60">
                                         💡 {q.explanation}
                                       </p>
                                     )}
@@ -1537,7 +1537,7 @@ ${currentDoc.summary}
 
                         {docViewMode === 'flashcards' && (
                           <div className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-2">
                               <span className="text-xs font-bold text-purple-400 flex items-center gap-1.5">
                                 <Sparkles className="w-4 h-4" />
                                 {companionLang === 'ar' ? '🗂️ بطاقات المراجعة السريعة (Spaced Flashcards):' : '🗂️ Spaced Repetition Flashcards:'}
@@ -1586,7 +1586,7 @@ ${currentDoc.summary}
                                     className={`p-5 rounded-2xl border cursor-pointer select-none transition-all shadow-lg min-h-[120px] flex flex-col justify-between ${
                                       card.flipped
                                         ? 'bg-purple-950/70 border-purple-500/60 text-purple-100'
-                                        : 'bg-slate-950 border-slate-800 text-slate-200 hover:border-slate-700'
+                                        : 'bg-[#080409] border-[#4A1224]/60 text-slate-200 hover:border-[#4A1224]/50'
                                     }`}
                                   >
                                     <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400 block mb-1">
@@ -1607,9 +1607,9 @@ ${currentDoc.summary}
                       </div>
 
                       {/* Interactive Q&A Mid-reading Section */}
-                      <div className="space-y-3 pt-3 border-t border-slate-800">
+                      <div className="space-y-3 pt-3 border-t border-[#4A1224]/60">
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-                          <MessageSquare className="w-4 h-4 text-indigo-400" />
+                          <MessageSquare className="w-4 h-4 text-[#E5A93C]" />
                           <span>
                             {companionLang === 'ar'
                               ? 'اسأل المعلم الذكي عن أي نقطة في هذه المحاضرة / المستند:'
@@ -1624,8 +1624,8 @@ ${currentDoc.summary}
                               key={idx}
                               className={`p-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                                 msg.role === 'user'
-                                  ? 'bg-indigo-600/30 border border-indigo-500/40 text-indigo-100 mr-auto max-w-[85%]'
-                                  : 'bg-slate-900 border border-slate-800 text-slate-200 ml-auto max-w-[85%]'
+                                  ? 'bg-indigo-600/30 border border-[#E5A93C]/30 text-indigo-100 mr-auto max-w-[85%]'
+                                  : 'bg-[#150917] border border-[#4A1224]/60 text-slate-200 ml-auto max-w-[85%]'
                               }`}
                             >
                               <span className="font-bold text-[10px] text-slate-400 block mb-0.5">
@@ -1652,7 +1652,7 @@ ${currentDoc.summary}
                                 ? 'مثلاً: ما هي أهم معادلة في المحاضرة؟ أو اشرح لي النقطة الثانية...'
                                 : 'Ask anything about this document...'
                             }
-                            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                            className="flex-1 px-4 py-2.5 rounded-xl border border-[#4A1224]/50 bg-[#080409] text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-indigo-500"
                           />
                           <button
                             type="button"
@@ -1733,7 +1733,7 @@ ${currentDoc.summary}
 
                   {/* Live Transcript Preview */}
                   {liveSpeechTranscript && (
-                    <div className="max-w-xl mx-auto p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-start space-y-1.5">
+                    <div className="max-w-xl mx-auto p-4 rounded-2xl bg-[#080409]/60 border border-[#4A1224]/60 text-start space-y-1.5">
                       <span className="text-[11px] font-bold text-red-400 block">
                         {companionLang === 'ar' ? 'تفريغ فوري مباشر أثناء التحدث:' : 'Live Transcript Stream:'}
                       </span>
@@ -1749,7 +1749,7 @@ ${currentDoc.summary}
               {docStudioTab === 'speech-to-text' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Panel A: Speech to Text (Voice Dictation) */}
-                  <div className="p-4 sm:p-5 rounded-3xl bg-slate-950/70 border border-slate-800 space-y-3 flex flex-col">
+                  <div className="p-4 sm:p-5 rounded-3xl bg-[#080409]/70 border border-[#4A1224]/60 space-y-3 flex flex-col">
                     <div className="flex items-center justify-between">
                       <h4 className="font-black text-sm text-emerald-400 flex items-center gap-1.5">
                         <Mic className="w-4 h-4" />
@@ -1778,7 +1778,7 @@ ${currentDoc.summary}
                           ? 'اضغط على "تحدث الآن" وابدأ الكلام، وسيتم كتابة كل ما تقوله بدقة هنا...'
                           : 'Click "Dictate" and start speaking. Your speech will appear here...'
                       }
-                      className="w-full flex-1 p-3 rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 leading-relaxed resize-none"
+                      className="w-full flex-1 p-3 rounded-2xl bg-[#150917] border border-[#4A1224]/50 text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 leading-relaxed resize-none"
                     />
 
                     <div className="flex gap-2 flex-wrap">
@@ -1816,7 +1816,7 @@ ${currentDoc.summary}
                   </div>
 
                   {/* Panel B: Text to Speech (Text Reader) */}
-                  <div className="p-4 sm:p-5 rounded-3xl bg-slate-950/70 border border-slate-800 space-y-3 flex flex-col">
+                  <div className="p-4 sm:p-5 rounded-3xl bg-[#080409]/70 border border-[#4A1224]/60 space-y-3 flex flex-col">
                     <div className="flex items-center justify-between">
                       <h4 className="font-black text-sm text-blue-400 flex items-center gap-1.5">
                         <Volume2 className="w-4 h-4" />
@@ -1833,7 +1833,7 @@ ${currentDoc.summary}
                           ? 'الصق أو اكتب أي نص هنا لسماعه فوراً بصوت طبيعي واضح...'
                           : 'Paste or type any text here to hear it read aloud...'
                       }
-                      className="w-full flex-1 p-3 rounded-2xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed resize-none"
+                      className="w-full flex-1 p-3 rounded-2xl bg-[#150917] border border-[#4A1224]/50 text-white placeholder-slate-500 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed resize-none"
                     />
 
                     <div className="flex gap-2">
@@ -1873,9 +1873,9 @@ ${currentDoc.summary}
               {/* TAB 4: SAVED DOCUMENTS ARCHIVE */}
               {docStudioTab === 'history' && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800">
+                  <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-[#4A1224]/60">
                     <span>{companionLang === 'ar' ? 'المستندات والمحاضرات التي تم تلخيصها سابقاً' : 'Previously Summarized Documents'}</span>
-                    <span className="font-mono text-indigo-400 font-bold">{docHistory.length} items</span>
+                    <span className="font-mono text-[#E5A93C] font-bold">{docHistory.length} items</span>
                   </div>
 
                   {docHistory.length === 0 ? (
@@ -1896,7 +1896,7 @@ ${currentDoc.summary}
                     docHistory.map((item) => (
                       <div
                         key={item.id}
-                        className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between gap-3 hover:border-slate-700 transition-all flex-wrap sm:flex-nowrap"
+                        className="p-4 rounded-2xl bg-[#080409]/60 border border-[#4A1224]/60 flex items-center justify-between gap-3 hover:border-[#4A1224]/50 transition-all flex-wrap sm:flex-nowrap"
                       >
                         <div className="space-y-1 flex-1 min-w-0">
                           <div className="flex items-center gap-2">

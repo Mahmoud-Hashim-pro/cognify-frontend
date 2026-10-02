@@ -37,7 +37,7 @@ export default function SmartFollowUpChips({
           id: 'summary',
           label: 'لخص في 3 نقاط محددة',
           icon: ListChecks,
-          color: 'text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-400',
+          color: 'text-[#E5A93C] border-[#4A1224]/70 hover:bg-[#4A1224]/30 hover:border-[#E5A93C]/50',
           prompt: 'لخص أهم ما ورد في الرد السابق في 3 نقاط مركزة ومحددة بدون أي حشو (الزبدة).',
         },
         {
@@ -77,7 +77,7 @@ export default function SmartFollowUpChips({
           id: 'summary',
           label: 'Résume en 3 points clés',
           icon: ListChecks,
-          color: 'text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-400',
+          color: 'text-[#E5A93C] border-[#4A1224]/70 hover:bg-[#4A1224]/30 hover:border-[#E5A93C]/50',
           prompt: 'Résume les points essentiels de la réponse précédente en 3 puces très concises.',
         },
         {
@@ -109,7 +109,7 @@ export default function SmartFollowUpChips({
         id: 'summary',
         label: 'Summarize in 3 bullet points',
         icon: ListChecks,
-        color: 'text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-400',
+        color: 'text-[#E5A93C] border-[#4A1224]/70 hover:bg-[#4A1224]/30 hover:border-[#E5A93C]/50',
         prompt: 'Summarize the core takeaways of your previous response into 3 punchy bullet points.',
       },
       {
@@ -144,7 +144,7 @@ export default function SmartFollowUpChips({
       className="w-full pt-3 pb-1"
     >
       <div className="flex items-center gap-1.5 mb-2.5">
-        <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+        <Sparkles className="w-3.5 h-3.5 text-[#E5A93C] animate-pulse" />
         <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
           {isAr ? 'متابعة سريعة بنقرة واحدة:' : isFr ? 'Poursuivre en 1 clic :' : '1-Click Smart Follow-ups:'}
         </span>
@@ -158,7 +158,7 @@ export default function SmartFollowUpChips({
               key={chip.id}
               type="button"
               onClick={() => onSelectChip(chip.prompt)}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border bg-[#101426]/90 text-xs font-semibold backdrop-blur-md shadow-md transition-all active:scale-95 cursor-pointer ${chip.color}`}
+              className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border bg-[#0E0610]/95 text-xs font-semibold backdrop-blur-md shadow-md transition-all active:scale-95 cursor-pointer ${chip.color}`}
             >
               <IconComponent className="w-3.5 h-3.5 shrink-0" />
               <span>{chip.label}</span>

@@ -47,6 +47,7 @@ import { speak } from '../lib/tts';
 import { triggerHapticAlert } from '../lib/hapticNavEngine';
 import { isArabicLocale } from '../lib/translations';
 import { toast } from './Toast';
+import { restoreContactsFromCloud } from '../lib/contacts';
 import {
   loadPecsCards,
   savePecsCards,
@@ -99,10 +100,10 @@ function RenderAccessibleCardIcon({ icon, className = "w-6 h-6" }: { icon?: stri
 const CATEGORY_COLORS: Record<string, string> = {
   food: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
   feelings: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
-  routine: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300',
+  routine: 'bg-[#4A1224]/50 border-[#E5A93C]/40 text-[#E5A93C]',
   play: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',
   medical: 'bg-rose-500/20 border-rose-500/40 text-rose-300',
-  needs: 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300',
+  needs: 'bg-indigo-500/20 border-[#E5A93C]/30 text-indigo-300',
 };
 
 export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearningHub }: NeurodiversityHubProps) {
@@ -165,6 +166,9 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
     loadPecsCards(profile.uid).then(setPecsCards);
     loadVisualSchedule(profile.uid).then(setSchedule);
     getRecentSensoryLogs(profile.uid, 15).then(setRecentLogs);
+    if (profile.uid) {
+      restoreContactsFromCloud(profile.uid).catch(() => {});
+    }
   }, [profile.uid]);
 
   // Speak PECS card
@@ -192,7 +196,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
       phraseEn: newCardPhraseEn.trim() || newCardLabelEn.trim(),
       category: newCardCategory,
       icon: newCardIcon || '⭐',
-      color: CATEGORY_COLORS[newCardCategory] || 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300',
+      color: CATEGORY_COLORS[newCardCategory] || 'bg-indigo-500/20 border-[#E5A93C]/30 text-indigo-300',
     };
 
     const updated = await addCustomPecsCard(profile.uid, newCard);
@@ -365,7 +369,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
 
   return (
     <div
-      className={`flex-1 flex flex-col h-full bg-slate-950 text-white overflow-hidden select-none relative transition-all duration-700 ${
+      className={`flex-1 flex flex-col h-full bg-[#080409] text-white overflow-hidden select-none relative transition-all duration-700 ${
         showCaregiverBeacon ? 'ring-4 ring-amber-400/60 shadow-[0_0_80px_rgba(251,191,36,0.3)]' : ''
       }`}
       dir={isAr ? 'rtl' : 'ltr'}
@@ -399,7 +403,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
       )}
 
       {/* Header Bar */}
-      <header className="p-3 sm:p-4 border-b border-slate-800 flex items-center justify-between gap-3 bg-slate-900/90 backdrop-blur-xl z-20 flex-wrap">
+      <header className="p-3 sm:p-4 border-b border-[#4A1224]/60 flex items-center justify-between gap-3 bg-[#0E0610]/95 backdrop-blur-xl z-20 flex-wrap">
         <div className="flex items-center gap-2.5">
           {onNavigateBack && (
             <button
@@ -411,7 +415,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
             </button>
           )}
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-2xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-400 shadow-lg shadow-indigo-950/50">
+            <div className="w-9 h-9 rounded-2xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-[#E5A93C] shadow-lg shadow-indigo-950/50">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
@@ -429,7 +433,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
         </div>
 
         {/* Subtabs Selector */}
-        <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-2xl border border-slate-800 text-xs font-bold flex-wrap">
+        <div className="flex items-center gap-1 bg-[#150917] p-1 rounded-2xl border border-[#4A1224]/60 text-xs font-bold flex-wrap">
           <button
             onClick={() => setActiveSubTab('pecs')}
             className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
@@ -461,7 +465,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
           {/* Universal Visual Comfort Tool Button */}
           <button
             onClick={() => setShowVisualComfortModal(true)}
-            className="px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500"
+            className="px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-[#4A1224]/50 hover:border-slate-500"
             title={t('Open Visual Comfort & Dyslexia Settings', 'فتح أدوات الراحة البصرية وتيسير القراءة')}
           >
             <span>📖</span>
@@ -520,7 +524,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${
                       pecsFilter === cat.id
                         ? 'bg-indigo-600 border-indigo-400 text-white shadow-md'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                        : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:text-white'
                     }`}
                   >
                     {cat.label}
@@ -549,13 +553,13 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     className={`p-4 rounded-3xl border-2 transition-all flex flex-col items-center justify-between text-center gap-3 active:scale-95 shadow-xl relative cursor-pointer group ${
                       isSelected
                         ? 'bg-amber-400 border-amber-300 text-slate-950 scale-105 shadow-amber-400/40'
-                        : `${card.color || 'bg-slate-900 border-slate-800'} hover:border-indigo-400/60`
+                        : `${card.color || 'bg-[#150917] border-[#4A1224]/60'} hover:border-indigo-400/60`
                     }`}
                   >
                     {isCustom && (
                       <button
                         onClick={(e) => handleDeleteCard(e, card.id)}
-                        className="absolute top-2.5 right-2.5 p-1 rounded-full bg-slate-950/60 hover:bg-red-600 text-slate-400 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        className="absolute top-2.5 right-2.5 p-1 rounded-full bg-[#080409]/60 hover:bg-red-600 text-slate-400 hover:text-white transition-all opacity-0 group-hover:opacity-100"
                         title={t('Delete custom card', 'حذف البطاقة')}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -587,10 +591,10 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
         {/* ── 2. VISUAL DAILY SCHEDULE ── */}
         {activeSubTab === 'schedule' && (
           <div className="max-w-2xl mx-auto space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-2 border-b border-[#4A1224]/60">
               <div>
                 <h2 className="font-black text-base flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-indigo-400" />
+                  <Calendar className="w-5 h-5 text-[#E5A93C]" />
                   <span>{t('Visual Predictability Schedule', 'جدول المهام والروتين البصري', 'Planning du Jour')}</span>
                 </h2>
                 <p className="text-[11px] text-slate-400">
@@ -619,7 +623,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 group ${
                     item.done
                       ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200 opacity-75'
-                      : 'bg-slate-900 border-slate-800 text-white hover:border-slate-700'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-white hover:border-[#4A1224]/50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -627,7 +631,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                       <RenderAccessibleCardIcon icon={item.icon} className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-mono font-bold text-indigo-400">{item.time}</div>
+                      <div className="text-[10px] font-mono font-bold text-[#E5A93C]">{item.time}</div>
                       <div className={`font-bold text-sm ${item.done ? 'line-through text-slate-400' : 'text-white'}`}>
                         {isAr ? item.titleAr : isFr ? item.titleFr : item.titleEn}
                       </div>
@@ -645,7 +649,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                       type="button"
                       aria-label="Toggle done"
                       className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all ${
-                        item.done ? 'bg-emerald-500 text-slate-950' : 'border-2 border-slate-700 text-transparent'
+                        item.done ? 'bg-emerald-500 text-slate-950' : 'border-2 border-[#4A1224]/50 text-transparent'
                       }`}
                     >
                       <CheckCircle2 className="w-5 h-5" />
@@ -661,7 +665,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
         {activeSubTab === 'emotions' && (
           <div className="max-w-xl mx-auto space-y-6 text-center">
             {/* 5-Point Emotion & Sensory Level Meter */}
-            <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
+            <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/60 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-slate-200 flex items-center gap-2">
                   <Activity className="w-4 h-4 text-rose-400" />
@@ -669,7 +673,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                 </h3>
                 <button
                   onClick={() => setShowLogsDrawer((v) => !v)}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1"
+                  className="text-xs text-[#E5A93C] hover:text-indigo-300 font-bold flex items-center gap-1"
                 >
                   <History className="w-3.5 h-3.5" />
                   <span>{t('History', 'السجل الحسي')} ({recentLogs.length})</span>
@@ -679,7 +683,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
               <div className="grid grid-cols-5 gap-2">
                 {[
                   { lvl: 1, icon: '😊', label: t('Calm', 'هادئ', 'Calme'), color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' },
-                  { lvl: 2, icon: '🙂', label: t('Good', 'تمام', 'Bien'), color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50' },
+                  { lvl: 2, icon: '🙂', label: t('Good', 'تمام', 'Bien'), color: 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/50' },
                   { lvl: 3, icon: '😐', label: t('Uncertain', 'مش مرتاح', 'Moyen'), color: 'bg-amber-500/20 text-amber-400 border-amber-500/50' },
                   { lvl: 4, icon: '😟', label: t('Overloaded', 'مضغوط', 'Surchargé'), color: 'bg-orange-500/20 text-orange-400 border-orange-500/50' },
                   { lvl: 5, icon: '😫', label: t('Meltdown', 'انفجار حسي', 'Crise'), color: 'bg-red-500/20 text-red-400 border-red-500/50' },
@@ -690,7 +694,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     className={`p-2.5 rounded-2xl border-2 transition-all flex flex-col items-center gap-1 active:scale-95 ${
                       currentEmotionLevel === item.lvl
                         ? `${item.color} scale-105 shadow-xl font-black`
-                        : 'bg-slate-950 border-slate-800 opacity-60 hover:opacity-100'
+                        : 'bg-[#080409] border-[#4A1224]/60 opacity-60 hover:opacity-100'
                     }`}
                   >
                     <span className="text-2xl sm:text-3xl">{item.icon}</span>
@@ -699,8 +703,8 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                 ))}
               </div>
 
-              <div className="text-[11px] text-slate-400 bg-slate-950/60 p-2.5 rounded-2xl border border-slate-800 flex items-center justify-center gap-2">
-                <Shield className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="text-[11px] text-slate-400 bg-[#080409]/60 p-2.5 rounded-2xl border border-[#4A1224]/60 flex items-center justify-center gap-2">
+                <Shield className="w-3.5 h-3.5 text-[#E5A93C]" />
                 <span>
                   {t(
                     'Level 5 automatically dispatches a secure server alert to the primary caregiver for immediate sensory de-escalation.',
@@ -743,21 +747,27 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     <div className="flex items-center gap-1.5 pt-1 flex-wrap">
                       <span className="text-[10px] text-slate-400">{t('Channels:', 'القنوات:')}</span>
                       {dispatchStatus.channels.map((ch) => (
-                        <span key={ch} className="px-2 py-0.5 rounded-lg bg-slate-900 text-[10px] font-mono text-emerald-300 border border-emerald-500/30">
+                        <span key={ch} className="px-2 py-0.5 rounded-lg bg-[#150917] text-[10px] font-mono text-emerald-300 border border-emerald-500/30">
                           {ch}
                         </span>
                       ))}
                     </div>
                   )}
-                  {dispatchStatus.fallbackDirectCall && dispatchStatus.caregiverPhone && (
+                  {dispatchStatus.fallbackDirectCall && (
                     <div className="pt-2">
-                      <a
-                        href={`tel:${dispatchStatus.caregiverPhone}`}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-md"
-                      >
-                        <PhoneCall className="w-4 h-4" />
-                        <span>{t('Call Caregiver Now', 'اتصل بالمرافق هاتفياً الآن')} ({dispatchStatus.caregiverPhone})</span>
-                      </a>
+                      {dispatchStatus.caregiverPhone ? (
+                        <a
+                          href={`tel:${dispatchStatus.caregiverPhone}`}
+                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-md"
+                        >
+                          <PhoneCall className="w-4 h-4" />
+                          <span>{t('Call Caregiver Now', 'اتصل بالمرافق هاتفياً الآن')} ({dispatchStatus.caregiverPhone})</span>
+                        </a>
+                      ) : (
+                        <div className="text-[11px] text-amber-300 bg-amber-950/60 p-2.5 rounded-xl border border-amber-500/40 leading-relaxed">
+                          ⚠️ {t('Caregiver emergency phone is not set up in contacts yet.', 'رقم هاتف المرافق غير مسجل بعد في جهات الاتصال الطارئة.')}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -766,14 +776,14 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
 
             {/* Sensory Logs History Drawer */}
             {showLogsDrawer && recentLogs.length > 0 && (
-              <div className="p-4 rounded-3xl bg-slate-900/90 border border-indigo-500/30 text-start space-y-2.5">
+              <div className="p-4 rounded-3xl bg-[#0E0610]/95 border border-indigo-500/30 text-start space-y-2.5">
                 <h4 className="font-bold text-xs text-indigo-300 flex items-center gap-1.5">
                   <History className="w-4 h-4" />
                   <span>{t('Recent Sensory Check-ins (Saved to Cloud & Caregiver Hub):', 'سجل الضغط والمشاعر الأخير (محفوظ للمرافق):')}</span>
                 </h4>
                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                   {recentLogs.map((log) => (
-                    <div key={log.id} className="p-2 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+                    <div key={log.id} className="p-2 rounded-xl bg-[#080409] border border-[#4A1224]/60 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
                         <span className="font-bold px-2 py-0.5 rounded-md text-[10px] bg-slate-800">
                           {log.intensity}/5
@@ -790,8 +800,8 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
             )}
 
             {/* Breathing Bubble Exercise */}
-            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4 flex flex-col items-center">
-              <div className="flex items-center gap-2 text-indigo-400">
+            <div className="p-6 rounded-3xl bg-[#150917] border border-[#4A1224]/60 space-y-4 flex flex-col items-center">
+              <div className="flex items-center gap-2 text-[#E5A93C]">
                 <Wind className="w-5 h-5" />
                 <h3 className="font-bold text-base">
                   {t('Calming Breathing Bubble', 'فقاعة التنفس الهادئ', 'Bulle de Respiration')}
@@ -809,7 +819,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                         : { scale: [1.45, 1], transition: { duration: 4, ease: 'easeInOut' } }
                       : { scale: 1 }
                   }
-                  className="w-36 h-36 rounded-full bg-gradient-to-tr from-indigo-600/70 via-purple-600/60 to-cyan-500/70 shadow-2xl flex flex-col items-center justify-center text-white"
+                  className="w-36 h-36 rounded-full bg-gradient-to-tr from-indigo-600/70 via-purple-600/60 to-rose-600/70 shadow-2xl flex flex-col items-center justify-center text-white"
                 >
                   <span className="font-mono font-black text-3xl">{breathingCount}</span>
                   <span className="text-xs font-bold uppercase tracking-wider mt-1">
@@ -840,8 +850,8 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
       {/* ── MODAL: ADD CUSTOM PECS CARD ── */}
       {showAddCardModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="w-full max-w-md bg-[#150917] border border-[#4A1224]/60 rounded-3xl p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
               <h3 className="font-black text-sm text-white flex items-center gap-2">
                 <span>🧩</span>
                 <span>{t('Add New Custom PECS Card', 'إنشاء بطاقة بيكس مخصصة')}</span>
@@ -863,7 +873,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   value={newCardLabelAr}
                   onChange={(e) => setNewCardLabelAr(e.target.value)}
                   placeholder="مثال: عصير تفاح، لعبة المكعبات..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-indigo-500 focus:outline-none"
+                  className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white focus:border-indigo-500 focus:outline-none"
                 />
               </div>
 
@@ -874,7 +884,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   value={newCardPhraseAr}
                   onChange={(e) => setNewCardPhraseAr(e.target.value)}
                   placeholder="مثال: أنا عايز عصير تفاح مثلج لو سمحت."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-indigo-500 focus:outline-none"
+                  className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white focus:border-indigo-500 focus:outline-none"
                 />
               </div>
 
@@ -885,7 +895,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     type="text"
                     value={newCardIcon}
                     onChange={(e) => setNewCardIcon(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-center text-lg"
+                    className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white text-center text-lg"
                   />
                 </div>
 
@@ -894,7 +904,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   <select
                     value={newCardCategory}
                     onChange={(e) => setNewCardCategory(e.target.value as any)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none"
+                    className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white focus:outline-none"
                   >
                     <option value="needs">احتياجات (Needs)</option>
                     <option value="food">طعام وشراب (Food)</option>
@@ -929,8 +939,8 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
       {/* ── MODAL: ADD SCHEDULE TASK ── */}
       {showAddScheduleModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="w-full max-w-md bg-[#150917] border border-[#4A1224]/60 rounded-3xl p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-3">
               <h3 className="font-black text-sm text-white flex items-center gap-2">
                 <span>📅</span>
                 <span>{t('Add Visual Routine Task', 'إضافة مهمة للجدول البصري')}</span>
@@ -952,7 +962,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     value={newSchTime}
                     onChange={(e) => setNewSchTime(e.target.value)}
                     placeholder="09:00 AM"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-white font-mono text-center"
+                    className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-2 py-2 text-white font-mono text-center"
                   />
                 </div>
                 <div className="col-span-2">
@@ -961,7 +971,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                     type="text"
                     value={newSchIcon}
                     onChange={(e) => setNewSchIcon(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-center text-lg"
+                    className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white text-center text-lg"
                   />
                 </div>
               </div>
@@ -974,7 +984,7 @@ export default function NeurodiversityHub({ profile, onNavigateBack, onOpenLearn
                   value={newSchTitleAr}
                   onChange={(e) => setNewSchTitleAr(e.target.value)}
                   placeholder="مثال: جلسة التخاطب، ترتيب الغرفة..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white"
+                  className="w-full bg-[#080409] border border-[#4A1224]/60 rounded-xl px-3 py-2 text-white"
                 />
               </div>
 

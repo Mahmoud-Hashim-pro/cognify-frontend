@@ -46,9 +46,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
   if (!isUnlocked) {
     return (
-      <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
-        <div className="max-w-md w-full p-8 rounded-3xl bg-slate-900 border-2 border-indigo-500/40 shadow-2xl text-center">
-          <div className="w-16 h-16 rounded-3xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
+      <div className="fixed inset-0 z-50 bg-[#080409]/90 backdrop-blur-xl flex items-center justify-center p-4">
+        <div className="max-w-md w-full p-8 rounded-3xl bg-[#150917] border-2 border-[#E5A93C]/40 shadow-2xl text-center">
+          <div className="w-16 h-16 rounded-3xl bg-[#4A1224]/40 text-[#E5A93C] flex items-center justify-center mx-auto mb-4 border border-[#4A1224]/60">
             <Lock className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-black text-white mb-2">
@@ -66,7 +66,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             value={pinInput}
             onChange={(e) => setPinInput(e.target.value)}
             placeholder="••••"
-            className="w-40 mx-auto block text-center tracking-[1em] text-2xl font-black p-3 rounded-2xl bg-slate-950 border-2 border-slate-800 focus:border-indigo-500 text-white outline-none mb-4"
+            className="w-40 mx-auto block text-center tracking-[1em] text-2xl font-black p-3 rounded-2xl bg-[#080409] border-2 border-[#4A1224]/60 focus:border-indigo-500 text-white outline-none mb-4"
           />
 
           {pinError && (
@@ -84,7 +84,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             </button>
             <button
               onClick={handlePinSubmit}
-              className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shadow-lg shadow-indigo-600/30"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:opacity-95 text-white font-black text-xs shadow-lg shadow-[#E5A93C]/20"
             >
               {isArabic ? 'دخول' : 'Unlock Dashboard'}
             </button>
@@ -97,14 +97,14 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
   if (!analytics) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950 overflow-y-auto text-white p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300 font-sans">
+    <div className="fixed inset-0 z-50 bg-[#080409] overflow-y-auto text-white p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300 font-sans">
       <div className="max-w-6xl mx-auto w-full">
         {/* Top Bar Header */}
-        <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800 flex-wrap">
+        <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-[#4A1224]/60 flex-wrap">
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="p-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-all shadow-md"
+              className="p-2.5 rounded-2xl bg-[#150917] hover:bg-slate-800 border border-[#4A1224]/60 text-slate-300 hover:text-white transition-all shadow-md"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -126,7 +126,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="p-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white"
+              className="p-2.5 rounded-2xl bg-[#150917] hover:bg-slate-800 border border-[#4A1224]/60 text-slate-400 hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -135,7 +135,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
         {/* High-Level Overview Metrics Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col justify-between">
+          <div className="p-4 sm:p-5 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-400">{isArabic ? 'الدقة العامة' : 'Overall Accuracy'}</span>
               <Award className="w-4 h-4 text-emerald-400" />
@@ -143,15 +143,15 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             <p className="text-2xl sm:text-3xl font-black text-emerald-400">{analytics.overallAccuracy}%</p>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col justify-between">
+          <div className="p-4 sm:p-5 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-400">{isArabic ? 'إجمالي الجلسات' : 'Sessions Done'}</span>
-              <BookOpen className="w-4 h-4 text-indigo-400" />
+              <BookOpen className="w-4 h-4 text-[#E5A93C]" />
             </div>
-            <p className="text-2xl sm:text-3xl font-black text-indigo-400">{analytics.totalSessions}</p>
+            <p className="text-2xl sm:text-3xl font-black text-[#E5A93C]">{analytics.totalSessions}</p>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col justify-between">
+          <div className="p-4 sm:p-5 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-400">{isArabic ? 'وقت التعلّم' : 'Total Time'}</span>
               <Clock className="w-4 h-4 text-amber-400" />
@@ -159,7 +159,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             <p className="text-2xl sm:text-3xl font-black text-amber-400">{analytics.totalTimeMinutes} {isArabic ? 'دقيقة' : 'mins'}</p>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col justify-between">
+          <div className="p-4 sm:p-5 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-400">{isArabic ? 'نمط التعلّم الأفضل' : 'Best Learning Style'}</span>
               <Brain className="w-4 h-4 text-purple-400" />
@@ -169,7 +169,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 mb-6 border-b border-slate-800 pb-2 overflow-x-auto">
+        <div className="flex items-center gap-2 mb-6 border-b border-[#4A1224]/60 pb-2 overflow-x-auto">
           {[
             { id: 'overview', label: isArabic ? 'نظرة عامة والتقدم' : 'Overview & Trends' },
             { id: 'subjects', label: isArabic ? 'أداء المواد' : 'Subject Breakdown' },
@@ -181,8 +181,8 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#4A1224] text-white shadow-lg shadow-[#E5A93C]/20'
+                  : 'text-slate-400 hover:text-white hover:bg-[#150917]'
               }`}
             >
               {tab.label}
@@ -193,9 +193,9 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
         {/* Tab Content 1: Overview & Progress Trend Chart */}
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl">
+            <div className="lg:col-span-2 p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl">
               <h3 className="text-base font-black text-white mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-indigo-400" />
+                <TrendingUp className="w-4 h-4 text-[#E5A93C]" />
                 {isArabic ? 'منحنى دقة التعلّم عبر الأيام' : 'Learning Accuracy Trend Over Time'}
               </h3>
               <div className="h-64 w-full">
@@ -214,7 +214,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             </div>
 
             {/* Strengths & Weaknesses Panel */}
-            <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col justify-between">
+            <div className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl flex flex-col justify-between">
               <div>
                 <h3 className="text-base font-black text-white mb-4 flex items-center gap-2">
                   <Target className="w-4 h-4 text-emerald-400" />
@@ -248,7 +248,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
         {/* Tab Content 2: Subject Performance Bar Chart */}
         {activeTab === 'subjects' && (
-          <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl">
             <h3 className="text-base font-black text-white mb-4">
               {isArabic ? 'مستوى الدقة حسب المادة' : 'Mastery Accuracy per Subject'}
             </h3>
@@ -268,7 +268,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
         {/* Tab Content 3: Common Mistakes Table */}
         {activeTab === 'mistakes' && (
-          <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl">
             <h3 className="text-base font-black text-white mb-4 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-400" />
               {isArabic ? 'تصنيف الأخطاء الشائعة المكتشفة' : 'AI-Classified Common Mistakes'}
@@ -278,7 +278,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {analytics.commonMistakes.map((mis, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                  <div key={idx} className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 flex items-center justify-between">
                     <div>
                       <span className="text-xs font-black text-indigo-300 uppercase">{mis.subject}</span>
                       <p className="text-sm font-bold text-white mt-0.5 capitalize">{mis.type.replace('_', ' ')}</p>
@@ -295,15 +295,15 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
         {/* Tab Content 4: AI Recommendations */}
         {activeTab === 'recommendations' && (
-          <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl">
+          <div className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 shadow-xl">
             <h3 className="text-base font-black text-white mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <Sparkles className="w-4 h-4 text-[#E5A93C]" />
               {isArabic ? 'خطة التدريس والتوصيات المقترحة من المعلم الذكي' : 'AI Pedagogical Action Plan'}
             </h3>
             <div className="flex flex-col gap-3">
               {analytics.recommendations.map((rec, idx) => (
-                <div key={idx} className="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-500/30 flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-xl bg-indigo-500/20 text-indigo-400 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                <div key={idx} className="p-4 rounded-2xl bg-indigo-950/30 border border-[#4A1224]/60 flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-xl bg-[#4A1224]/40 text-[#E5A93C] font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
                   </div>
                   <p className="text-sm text-indigo-200 font-medium leading-relaxed">{rec}</p>

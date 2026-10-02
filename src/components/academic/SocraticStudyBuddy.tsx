@@ -228,7 +228,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
     <div className="space-y-6">
       {/* Session Setup or Active Header */}
       {!sessionActive ? (
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <Mic className="w-6 h-6" />
@@ -253,7 +253,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder={isAr ? 'مثال: قانون نيوتن الثاني، تفاعلات كريبس، خوارزميات الـ Dijkstra...' : 'e.g. Newton Second Law, Krebs Cycle, Dijkstra Algorithm...'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500"
               />
             </div>
 
@@ -268,7 +268,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                   className={`p-4 rounded-2xl border text-start transition-all ${
                     mode === 'oral'
                       ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-lg shadow-emerald-500/10'
-                      : 'bg-[#0A0C14] border-slate-800 text-slate-400 hover:border-slate-700'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:border-[#831843]/70'
                   }`}
                 >
                   <div className="flex items-center gap-2 font-bold text-xs mb-1 text-emerald-400">
@@ -285,11 +285,11 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                   onClick={() => setMode('feynman')}
                   className={`p-4 rounded-2xl border text-start transition-all ${
                     mode === 'feynman'
-                      ? 'bg-cyan-500/15 border-cyan-500 text-white shadow-lg shadow-cyan-500/10'
-                      : 'bg-[#0A0C14] border-slate-800 text-slate-400 hover:border-slate-700'
+                      ? 'bg-[#4A1224]/40 border-[#E5A93C] text-white shadow-lg shadow-[#E5A93C]/10'
+                      : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:border-[#831843]/70'
                   }`}
                 >
-                  <div className="flex items-center gap-2 font-bold text-xs mb-1 text-cyan-400">
+                  <div className="flex items-center gap-2 font-bold text-xs mb-1 text-[#E5A93C]">
                     <Sparkles className="w-4 h-4" />
                     {isAr ? 'تقنية فاينمان (Feynman Technique)' : 'Feynman Technique'}
                   </div>
@@ -303,7 +303,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
             <div className="pt-2 flex justify-end">
               <button
                 onClick={handleStartSession}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white font-black text-sm shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-rose-600 hover:from-emerald-400 hover:to-rose-600 text-white font-black text-sm shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
               >
                 <Mic className="w-4 h-4" />
                 {isAr ? 'بدء جلسة "سمّعلي" الصوتية' : 'Start Socratic Voice Session'}
@@ -313,9 +313,9 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
         </div>
       ) : (
         /* Active Dialogue View */
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl flex flex-col h-[650px]">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl flex flex-col h-[650px]">
           {/* Top Session Toolbar */}
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+          <div className="flex items-center justify-between pb-4 border-b border-[#4A1224]/60 shrink-0">
             <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
               <div>
@@ -332,8 +332,8 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                 onClick={() => setAutoSpeak(!autoSpeak)}
                 className={`p-2 rounded-xl border text-xs font-bold transition-all ${
                   autoSpeak
-                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
-                    : 'bg-[#0A0C14] text-slate-500 border-slate-800'
+                    ? 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/30'
+                    : 'bg-[#150917] text-slate-500 border-[#4A1224]/60'
                 }`}
                 title={isAr ? 'نطق صوتي تلقائي' : 'Auto-read aloud'}
               >
@@ -356,7 +356,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                   stopSpeaking();
                   setSessionActive(false);
                 }}
-                className="p-2 rounded-xl bg-[#0A0C14] hover:bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition-colors"
+                className="p-2 rounded-xl bg-[#150917] hover:bg-[#150917] text-slate-400 hover:text-white border border-[#4A1224]/60 transition-colors"
                 title={isAr ? 'إنهاء الجلسة' : 'End'}
               >
                 <RotateCcw className="w-4 h-4" />
@@ -382,15 +382,15 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                   <div
                     className={`max-w-[85%] rounded-2xl p-4 text-xs md:text-sm leading-relaxed ${
                       isAi
-                        ? 'bg-[#0A0C14] border border-slate-800 text-slate-200 shadow-md'
-                        : 'bg-gradient-to-r from-emerald-600/30 to-cyan-600/30 border border-emerald-500/30 text-white'
+                        ? 'bg-[#150917] border border-[#4A1224]/60 text-slate-200 shadow-md'
+                        : 'bg-gradient-to-r from-emerald-600/30 to-rose-600/30 border border-emerald-500/30 text-white'
                     }`}
                   >
                     <p>{turn.text}</p>
                   </div>
 
                   {!isAi && (
-                    <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/30 flex items-center justify-center text-[#E5A93C] shrink-0">
                       <User className="w-4 h-4" />
                     </div>
                   )}
@@ -408,7 +408,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
           </div>
 
           {/* Voice & Text Input Dock */}
-          <div className="pt-3 border-t border-slate-800 shrink-0 space-y-2">
+          <div className="pt-3 border-t border-[#4A1224]/60 shrink-0 space-y-2">
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -416,7 +416,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                 onChange={(e) => setCurrentInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendResponse()}
                 placeholder={isAr ? 'تحدث بالمايك أو اكتب إجابتك هنا...' : 'Speak with mic or type your answer here...'}
-                className="flex-1 bg-[#0A0C14] border border-slate-800 rounded-2xl px-4 py-3 text-xs md:text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="flex-1 bg-[#150917] border border-[#4A1224]/60 rounded-2xl px-4 py-3 text-xs md:text-sm text-white focus:outline-none focus:border-emerald-500"
               />
 
               <button
@@ -425,7 +425,7 @@ Keep your response conversational, concise (2-4 sentences max), and directly spo
                 className={`p-3 rounded-2xl border transition-all ${
                   isRecording
                     ? 'bg-rose-500 text-white border-rose-400 shadow-lg shadow-rose-500/30 animate-pulse'
-                    : 'bg-[#0A0C14] border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                    : 'bg-[#150917] border-[#4A1224]/60 text-slate-400 hover:text-white hover:border-[#831843]/70'
                 }`}
                 title={isRecording ? (isAr ? 'إيقاف التسجيل' : 'Stop') : (isAr ? 'تحدث بالصوت' : 'Record')}
               >

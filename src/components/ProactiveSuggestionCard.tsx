@@ -3,7 +3,7 @@
  * Milestones 6, 7 & 8: Obsidian glassmorphic banner for proactive opportunities and insights.
  *
  * Adheres to:
- * - Obsidian glassmorphic palette (#0A0C14 canvas, #121524 card, slate borders, luminous ambient glow).
+ * - Obsidian glassmorphic palette (#150917 canvas, #0E0610 card, slate borders, luminous ambient glow).
  * - Full Student Agency: [Start Action], [Not Now (Snooze)], [Dismiss], and [Settings Toggle].
  * - Bilingual RTL/LTR support (Arabic & English).
  * - Grounded Triad display for Learning Insights: Evidence + Interpretation + Action.
@@ -114,7 +114,7 @@ export default function ProactiveSuggestionCard({
   const typeKey = opportunity?.type || insight?.category;
 
   let themeStyles = {
-    cardBg: 'from-amber-500/10 via-[#121524]/95 to-indigo-950/20',
+    cardBg: 'from-amber-500/10 via-[#0E0610]/95 to-indigo-950/20',
     border: 'border-amber-500/30 hover:border-amber-500/50',
     glow: 'bg-amber-500/10',
     badgeBg: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
@@ -126,7 +126,7 @@ export default function ProactiveSuggestionCard({
 
   if (typeKey === 'repeated_struggle' || typeKey === 'cognitive_strain' || typeKey === 'prerequisite_link') {
     themeStyles = {
-      cardBg: 'from-rose-500/10 via-[#121524]/95 to-purple-950/20',
+      cardBg: 'from-rose-500/10 via-[#0E0610]/95 to-purple-950/20',
       border: 'border-rose-500/30 hover:border-rose-500/50',
       glow: 'bg-rose-500/10',
       badgeBg: 'bg-rose-500/15 border-rose-500/30 text-rose-300',
@@ -137,25 +137,25 @@ export default function ProactiveSuggestionCard({
     };
   } else if (typeKey === 'growth_challenge' || typeKey === 'breakthrough') {
     themeStyles = {
-      cardBg: 'from-emerald-500/10 via-[#121524]/95 to-cyan-950/20',
+      cardBg: 'from-emerald-500/10 via-[#0E0610]/95 to-rose-600/20',
       border: 'border-emerald-500/30 hover:border-emerald-500/50',
       glow: 'bg-emerald-500/10',
       badgeBg: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
       badgeText: isAr ? 'تحدٍ معرفي متقدم' : 'Growth Challenge',
       icon: Sparkles,
       iconColor: 'text-emerald-400',
-      actionBtn: 'from-emerald-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-slate-950 shadow-emerald-500/20',
+      actionBtn: 'from-emerald-500 to-rose-600 hover:from-emerald-400 hover:to-rose-600 text-slate-950 shadow-emerald-500/20',
     };
   } else if (typeKey === 'strategy_optimization') {
     themeStyles = {
-      cardBg: 'from-cyan-500/10 via-[#121524]/95 to-indigo-950/20',
-      border: 'border-cyan-500/30 hover:border-cyan-500/50',
-      glow: 'bg-cyan-500/10',
-      badgeBg: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
+      cardBg: 'from-amber-400/10 via-[#0E0610]/95 to-indigo-950/20',
+      border: 'border-[#E5A93C]/30 hover:border-[#E5A93C]/50',
+      glow: 'bg-[#4A1224]/30',
+      badgeBg: 'bg-[#4A1224]/40 border-[#E5A93C]/30 text-[#E5A93C]',
       badgeText: isAr ? 'استراتيجية عالية الفاعلية' : 'Optimal Strategy',
       icon: Zap,
-      iconColor: 'text-cyan-400',
-      actionBtn: 'from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-cyan-500/20',
+      iconColor: 'text-[#E5A93C]',
+      actionBtn: 'from-amber-400 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white shadow-[#E5A93C]/20',
     };
   }
 
@@ -177,14 +177,14 @@ export default function ProactiveSuggestionCard({
       {/* Top Header Row */}
       <div className="flex items-center justify-between gap-3 mb-3.5 relative z-10">
         <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="w-8 h-8 rounded-xl bg-slate-900/80 border border-slate-700/60 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-[#0E0610]/90 border border-[#4A1224]/50 flex items-center justify-center shrink-0">
             <IconComponent className={`w-4 h-4 ${themeStyles.iconColor}`} />
           </div>
           <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider border ${themeStyles.badgeBg}`}>
             {themeStyles.badgeText}
           </span>
           {(opportunity?.metadata?.daysOverdue || insight?.metricDelta) && (
-            <span className="text-[11px] font-medium text-slate-400 bg-slate-900/60 px-2 py-0.5 rounded-lg border border-slate-800">
+            <span className="text-[11px] font-medium text-slate-400 bg-[#0E0610]/70 px-2 py-0.5 rounded-lg border border-[#4A1224]/60">
               {insight?.metricDelta || `${opportunity?.metadata?.daysOverdue}d overdue`}
             </span>
           )}
@@ -196,7 +196,7 @@ export default function ProactiveSuggestionCard({
             onClick={() => setShowSettings(!showSettings)}
             aria-label={localize(language, 'Proactive Settings', 'إعدادات الاقتراحات')}
             title={localize(language, 'Proactive Settings', 'إعدادات الاقتراحات')}
-            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800/60 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-[#150917]/70 transition-colors"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
           </button>
@@ -204,7 +204,7 @@ export default function ProactiveSuggestionCard({
             onClick={handleDismissClick}
             aria-label={localize(language, 'Dismiss', 'تجاهل')}
             title={localize(language, 'Dismiss', 'تجاهل')}
-            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800/60 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-[#150917]/70 transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -218,7 +218,7 @@ export default function ProactiveSuggestionCard({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mb-4 p-3 rounded-2xl bg-[#0A0C14]/90 border border-slate-800 text-xs flex items-center justify-between gap-3 overflow-hidden"
+            className="mb-4 p-3 rounded-2xl bg-[#080409]/90 border border-[#4A1224]/60 text-xs flex items-center justify-between gap-3 overflow-hidden"
           >
             <div className="flex items-center gap-2 text-slate-300">
               <BellOff className="w-4 h-4 text-slate-400" />
@@ -266,9 +266,9 @@ export default function ProactiveSuggestionCard({
             {/* Triad Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               {/* Pillar 1: Evidence */}
-              <div className="p-3 rounded-2xl bg-slate-900/70 border border-slate-800/80 space-y-1">
+              <div className="p-3 rounded-2xl bg-[#150917]/70 border border-[#4A1224]/60 space-y-1">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E5A93C]" />
                   {localize(language, '1. Empirical Evidence', '١. الدليل التجريبي')}
                 </div>
                 <p className="text-xs text-slate-200 leading-relaxed font-medium">
@@ -277,7 +277,7 @@ export default function ProactiveSuggestionCard({
               </div>
 
               {/* Pillar 2: Interpretation */}
-              <div className="p-3 rounded-2xl bg-slate-900/70 border border-slate-800/80 space-y-1">
+              <div className="p-3 rounded-2xl bg-[#150917]/70 border border-[#4A1224]/60 space-y-1">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                   {localize(language, '2. Pedagogical Meaning', '٢. التفسير التربوي')}
@@ -292,7 +292,7 @@ export default function ProactiveSuggestionCard({
       </div>
 
       {/* Action Agency Bar (Accept / Snooze / Dismiss) */}
-      <div className="mt-5 pt-3.5 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-3 relative z-10">
+      <div className="mt-5 pt-3.5 border-t border-[#4A1224]/50 flex flex-wrap items-center justify-between gap-3 relative z-10">
         <div className="flex items-center gap-2">
           {/* Primary Action Button */}
           <button
@@ -312,7 +312,7 @@ export default function ProactiveSuggestionCard({
           {/* Secondary "Not Now" Snooze Button */}
           <button
             onClick={handleSnoozeClick}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#0E0610]/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-xs font-semibold transition-all active:scale-95 cursor-pointer"
           >
             <Clock className="w-3.5 h-3.5 text-slate-400" />
             <span>{localize(language, 'Not Now', 'ليس الآن')}</span>

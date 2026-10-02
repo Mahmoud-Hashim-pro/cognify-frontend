@@ -57,6 +57,98 @@ export function triggerHapticAlert(pattern: HapticAlertPattern): boolean {
   }
 }
 
+function normalizeArabicText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/[\u064B-\u065F]/g, ''); // strip Arabic diacritics
+}
+
+const DANGER_KEYWORDS: Record<'ar' | 'en' | 'fr', string[]> = {
+  ar: [
+    'خطر', 'احذر', 'احذري', 'احترس', 'احترسي', 'انتبه', 'انتبهي', 'تحذير', 'توقف',
+    'سلم', 'سلالم', 'درج', 'حفرة', 'سقوط', 'وقوع', 'انحدار', 'حافة', 'هاوية',
+    'عتبة عالية', 'عتبة', 'عربية', 'سيارة', 'شارع', 'طريق سيارات', 'موتوسيكل', 'زجاج مكسور'
+  ],
+  fr: [
+    'danger', 'dangereux', 'dangereuse', 'attention', 'alerte', 'arret', 'arrête', 'stoppez', 'stop',
+    'escalier', 'escaliers', 'marche', 'marches', 'trou', 'chute', 'tomber', 'précipice', 'ravin',
+    'fosse', 'voiture', 'véhicule', 'rue', 'glissant', 'travaux', 'barrière', 'pente raide'
+  ],
+  en: [
+    'danger', 'dangerous', 'hazard', 'hazardous', 'watch out', 'look out', 'careful', 'beware', 'stop',
+    'stairs', 'staircase', 'stairway', 'step down', 'drop', 'drop-off', 'hole', 'cliff', 'edge', 'fall',
+    'pit', 'car', 'cars', 'vehicle', 'vehicles', 'traffic', 'truck', 'street', 'slippery', 'live wire'
+  ],
+};
+
+const CAUTION_KEYWORDS: Record<'ar' | 'en' | 'fr', string[]> = {
+  ar: [
+    'كرسي', 'ترابيزة', 'طاولة', 'كنبة', 'سرير', 'مكتب', 'شنطة', 'حقيبة', 'سلك', 'كابل',
+    'سجادة', 'باب', 'عائق', 'حيطة', 'جدار', 'عمود', 'شخص', 'أشخاص', 'ناس'
+  ],
+  fr: [
+    'prudence', 'ralentir', 'ralentissez', 'chaussée', 'trottoir', 'pente', 'virage serré',
+    'passage encombré', 'passage étroit', 'encombré', 'porte', 'chaise', 'table', 'sac', 'fil',
+    'câble', 'mur', 'personne', 'obstacle'
+  ],
+  en: [
+    'caution', 'slow down', 'chair', 'table', 'desk', 'bag', 'backpack', 'wire', 'cord', 'cable',
+    'door', 'wall', 'pole', 'obstacle', 'person', 'people', 'curb', 'narrow passage', 'blocked'
+  ],
+};
+
+function matchesKeywords(
+  description: string,
+  keywords: string[],
+  lang: 'ar' | 'en' | 'fr'
+): boolean {
+  if (!description) return false;
+  const rawLower = description.toLowerCase();
+
+  if (lang === 'ar') {
+    const normDesc = normalizeArabicText(rawLower);
+    return keywords.some((kw) => {
+      const kwLower = kw.toLowerCase();
+      const normKw = normalizeArabicText(kwLower);
+      return rawLower.includes(kwLower) || normDesc.includes(normKw);
+    });
+  }
+
+  const normLatinDesc = rawLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return keywords.some((kw) => {
+    const kwLower = kw.toLowerCase();
+    const normKw = kwLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return rawLower.includes(kwLower) || normLatinDesc.includes(normKw);
+  });
+}
+
+function getDangerLabel(lang: 'ar' | 'en' | 'fr'): string {
+  switch (lang) {
+    case 'ar':
+      return 'عائق أو انحدار خطير';
+    case 'fr':
+      return 'Obstacle dangereux ou dénivelé';
+    case 'en':
+    default:
+      return 'Hazardous obstacle or drop';
+  }
+}
+
+function getCautionLabel(lang: 'ar' | 'en' | 'fr'): string {
+  switch (lang) {
+    case 'ar':
+      return 'عائق محيطي';
+    case 'fr':
+      return 'Obstacle à proximité';
+    case 'en':
+    default:
+      return 'Nearby object';
+  }
+}
+
 /**
  * Parses vision analysis text into structured navigation guidance
  */
@@ -64,25 +156,17 @@ export function parseNavGuidance(
   description: string,
   lang: 'ar' | 'en' | 'fr' = 'ar'
 ): NavGuidanceResult {
-  const isAr = lang === 'ar';
+  const activeLang = lang === 'ar' || lang === 'fr' || lang === 'en' ? lang : 'en';
 
-  const dangerKeywords = isAr
-    ? ['خطر', 'سلم', 'درج', 'حفرة', 'سقوط', 'احذر', 'عتبة عالية', 'عربية', 'شارع']
-    : ['danger', 'hazard', 'stairs', 'drop', 'step down', 'hole', 'careful', 'watch out', 'car'];
-
-  const cautionKeywords = isAr
-    ? ['كرسي', 'ترابيزة', 'شنطة', 'سلك', 'باب', 'عائق', 'حيطة', 'شخص', 'قدامك']
-    : ['chair', 'table', 'bag', 'wire', 'cord', 'door', 'wall', 'obstacle', 'person', 'path'];
-
-  const hasDanger = dangerKeywords.some((kw) => description.includes(kw));
-  const hasCaution = cautionKeywords.some((kw) => description.includes(kw));
+  const hasDanger = matchesKeywords(description, DANGER_KEYWORDS[activeLang], activeLang);
+  const hasCaution = matchesKeywords(description, CAUTION_KEYWORDS[activeLang], activeLang);
 
   if (hasDanger) {
     return {
       hazardLevel: 'danger',
       spokenInstruction: description,
       hapticPattern: 'danger',
-      obstaclesDetected: [isAr ? 'عائق أو انحدار خطير' : 'Hazardous obstacle or drop'],
+      obstaclesDetected: [getDangerLabel(activeLang)],
     };
   }
 
@@ -91,7 +175,7 @@ export function parseNavGuidance(
       hazardLevel: 'caution',
       spokenInstruction: description,
       hapticPattern: 'warning',
-      obstaclesDetected: [isAr ? 'عائق محيطي' : 'Nearby object'],
+      obstaclesDetected: [getCautionLabel(activeLang)],
     };
   }
 

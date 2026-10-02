@@ -155,8 +155,6 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
       accessibilityMode: profile.accessibilityMode,
       accessibilityPassport: profile.accessibilityPassport,
       visionMemories: profile.visionMemories,
-      headTrackingConfig: profile.headTrackingConfig,
-      vocalTriggers: profile.vocalTriggers,
       contacts: loadContacts(),
       sensoryLogs: sensoryLogs,
       exportedAt: new Date().toISOString(),
@@ -430,13 +428,13 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
   return (
     <div className="flex-1 flex flex-col h-full bg-[#111622] text-white overflow-y-auto p-4 sm:p-6" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <header className="pb-4 border-b border-slate-800 flex items-center justify-between gap-3 mb-6 flex-wrap">
+      <header className="pb-4 border-b border-[#4A1224]/60 flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div className="flex items-center gap-2.5">
           {onNavigateBack && (
             <button
               onClick={onNavigateBack}
               aria-label={t('Back', 'رجوع', 'Retour')}
-              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-[#171E2E] hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/60 transition-all flex items-center justify-center cursor-pointer"
+              className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-[#150917] hover:bg-slate-800 text-slate-200 hover:text-white border border-[#4A1224]/50 transition-all flex items-center justify-center cursor-pointer"
             >
               <ArrowLeft className={`w-5 h-5 ${isAr ? 'rotate-180' : ''}`} />
             </button>
@@ -456,15 +454,26 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           </div>
         </div>
 
-        {onOpenPassport && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {onOpenPassport && (
+            <button
+              onClick={onOpenPassport}
+              className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-950/40 active:scale-95 transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4 text-slate-950" />
+              <span>{t('Accessibility Passport', 'جواز السفر الميسر', 'Passeport Accessibilité')}</span>
+            </button>
+          )}
           <button
-            onClick={onOpenPassport}
-            className="min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-amber-950/40 active:scale-95 transition-all cursor-pointer"
+            onClick={() => {
+              window.location.hash = '#parent';
+            }}
+            className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#4A1224]/60 hover:bg-[#831843]/60 text-[#E5A93C] border border-[#E5A93C]/40 font-bold text-xs flex items-center gap-2 shadow-lg shadow-[#2D0B16]/50 active:scale-95 transition-all cursor-pointer"
           >
-            <ShieldCheck className="w-4 h-4 text-slate-950" />
-            <span>{t('Accessibility Passport', 'جواز السفر الميسر', 'Passeport Accessibilité')}</span>
+            <Heart className="w-4 h-4 text-[#E5A93C]" />
+            <span>{t('Parent Intelligence & Growth', 'بوابة ولي الأمر والنمو الإدراكي', 'Portail Parental & Croissance')}</span>
           </button>
-        )}
+        </div>
       </header>
 
       {/* Main Grid Content */}
@@ -481,7 +490,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             {pendingLinkRequests.map((req) => (
               <div
                 key={req.parentUid}
-                className="p-3.5 rounded-2xl bg-[#171E2E] border border-slate-700/60 flex items-center justify-between gap-3"
+                className="p-3.5 rounded-2xl bg-[#150917] border border-[#4A1224]/50 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
                   <div className="font-bold text-sm text-white truncate">{req.parentName}</div>
@@ -515,7 +524,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
 
         {/* Linked Caregivers */}
         {linkedCaregivers.length > 0 && (
-          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 shadow-lg space-y-3">
+          <div className="p-4 rounded-3xl bg-[#150917] border border-[#4A1224]/50 shadow-lg space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-slate-200 font-bold text-sm">
                 <Users className="w-5 h-5 text-amber-400" />
@@ -530,7 +539,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             {linkedCaregivers.map((c) => (
               <div
                 key={c.uid}
-                className="p-3.5 rounded-2xl bg-[#111622] border border-slate-800 flex items-center justify-between gap-3"
+                className="p-3.5 rounded-2xl bg-[#111622] border border-[#4A1224]/60 flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
                   <div className="font-bold text-sm text-white truncate">{c.name}</div>
@@ -553,7 +562,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         {/* Status Telemetry Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
           {/* Vision Telemetry */}
-          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#150917] border border-[#4A1224]/50 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Eye className="w-6 h-6" />
             </div>
@@ -563,19 +572,8 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             </div>
           </div>
 
-          {/* Euphonia Telemetry */}
-          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-              <Mic className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="text-[11px] text-slate-400 font-bold uppercase">{t('Vocal Triggers', 'محفزات النطق (إيفونيا)')}</div>
-              <div className="text-xl font-black text-white">{profile.vocalTriggers?.length || 3} {t('Tuned', 'مضبوط')}</div>
-            </div>
-          </div>
-
           {/* Sensory Regulation Telemetry */}
-          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#150917] border border-[#4A1224]/50 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
               <Activity className="w-6 h-6" />
             </div>
@@ -591,7 +589,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           </div>
 
           {/* Contacts Telemetry */}
-          <div className="p-4 rounded-3xl bg-[#171E2E] border border-slate-700/60 flex items-center gap-3.5 shadow-lg">
+          <div className="p-4 rounded-3xl bg-[#150917] border border-[#4A1224]/50 flex items-center gap-3.5 shadow-lg">
             <div className="w-11 h-11 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
               <Phone className="w-6 h-6" />
             </div>
@@ -603,8 +601,8 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* ── CLINICAL ABA & OT SENSORY PATTERN ANALYTICS ── */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-5 shadow-2xl">
-          <div className="flex items-center justify-between flex-wrap gap-2 border-b border-slate-800 pb-3">
+        <div className="p-5 sm:p-6 rounded-3xl bg-[#150917] border border-[#4A1224]/50 space-y-5 shadow-2xl">
+          <div className="flex items-center justify-between flex-wrap gap-2 border-b border-[#4A1224]/60 pb-3">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-md">
                 <BarChart2 className="w-5 h-5" />
@@ -654,7 +652,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           {/* Distribution & Triggers Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Time of Day Distribution */}
-            <div className="p-4 rounded-2xl bg-[#111622] border border-slate-800 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#111622] border border-[#4A1224]/60 space-y-3">
               <h4 className="font-bold text-xs text-slate-300 flex items-center justify-between">
                 <span>{t('Meltdown Time-of-Day Distribution:', 'توزيع النوبات خلال ساعات اليوم:')}</span>
                 <span className="text-[10px] text-slate-400 font-normal">{patternAnalysis.totalMeltdowns} {t('Total', 'إجمالي')}</span>
@@ -674,7 +672,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
                         <span>{item.label}</span>
                         <span className="font-mono font-bold text-slate-200">{item.count} ({pct}%)</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden">
                         <div className={`h-full ${item.color} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
                       </div>
                     </div>
@@ -684,7 +682,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
             </div>
 
             {/* Top Triggers */}
-            <div className="p-4 rounded-2xl bg-[#111622] border border-slate-800 space-y-3">
+            <div className="p-4 rounded-2xl bg-[#111622] border border-[#4A1224]/60 space-y-3">
               <h4 className="font-bold text-xs text-slate-300 flex items-center justify-between">
                 <span>{t('Most Frequent Sensory Triggers:', 'أبرز المثيرات الحسية المتكررة:')}</span>
                 <span className="text-[10px] text-slate-400 font-normal">{patternAnalysis.topTriggers.length} {t('Identified', 'محددة')}</span>
@@ -702,7 +700,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
                         <span className="truncate">{tr.trigger}</span>
                         <span className="font-mono font-bold text-rose-300 shrink-0">{tr.count}x ({tr.percentage}%)</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-[#150917] rounded-full overflow-hidden">
                         <div className="h-full bg-rose-500 rounded-full transition-all duration-500" style={{ width: `${tr.percentage}%` }} />
                       </div>
                     </div>
@@ -714,7 +712,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* Safety & SOS Testing Section */}
-        <div className="p-5 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-4 shadow-xl">
+        <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/50 space-y-4 shadow-xl">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h3 className="font-black text-base flex items-center gap-2 text-white">
@@ -740,7 +738,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
           {/* Registered Emergency Contacts List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-2">
             {contacts.map((c) => (
-              <div key={c.id} className="p-3.5 rounded-2xl bg-[#111622] border border-slate-800 flex items-center justify-between">
+              <div key={c.id} className="p-3.5 rounded-2xl bg-[#111622] border border-[#4A1224]/60 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-xs text-white flex items-center gap-1.5">
                     <span>{isAr ? (c.nameAr || c.nameEn) : c.nameEn}</span>
@@ -764,7 +762,7 @@ export default function CaregiverHub({ profile, onNavigateBack, setProfile, onOp
         </div>
 
         {/* Configuration Backup & Migration */}
-        <div className="p-5 rounded-3xl bg-[#171E2E] border border-slate-700/60 space-y-4 shadow-xl">
+        <div className="p-5 rounded-3xl bg-[#150917] border border-[#4A1224]/50 space-y-4 shadow-xl">
           <div>
             <h3 className="font-black text-base flex items-center gap-2 text-white">
               <FileJson className="w-5 h-5 text-amber-400" />

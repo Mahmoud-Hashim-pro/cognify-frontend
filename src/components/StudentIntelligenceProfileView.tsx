@@ -10,7 +10,7 @@
  * - Recent Progress & Mastery Deltas
  * - Ethical Non-IQ Guardrail Callout
  *
- * Aesthetic: Deep obsidian canvas (#0A0C14), glassmorphic slate cards (#121524),
+ * Aesthetic: Deep obsidian canvas (#150917), glassmorphic slate cards (#0E0610),
  * ambient glow, responsive RTL/LTR bilingual support.
  */
 
@@ -161,21 +161,21 @@ export default function StudentIntelligenceProfileView({
 
   return (
     <div
-      className="flex-1 flex flex-col bg-[#0A0C14] text-slate-100 relative overflow-y-auto font-sans custom-scrollbar min-h-screen"
+      className="flex-1 flex flex-col bg-[#080409] text-slate-100 relative overflow-y-auto font-sans custom-scrollbar min-h-screen"
       dir={isAr ? 'rtl' : 'ltr'}
     >
       {/* Ambient Glow Lighting Orbs */}
-      <div className="absolute top-0 left-1/4 w-[420px] h-[420px] bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[420px] h-[420px] bg-[#4A1224]/30 rounded-full blur-[128px] pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 left-1/3 w-[360px] h-[360px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-20 bg-[#0A0C14]/80 backdrop-blur-xl border-b border-slate-800/80 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-20 bg-[#080409]/80 backdrop-blur-xl border-b border-[#4A1224]/60 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {onMenuClick && (
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-white"
+              className="lg:hidden p-2 rounded-xl bg-[#0E0610]/70 border border-[#4A1224]/60 text-slate-400 hover:text-white"
               aria-label="Toggle menu"
             >
               <Menu className="w-5 h-5" />
@@ -184,14 +184,14 @@ export default function StudentIntelligenceProfileView({
           {onNavigateBack && (
             <button
               onClick={onNavigateBack}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 text-xs font-medium transition-all"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0E0610]/70 border border-[#4A1224]/60 text-slate-300 hover:text-white hover:border-[#4A1224]/50 text-xs font-medium transition-all"
             >
               <ArrowIcon className="w-4 h-4" />
               <span>{localize(profile.language, 'Back', 'رجوع')}</span>
             </button>
           )}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-[#E5A93C]/20">
               <Brain className="w-5 h-5" />
             </div>
             <div>
@@ -203,8 +203,10 @@ export default function StudentIntelligenceProfileView({
                     'الملف المعرفي الذكي'
                   )}
                 </h1>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-                  {learningProfile.overallMasteryPercentage}% {localize(profile.language, 'Mastery', 'إتقان')}
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-[#4A1224]/30 border border-[#E5A93C]/30 text-[#E5A93C]">
+                  {learningProfile.isAssessed
+                    ? `${learningProfile.overallMasteryPercentage}% ${localize(profile.language, 'Mastery', 'إتقان')}`
+                    : localize(profile.language, 'Not Assessed Yet', 'لم يبدأ التقييم بعد')}
                 </span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">
@@ -222,10 +224,10 @@ export default function StudentIntelligenceProfileView({
           <button
             onClick={() => refresh()}
             disabled={loading}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0E0610]/90 border border-[#4A1224]/60 hover:border-[#4A1224]/50 text-xs text-slate-300 hover:text-white transition-all active:scale-95 disabled:opacity-50"
             title={localize(profile.language, 'Refresh Profile', 'تحديث البيانات')}
           >
-            <RotateCcw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-cyan-400' : ''}`} />
+            <RotateCcw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#E5A93C]' : ''}`} />
             <span className="hidden sm:inline">
               {localize(profile.language, 'Sync', 'مزامنة')}
             </span>
@@ -237,7 +239,7 @@ export default function StudentIntelligenceProfileView({
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 relative z-10">
         {/* Quick Stats Overview Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+          <div className="p-4 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl">
             <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">
               {localize(profile.language, 'Mastered Concepts', 'المفاهيم المتقنة')}
             </div>
@@ -249,16 +251,16 @@ export default function StudentIntelligenceProfileView({
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+          <div className="p-4 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl">
             <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">
               {localize(profile.language, 'Under Practice', 'قيد التدريب')}
             </div>
-            <div className="text-2xl font-bold text-cyan-400">
+            <div className="text-2xl font-bold text-[#E5A93C]">
               {learningProfile.developingConcepts?.length || 0}
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+          <div className="p-4 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl">
             <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">
               {localize(profile.language, 'Retention Reviews Due', 'مراجعات التثبيت المستحقة')}
             </div>
@@ -267,12 +269,12 @@ export default function StudentIntelligenceProfileView({
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+          <div className="p-4 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl">
             <div className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-1">
               {localize(profile.language, 'Overall Confidence', 'معدل الثقة العام')}
             </div>
-            <div className="text-2xl font-bold text-indigo-400">
-              {learningProfile.overallConfidencePercentage}%
+            <div className="text-2xl font-bold text-[#E5A93C]">
+              {learningProfile.isAssessed ? `${learningProfile.overallConfidencePercentage}%` : '—'}
             </div>
           </div>
         </div>
@@ -324,32 +326,16 @@ export default function StudentIntelligenceProfileView({
 
         {/* Section 1: Current Focus & Prerequisite Diagnosis */}
         {learningProfile.currentFocus && (
-          <section className="p-6 rounded-3xl bg-gradient-to-br from-[#13192f]/95 to-[#121524]/90 border border-slate-800/90 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-            <div className="absolute -top-12 -right-12 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          <section className="p-6 rounded-3xl bg-gradient-to-br from-[#13192f]/95 to-[#0E0610]/90 border border-[#4A1224]/70 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#4A1224]/30 rounded-full blur-3xl pointer-events-none" />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-2 max-w-2xl">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]">
                     <Target className="w-3.5 h-3.5" />
                     <span>{localize(profile.language, 'Current Focus', 'محور التركيز الحالي')}</span>
                   </div>
 
-                  {focusRationale && (
-                    <button
-                      type="button"
-                      onClick={() => setShowFocusExplain(!showFocusExplain)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all active:scale-95 border ${
-                        showFocusExplain
-                          ? 'bg-cyan-500/25 border-cyan-400 text-cyan-200 shadow-sm shadow-cyan-500/20'
-                          : 'bg-slate-900/80 hover:bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
-                      }`}
-                      title={localize(profile.language, 'Pedagogical reasoning behind this recommendation', 'التعليل التربوي لاختيار هذا المفهوم')}
-                    >
-                      <Sparkles className="w-3 h-3 text-amber-400" />
-                      <span>{localize(profile.language, 'Why this focus?', 'لماذا هذا التركيز؟')}</span>
-                      <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showFocusExplain ? 'rotate-180 text-cyan-300' : 'text-slate-400'}`} />
-                    </button>
-                  )}
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold text-white">
                   {isAr
@@ -364,11 +350,11 @@ export default function StudentIntelligenceProfileView({
               </div>
 
               <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
-                <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-800">
+                <div className="p-3 rounded-2xl bg-[#0E0610]/90 border border-[#4A1224]/60">
                   <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">
                     {localize(profile.language, 'Adaptive Strategy', 'الاستراتيجية الموجهة')}
                   </div>
-                  <div className="text-xs font-semibold text-cyan-300 flex items-center gap-1.5">
+                  <div className="text-xs font-semibold text-[#E5A93C] flex items-center gap-1.5">
                     <Zap className="w-3.5 h-3.5 text-amber-400" />
                     {isAr
                       ? STRATEGY_METADATA[learningProfile.currentFocus.recommendedStrategy]?.nameAr ||
@@ -379,71 +365,6 @@ export default function StudentIntelligenceProfileView({
                 </div>
               </div>
             </div>
-
-            {/* Explainable Intelligence Rationale Panel */}
-            {showFocusExplain && focusRationale && (
-              <div className="mt-4 p-5 rounded-2xl bg-[#0d111f]/95 border border-cyan-500/40 backdrop-blur-xl shadow-xl space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                      <Sparkles className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider">
-                      {localize(profile.language, 'Explainable Intelligence Rationale', 'التعليل التربوي لاختيار هذا التركيز')}
-                    </span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                    focusRationale.isPrerequisiteGap
-                      ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-                      : 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                  }`}>
-                    {focusRationale.isPrerequisiteGap
-                      ? localize(profile.language, 'Prerequisite Root Gap', 'فجوة متطلب تأسيسي')
-                      : localize(profile.language, 'Direct Concept Mastery', 'تثبيت مباشر للمفهوم')}
-                  </span>
-                </div>
-
-                {/* Prerequisite Chain visualization if gap exists */}
-                {focusRationale.isPrerequisiteGap && focusRationale.prerequisiteChain && (
-                  <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2 text-xs flex-wrap">
-                    <span className="text-slate-400 font-medium">
-                      {localize(profile.language, 'Dependency Chain:', 'مسار التبعية:')}
-                    </span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {focusRationale.prerequisiteChain.map((cid, cidx) => {
-                        const isLast = cidx === focusRationale.prerequisiteChain!.length - 1;
-                        const isRoot = cidx === 0;
-                        return (
-                          <React.Fragment key={cid}>
-                            <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold border ${
-                              isRoot
-                                ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
-                                : isLast
-                                ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
-                                : 'bg-slate-800 border-slate-700 text-slate-300'
-                            }`}>
-                              {cid}
-                            </span>
-                            {!isLast && <span className="text-slate-500 text-xs">➔</span>}
-                          </React.Fragment>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                  {isAr ? focusRationale.rationaleAr : focusRationale.rationaleEn}
-                </p>
-
-                <div className="text-[11px] text-slate-400 flex items-center gap-1.5 pt-1 border-t border-slate-800/60">
-                  <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                  <span>
-                    {isAr ? focusRationale.diagnosisSummaryAr : focusRationale.diagnosisSummaryEn}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {/* Prerequisite Alert Callout */}
             {learningProfile.currentFocus.prerequisiteToReview && (
@@ -473,8 +394,8 @@ export default function StudentIntelligenceProfileView({
         {/* Section: Strengths (مكامن القوة) & Current Difficulties (الصعوبات الحالية) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Card A: Strengths (مكامن القوة ونقاط التميز) */}
-          <section className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800/70 pb-3">
+          <section className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#4A1224]/60/70 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <Award className="w-4 h-4" />
@@ -494,7 +415,7 @@ export default function StudentIntelligenceProfileView({
             </div>
 
             {(learningProfile.masteredConcepts || []).length === 0 ? (
-              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center space-y-2">
+              <div className="p-6 rounded-2xl bg-[#150917]/40 border border-[#4A1224]/50 text-center space-y-2">
                 <Brain className="w-8 h-8 text-slate-600 mx-auto" />
                 <div className="text-xs font-semibold text-slate-300">
                   {localize(profile.language, 'Calibrating Strengths', 'جاري تحديد مكامن القوة')}
@@ -512,15 +433,12 @@ export default function StudentIntelligenceProfileView({
                 {learningProfile.masteredConcepts.map((item) => (
                   <div
                     key={item.conceptId}
-                    className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/30 transition-all space-y-2"
+                    className="p-4 rounded-2xl bg-[#0E0610]/70 border border-[#4A1224]/60 hover:border-emerald-500/30 transition-all space-y-2"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-xs font-bold text-white">
                           {isAr ? item.conceptNameAr : item.conceptNameEn}
-                        </div>
-                        <div className="text-[10px] text-slate-400 capitalize">
-                          {item.conceptId}
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -535,7 +453,7 @@ export default function StudentIntelligenceProfileView({
                     </div>
 
                     {/* Mini Progress Bar */}
-                    <div className="w-full h-1.5 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
+                    <div className="w-full h-1.5 rounded-full bg-[#080409] overflow-hidden border border-[#4A1224]/60">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"
                         style={{ width: `${item.masteryPercentage}%` }}
@@ -557,8 +475,8 @@ export default function StudentIntelligenceProfileView({
           </section>
 
           {/* Card B: Current Difficulties (الصعوبات الحالية ومؤشرات الإجهاد) */}
-          <section className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800/70 pb-3">
+          <section className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#4A1224]/60/70 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                   <AlertTriangle className="w-4 h-4" />
@@ -578,7 +496,7 @@ export default function StudentIntelligenceProfileView({
             </div>
 
             {(learningProfile.strugglingConcepts || []).length === 0 ? (
-              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center space-y-2">
+              <div className="p-6 rounded-2xl bg-[#150917]/40 border border-[#4A1224]/50 text-center space-y-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
                 <div className="text-xs font-semibold text-slate-200">
                   {localize(profile.language, 'No Active Struggle Detected', 'لا توجد صعوبات معرفية نشطة')}
@@ -596,20 +514,17 @@ export default function StudentIntelligenceProfileView({
                 {learningProfile.strugglingConcepts.map((item) => (
                   <div
                     key={item.conceptId}
-                    className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-500/30 transition-all space-y-2"
+                    className="p-4 rounded-2xl bg-[#0E0610]/70 border border-[#4A1224]/60 hover:border-amber-500/30 transition-all space-y-2"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-xs font-bold text-white">
                           {isAr ? item.conceptNameAr : item.conceptNameEn}
                         </div>
-                        <div className="text-[10px] text-slate-400 capitalize">
-                          {item.conceptId}
-                        </div>
                       </div>
                       <div className="flex items-center gap-1.5">
                         {item.commonError && (
-                          <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono">
+                          <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-rose-500/15 border border-rose-500/30 text-rose-300">
                             {item.commonError}
                           </span>
                         )}
@@ -620,7 +535,7 @@ export default function StudentIntelligenceProfileView({
                     </div>
 
                     {/* Mini Progress Bar */}
-                    <div className="w-full h-1.5 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
+                    <div className="w-full h-1.5 rounded-full bg-[#080409] overflow-hidden border border-[#4A1224]/60">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-amber-500 to-rose-500"
                         style={{ width: `${Math.max(10, item.masteryPercentage)}%` }}
@@ -632,13 +547,13 @@ export default function StudentIntelligenceProfileView({
                         <AlertTriangle className="w-3 h-3 text-amber-400" />
                         {localize(
                           profile.language,
-                          `Latency: ${item.latencyProfile}`,
-                          `زمن الاستجابة: ${item.latencyProfile === 'high' ? 'مرتفع (>15ث)' : 'متوسط'}`
+                          item.latencyProfile === 'high' ? 'Needs more practice' : 'In progress',
+                          item.latencyProfile === 'high' ? 'يحتاج تدريباً أكثر' : 'قيد التدريب'
                         )}
                       </span>
                       {item.bestStrategy && (
-                        <span className="text-cyan-300 font-medium">
-                          {localize(profile.language, 'Remedy:', 'العلاج:')} {STRATEGY_METADATA[item.bestStrategy]?.nameEn || item.bestStrategy}
+                        <span className="text-[#E5A93C] font-medium">
+                          {localize(profile.language, 'Suggested Style:', 'الأسلوب المقترح:')} {isAr ? (STRATEGY_METADATA[item.bestStrategy]?.nameAr || item.bestStrategy) : (STRATEGY_METADATA[item.bestStrategy]?.nameEn || item.bestStrategy)}
                         </span>
                       )}
                     </div>
@@ -650,8 +565,8 @@ export default function StudentIntelligenceProfileView({
         </div>
 
         {/* Section: Common Mistakes & Actionable Remediation Tips (الأخطاء الشائعة المتكررة) */}
-        <section className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800/70 pb-3">
+        <section className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-[#4A1224]/60/70 pb-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                 <Lightbulb className="w-4 h-4" />
@@ -673,13 +588,13 @@ export default function StudentIntelligenceProfileView({
                 </p>
               </div>
             </div>
-            <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+            <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-indigo-500/10 border border-[#4A1224]/60 text-indigo-300">
               {commonMistakes.length} {localize(profile.language, 'patterns diagnosed', 'أنماط مشخصة')}
             </span>
           </div>
 
           {commonMistakes.length === 0 ? (
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center space-y-2">
+            <div className="p-6 rounded-2xl bg-[#150917]/40 border border-[#4A1224]/50 text-center space-y-2">
               <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
               <div className="text-xs font-semibold text-slate-200">
                 {localize(profile.language, 'Clean Execution History', 'سجل أخطاء نظيف ومثالي')}
@@ -697,7 +612,7 @@ export default function StudentIntelligenceProfileView({
               {commonMistakes.map((mistake) => (
                 <div
                   key={mistake.id}
-                  className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition-all space-y-3 flex flex-col justify-between"
+                  className="p-5 rounded-2xl bg-[#150917]/70 border border-[#4A1224]/60 hover:border-[#4A1224]/50 transition-all space-y-3 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
@@ -705,9 +620,6 @@ export default function StudentIntelligenceProfileView({
                         <div className="text-sm font-bold text-white">
                           {isAr ? mistake.nameAr : mistake.nameEn}
                         </div>
-                        <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-300">
-                          {mistake.id}
-                        </span>
                       </div>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 border border-amber-500/30 text-amber-300 shrink-0">
                         {mistake.count} {localize(profile.language, 'times', 'مرات')}
@@ -726,9 +638,9 @@ export default function StudentIntelligenceProfileView({
                         {mistake.conceptsInvolved.map((cid) => (
                           <span
                             key={cid}
-                            className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300"
+                            className="px-2 py-0.5 rounded-lg bg-slate-800 text-[10px] text-slate-300 font-medium capitalize"
                           >
-                            {cid}
+                            {cid.replace(/_/g, ' ')}
                           </span>
                         ))}
                       </div>
@@ -736,8 +648,8 @@ export default function StudentIntelligenceProfileView({
                   </div>
 
                   {/* Actionable Remediation Tip Callout */}
-                  <div className="p-3.5 rounded-xl bg-gradient-to-r from-cyan-950/40 via-indigo-950/30 to-slate-900/60 border border-cyan-500/30 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-cyan-300">
+                  <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-400/40 via-indigo-950/30 to-slate-900/60 border border-[#E5A93C]/30 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#E5A93C]">
                       <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                       <span>{localize(profile.language, 'Actionable Remediation Tip', 'نصيحة العلاج والوقاية')}</span>
                     </div>
@@ -755,7 +667,7 @@ export default function StudentIntelligenceProfileView({
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Layers className="w-5 h-5 text-cyan-400" />
+              <Layers className="w-5 h-5 text-[#E5A93C]" />
               <h2 className="text-lg font-bold text-white">
                 {localize(profile.language, 'Concept Mastery Map', 'خريطة إتقان المفاهيم')}
               </h2>
@@ -767,7 +679,7 @@ export default function StudentIntelligenceProfileView({
           </div>
 
           {allConceptSummaries.length === 0 ? (
-            <div className="p-8 rounded-3xl bg-[#121524]/90 border border-slate-800/80 text-center space-y-3">
+            <div className="p-8 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 text-center space-y-3">
               <Brain className="w-12 h-12 text-slate-600 mx-auto" />
               <div className="text-sm font-semibold text-slate-300">
                 {localize(
@@ -793,27 +705,24 @@ export default function StudentIntelligenceProfileView({
                 const barColor = isMastered
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
                   : isPracticing
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500'
+                  ? 'bg-gradient-to-r from-amber-400 to-blue-500'
                   : 'bg-gradient-to-r from-amber-500 to-orange-500';
 
                 const statusBadgeColor = isMastered
                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                   : isPracticing
-                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
+                  ? 'bg-[#4A1224]/30 border-[#E5A93C]/30 text-[#E5A93C]'
                   : 'bg-amber-500/10 border-amber-500/30 text-amber-400';
 
                 return (
                   <div
                     key={item.conceptId}
-                    className="p-5 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl hover:border-slate-700/80 transition-all space-y-3"
+                    className="p-5 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl hover:border-[#4A1224]/60 transition-all space-y-3"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-sm font-bold text-white">
                           {isAr ? item.conceptNameAr : item.conceptNameEn}
-                        </div>
-                        <div className="text-[11px] text-slate-400 capitalize">
-                          {item.conceptId}
                         </div>
                       </div>
                       <span
@@ -835,7 +744,7 @@ export default function StudentIntelligenceProfileView({
                         </span>
                         <span className="text-white">{item.masteryPercentage}%</span>
                       </div>
-                      <div className="w-full h-2.5 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
+                      <div className="w-full h-2.5 rounded-full bg-[#150917] overflow-hidden border border-[#4A1224]/60">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${barColor}`}
                           style={{ width: `${Math.min(100, Math.max(0, item.masteryPercentage))}%` }}
@@ -844,7 +753,7 @@ export default function StudentIntelligenceProfileView({
                     </div>
 
                     {/* Secondary Metrics */}
-                    <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
+                    <div className="pt-2 border-t border-[#4A1224]/50 flex items-center justify-between text-[11px] text-slate-400">
                       <span>
                         {localize(profile.language, 'Confidence', 'الثقة')}:{' '}
                         <strong className="text-slate-200">{item.confidencePercentage}%</strong>
@@ -864,7 +773,7 @@ export default function StudentIntelligenceProfileView({
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-indigo-400" />
+              <Zap className="w-5 h-5 text-[#E5A93C]" />
               <h2 className="text-lg font-bold text-white">
                 {localize(
                   profile.language,
@@ -890,16 +799,16 @@ export default function StudentIntelligenceProfileView({
               return (
                 <div
                   key={item.strategy}
-                  className="p-5 rounded-2xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl hover:border-slate-700/80 transition-all flex flex-col justify-between space-y-3"
+                  className="p-5 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl hover:border-[#4A1224]/60 transition-all flex flex-col justify-between space-y-3"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-[#E5A93C]">
                         <IconComponent className="w-4 h-4" />
                       </div>
 
                       {item.isCalibrating ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800/80 border border-slate-700 text-slate-400">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#150917]/80 border border-[#4A1224]/50 text-slate-400">
                           {localize(
                             profile.language,
                             `Calibrating (${item.attemptsCount}/3)`,
@@ -911,7 +820,7 @@ export default function StudentIntelligenceProfileView({
                           {localize(profile.language, 'Optimal Strategy', 'الاستراتيجية المثلى')}
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 border border-[#4A1224]/60 text-indigo-300">
                           #{idx + 1}
                         </span>
                       )}
@@ -926,14 +835,14 @@ export default function StudentIntelligenceProfileView({
                   </div>
 
                   {/* Score Progress */}
-                  <div className="space-y-1.5 pt-2 border-t border-slate-800/60">
+                  <div className="space-y-1.5 pt-2 border-t border-[#4A1224]/50">
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-400 text-[11px]">
                         {localize(profile.language, 'Strategy Efficacy', 'فاعلية الاستراتيجية')}
                       </span>
                       <span className="text-slate-200">{item.scorePercentage}%</span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
+                    <div className="w-full h-2 rounded-full bg-[#150917] overflow-hidden border border-[#4A1224]/60">
                       <div
                         className="h-full rounded-full bg-indigo-500 transition-all duration-500"
                         style={{ width: `${Math.min(100, Math.max(0, item.scorePercentage))}%` }}
@@ -941,11 +850,6 @@ export default function StudentIntelligenceProfileView({
                     </div>
                     <div className="text-[10px] text-slate-400 mt-1 flex justify-between items-center">
                       <span>{isAr ? item.sampleSizeNoteAr : item.sampleSizeNoteEn}</span>
-                      {calibratedStrategiesMap[item.strategy]?.calibrationStage === 'calibrated' && (
-                        <span className="text-cyan-400 font-medium text-[10px]">
-                          Wilson: {Math.round((calibratedStrategiesMap[item.strategy]?.wilsonLowerBound || 0) * 100)}%
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -953,19 +857,21 @@ export default function StudentIntelligenceProfileView({
             })}
           </div>
 
-          {/* Anti-Overclaiming Situational Efficacy Disclaimer */}
-          <div className="p-4 rounded-2xl bg-[#0e1222] border border-cyan-500/20 text-xs text-slate-300 flex items-start gap-3">
-            <Brain className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+          {/* Adaptive Learning Note */}
+          <div className="p-4 rounded-2xl bg-[#0E0610]/95 border border-[#4A1224]/60 text-xs text-slate-300 flex items-start gap-3">
+            <Brain className="w-5 h-5 text-[#E5A93C] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <div className="font-bold text-cyan-300 text-xs">
+              <div className="font-bold text-[#E5A93C] text-xs">
                 {localize(
                   profile.language,
-                  'Scientific Anti-Overclaiming Principle (Situational Strategy Efficacy)',
-                  'مبدأ الموضوعية العلمية (فاعلية الأساليب السياقية)'
+                  'Personalized Adaptive Learning',
+                  'التعلم التكيفي المخصص لك'
                 )}
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                {isAr ? ANTI_OVERCLAIMING_DISCLAIMER_AR : ANTI_OVERCLAIMING_DISCLAIMER_EN}
+                {isAr
+                  ? 'يتكيف كوجنيفاي تلقائيًا مع أسلوب التعلم الذي يناسبك في كل موضوع لضمان فهم المفاهيم بأسرع وقت وأعلى دقة.'
+                  : 'Cognify automatically adapts its explanation style to whatever helps you understand each subject best.'}
               </p>
             </div>
           </div>
@@ -974,7 +880,7 @@ export default function StudentIntelligenceProfileView({
         {/* Section 4: Retention Health & Recent Improvement */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Spaced Retention Alerts */}
-          <section className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
+          <section className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-amber-400" />
@@ -992,7 +898,7 @@ export default function StudentIntelligenceProfileView({
             </div>
 
             {(learningProfile.retentionAlerts || []).length === 0 ? (
-              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center space-y-2">
+              <div className="p-6 rounded-2xl bg-[#150917]/40 border border-[#4A1224]/50 text-center space-y-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
                 <div className="text-xs font-semibold text-slate-200">
                   {localize(
@@ -1014,7 +920,7 @@ export default function StudentIntelligenceProfileView({
                 {learningProfile.retentionAlerts.map((alert) => (
                   <div
                     key={alert.conceptId}
-                    className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between gap-3"
+                    className="p-3.5 rounded-xl bg-[#0E0610]/70 border border-[#4A1224]/60 flex items-center justify-between gap-3"
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-200">
@@ -1034,7 +940,7 @@ export default function StudentIntelligenceProfileView({
           </section>
 
           {/* Recent Mastery Gains */}
-          <section className="p-6 rounded-3xl bg-[#121524]/90 border border-slate-800/80 backdrop-blur-xl shadow-xl space-y-4">
+          <section className="p-6 rounded-3xl bg-[#0E0610]/95 border border-[#4A1224]/60 backdrop-blur-xl shadow-xl space-y-4">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
               <h2 className="text-base font-bold text-white">
@@ -1047,7 +953,7 @@ export default function StudentIntelligenceProfileView({
             </div>
 
             {(learningProfile.recentProgress || []).length === 0 ? (
-              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center space-y-2">
+              <div className="p-6 rounded-2xl bg-[#150917]/40 border border-[#4A1224]/50 text-center space-y-2">
                 <Brain className="w-8 h-8 text-slate-600 mx-auto" />
                 <div className="text-xs font-semibold text-slate-300">
                   {localize(
@@ -1069,7 +975,7 @@ export default function StudentIntelligenceProfileView({
                 {learningProfile.recentProgress.map((gain) => (
                   <div
                     key={gain.conceptId}
-                    className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between"
+                    className="p-3.5 rounded-xl bg-[#0E0610]/70 border border-[#4A1224]/60 flex items-center justify-between"
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-200">
@@ -1090,8 +996,8 @@ export default function StudentIntelligenceProfileView({
         </div>
 
         {/* Section 5: Ethical Non-IQ Guardrail Callout */}
-        <section className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl flex items-start gap-3 text-slate-400 text-xs leading-relaxed">
-          <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+        <section className="p-5 rounded-2xl bg-[#0E0610]/70 border border-[#4A1224]/60 backdrop-blur-xl flex items-start gap-3 text-slate-400 text-xs leading-relaxed">
+          <ShieldCheck className="w-5 h-5 text-[#E5A93C] shrink-0 mt-0.5" />
           <div>
             <div className="font-semibold text-slate-300 mb-1">
               {localize(

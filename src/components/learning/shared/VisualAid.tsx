@@ -16,9 +16,9 @@ export const VisualAid: React.FC<VisualAidProps> = ({
   const { type, emoji = '🍎', count = 3, secondCount = 0, steps = [], numberLineRange = [0, 10], highlightPoint } = data;
 
   return (
-    <div className={`p-4 rounded-2xl bg-slate-900/90 border-2 border-indigo-500/30 shadow-xl backdrop-blur-md ${className}`}>
+    <div className={`p-4 rounded-2xl bg-[#0E0610]/95 border-2 border-[#4A1224]/60 shadow-xl backdrop-blur-md ${className}`}>
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3 text-xs font-black text-indigo-400">
+      <div className="flex items-center gap-2 mb-3 text-xs font-black text-[#E5A93C]">
         <Eye className="w-4 h-4" />
         <span>{isArabic ? 'المساعد البصري التوضيحي:' : 'Visual Learning Aid:'}</span>
       </div>
@@ -28,7 +28,7 @@ export const VisualAid: React.FC<VisualAidProps> = ({
         <div className="flex flex-col items-center gap-4 py-2">
           <div className="flex items-center justify-center gap-3 flex-wrap text-2xl sm:text-3xl">
             {/* First group */}
-            <div className="flex items-center gap-1.5 p-3 rounded-xl bg-slate-950/70 border border-slate-800 shadow-inner">
+            <div className="flex items-center gap-1.5 p-3 rounded-xl bg-[#080409]/70 border border-[#4A1224]/60 shadow-inner">
               {Array.from({ length: Math.min(count, 15) }).map((_, i) => (
                 <span key={`c1-${i}`} className="animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
                   {emoji}
@@ -42,7 +42,7 @@ export const VisualAid: React.FC<VisualAidProps> = ({
               <>
                 <span className="text-2xl font-black text-amber-400">+</span>
                 {/* Second group */}
-                <div className="flex items-center gap-1.5 p-3 rounded-xl bg-slate-950/70 border border-slate-800 shadow-inner">
+                <div className="flex items-center gap-1.5 p-3 rounded-xl bg-[#080409]/70 border border-[#4A1224]/60 shadow-inner">
                   {Array.from({ length: Math.min(secondCount, 15) }).map((_, i) => (
                     <span key={`c2-${i}`} className="animate-pulse" style={{ animationDelay: `${(count + i) * 100}ms` }}>
                       {emoji}
@@ -109,9 +109,9 @@ export const VisualAid: React.FC<VisualAidProps> = ({
           {steps.map((step, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800"
+              className="flex items-center gap-3 p-2.5 rounded-xl bg-[#080409]/60 border border-[#4A1224]/60"
             >
-              <div className="w-6 h-6 rounded-full bg-indigo-500/30 text-indigo-400 font-black text-xs flex items-center justify-center shrink-0">
+              <div className="w-6 h-6 rounded-full bg-indigo-500/30 text-[#E5A93C] font-black text-xs flex items-center justify-center shrink-0">
                 {idx + 1}
               </div>
               <span className="text-xs text-slate-200 font-medium leading-relaxed">

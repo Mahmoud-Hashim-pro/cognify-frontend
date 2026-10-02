@@ -172,7 +172,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-slate-900/60 rounded-3xl border border-slate-800">
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0E0610]/70 rounded-3xl border border-[#4A1224]/60">
           <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-bold text-sm">
             {isArabic ? 'جاري تجهيز تمرين الكتابة والإملاء...' : 'Preparing a fun writing activity for you...'}
@@ -180,7 +180,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
         </div>
       ) : currentExercise ? (
         <div className="flex flex-col gap-5">
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-orange-500/30 shadow-2xl backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0610]/95 border-2 border-orange-500/30 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-3 mb-4">
               <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 font-black text-xs flex items-center gap-1.5 border border-orange-500/30">
                 <Edit3 className="w-3.5 h-3.5" />
@@ -215,7 +215,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
 
             {/* Interactive Letter / Word Builder Tray */}
             {((currentExercise.letterTiles && currentExercise.letterTiles.length > 0) || assembledTiles.length > 0) && (
-              <div className="p-4 rounded-2xl bg-slate-950/90 border border-orange-500/40 my-3">
+              <div className="p-4 rounded-2xl bg-[#080409]/90 border border-orange-500/40 my-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-black text-orange-400">
                     {isArabic ? 'لوحة تركيب الحروف والكلمات:' : 'Word / Letter Builder:'}
@@ -232,7 +232,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
                 </div>
 
                 {/* Assembled Word Tray */}
-                <div className="min-h-[52px] p-2.5 rounded-xl bg-slate-900 border-2 border-dashed border-slate-700 flex items-center justify-center gap-2 flex-wrap mb-3">
+                <div className="min-h-[52px] p-2.5 rounded-xl bg-[#150917] border-2 border-dashed border-[#4A1224]/50 flex items-center justify-center gap-2 flex-wrap mb-3">
                   {assembledTiles.length === 0 ? (
                     <span className="text-xs text-slate-500 font-bold">
                       {isArabic ? 'المس الحروف أو الكلمات بالأسفل لتركيبها هنا' : 'Tap tiles below to assemble your answer here'}
@@ -293,7 +293,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
                     const isSelected = selectedOption === originalOpt;
                     const isCorrect = originalOpt === currentExercise.correctAnswer;
 
-                    let buttonStyle = 'bg-slate-950/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-orange-500/50';
+                    let buttonStyle = 'bg-[#080409]/80 hover:bg-slate-800/90 border-[#4A1224]/60 text-slate-200 hover:border-orange-500/50';
 
                     if (isAnswered) {
                       if (isCorrect) {
@@ -301,7 +301,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
                       } else if (isSelected) {
                         buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300';
                       } else {
-                        buttonStyle = 'bg-slate-950/40 border-slate-800 text-slate-500 opacity-60';
+                        buttonStyle = 'bg-[#080409]/40 border-[#4A1224]/60 text-slate-500 opacity-60';
                       }
                     }
 
@@ -313,7 +313,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
                         className={`p-4 rounded-2xl border-2 text-left font-black text-base sm:text-lg transition-all flex items-center justify-between shadow-md active:scale-95 ${buttonStyle}`}
                       >
                         <span>{opt}</span>
-                        <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+                        <div className="w-6 h-6 rounded-full border border-[#4A1224]/50 flex items-center justify-center text-xs font-bold shrink-0">
                           {String.fromCharCode(65 + idx)}
                         </div>
                       </button>
@@ -330,7 +330,7 @@ export const WritingModule: React.FC<WritingModuleProps> = ({
                   onChange={(e) => setUserInput(e.target.value)}
                   disabled={isAnswered}
                   placeholder={isArabic ? 'اكتب إجابتك هنا...' : 'Type your answer here...'}
-                  className="w-full p-4 rounded-2xl bg-slate-950 border-2 border-slate-800 focus:border-orange-500 text-white font-bold text-lg outline-none transition-all placeholder:text-slate-600"
+                  className="w-full p-4 rounded-2xl bg-[#080409] border-2 border-[#4A1224]/60 focus:border-orange-500 text-white font-bold text-lg outline-none transition-all placeholder:text-slate-600"
                 />
                 {!isAnswered && (
                   <button

@@ -134,7 +134,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-slate-900/60 rounded-3xl border border-slate-800">
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0E0610]/70 rounded-3xl border border-[#4A1224]/60">
           <div className="w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-bold text-sm">
             {isArabic ? 'جاري تجهيز كلمات ومحادثة اللغة الإنجليزية...' : 'Preparing fun English vocabulary & sentences...'}
@@ -142,7 +142,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
         </div>
       ) : currentExercise ? (
         <div className="flex flex-col gap-5">
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-rose-500/30 shadow-2xl backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0610]/95 border-2 border-rose-500/30 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-3 mb-4">
               <span className="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 font-black text-xs flex items-center gap-1.5 border border-rose-500/30">
                 <Globe className="w-3.5 h-3.5" />
@@ -151,7 +151,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
 
               <button
                 onClick={() => speakEnglish(currentExercise.question)}
-                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all"
+                className="p-2 rounded-xl bg-[#150917]/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-[#4A1224]/50 transition-all"
                 title="Listen in English"
               >
                 <Volume2 className="w-4 h-4" />
@@ -159,7 +159,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
             </div>
 
             {/* Question Text */}
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 my-3 text-center">
+            <div className="p-5 rounded-2xl bg-[#080409]/80 border border-[#4A1224]/60 my-3 text-center">
               <p className="text-2xl sm:text-3xl font-black text-rose-300 tracking-wide mb-1">
                 {currentExercise.question}
               </p>
@@ -179,7 +179,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
                 const isSelected = selectedOption === opt;
                 const isCorrect = opt === currentExercise.correctAnswer;
 
-                let buttonStyle = 'bg-slate-950/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-rose-500/50';
+                let buttonStyle = 'bg-[#080409]/80 hover:bg-slate-800/90 border-[#4A1224]/60 text-slate-200 hover:border-rose-500/50';
 
                 if (isAnswered) {
                   if (isCorrect) {
@@ -187,7 +187,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
                   } else if (isSelected) {
                     buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300';
                   } else {
-                    buttonStyle = 'bg-slate-950/40 border-slate-800 text-slate-500 opacity-60';
+                    buttonStyle = 'bg-[#080409]/40 border-[#4A1224]/60 text-slate-500 opacity-60';
                   }
                 }
 
@@ -210,7 +210,7 @@ export const EnglishModule: React.FC<EnglishModuleProps> = ({
                         <Volume2 className="w-3.5 h-3.5" />
                       </span>
                     </div>
-                    <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+                    <div className="w-6 h-6 rounded-full border border-[#4A1224]/50 flex items-center justify-center text-xs font-bold shrink-0">
                       {String.fromCharCode(65 + idx)}
                     </div>
                   </button>

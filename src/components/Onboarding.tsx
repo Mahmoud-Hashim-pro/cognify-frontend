@@ -25,7 +25,13 @@ import {
 } from "lucide-react";
 import { auth, logout } from "../lib/firebase";
 import { getTranslation, isRTL } from "../lib/translations";
-import { IQ_QUESTION_BATTERY, calculateStandardizedIq, IqQuestion } from "../lib/iqAssessment";
+import {
+  IQ_QUESTION_BATTERY,
+  calculateStandardizedIq,
+  IqQuestion,
+  COGNITIVE_ASSESSMENT_DISCLAIMER_EN,
+  COGNITIVE_ASSESSMENT_DISCLAIMER_AR,
+} from "../lib/iqAssessment";
 
 interface OnboardingProps {
   onComplete: (data: Partial<UserProfile>) => void | Promise<void>;
@@ -122,16 +128,13 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
           accessibilityMode = 'Vocal-Deaf';
         } else if (disabilityType === 'Speech Impairment') {
           accessibilityMode = 'Speech';
-        } else if (disabilityType === 'Motor Impairment') {
-          accessibilityMode = 'Motor-Euphonia';
         } else if (disabilityType === 'Cognitive/Learning Disability') {
           accessibilityMode = 'Neurodiversity';
         }
       }
 
       try {
-        const mappedTab = accessibilityMode === 'Motor-Euphonia' ? 'motor' :
-                          accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
+        const mappedTab = accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
                           accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
         localStorage.setItem('cognify_default_disability_tab', mappedTab);
       } catch {}
@@ -486,7 +489,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
 
       <button
         onClick={handleNextStep}
-        className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-black transition-all flex items-center justify-center gap-2 group"
+        className="w-full bg-[#0E0610] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-[#080409] transition-all flex items-center justify-center gap-2 group"
       >
         {getTranslation(formData.language, "continue")} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
       </button>
@@ -506,25 +509,33 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
           className="flex flex-col gap-6 w-full max-w-lg"
         >
           <div className="space-y-3 text-center">
-            <div className="w-16 h-16 bg-gradient-to-tr from-primary to-indigo-600 rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-primary/20 text-white">
+            <div className="w-16 h-16 bg-gradient-to-tr from-[#4A1224] to-[#E5A93C] rounded-3xl flex items-center justify-center mx-auto shadow-lg shadow-[#E5A93C]/10 text-white">
               <Brain className="w-8 h-8" />
             </div>
             <div className="space-y-1">
               <h2 className="text-2xl md:text-3xl font-black text-text-main tracking-tight">
                 {localize(
                   formData.language,
-                  "Cognitive Baseline & AI Calibration",
-                  "معايرة الذكاء الاصطناعي واختبار الذكاء الأساسي"
+                  "Cognitive Style & AI Personalization",
+                  "استكشاف الأسلوب المعرفي وتخصيص المساعد الذكي"
                 )}
               </h2>
               <p className="text-xs md:text-sm text-text-muted leading-relaxed">
                 {localize(
                   formData.language,
-                  "Cognify personalizes its pedagogical depth, scaffolding, and problem complexity to your unique cognitive profile. Complete the 10-question standardized assessment (10:00 minutes total), or start with our balanced baseline.",
-                  "يتكيّف كوجنيفاي تلقائياً مع طريقتك في التفكير وعمق الشرح ودرجة صعوبة المسائل. يتكون التقييم من 10 أسئلة مصفوفات بصرية غير منحازة ثقافياً ومؤقت إجمالي مدته 10 دقائق، أو يمكنك البدء بالمستوى المتوازن وممارسة التمارين لاحقاً."
+                  "Cognify personalizes its explanation depth and scaffolding to your unique reasoning preferences. Complete this quick 10-question visual puzzle preview, or start with our balanced baseline.",
+                  "يتكيّف كوجنيفاي تلقائياً مع طريقتك في التفكير وأسلوب الشرح المفضل لديك عبر 10 ألغاز بصرية استكشافية سريعة، أو يمكنك البدء بالمستوى المتوازن وممارسة التمارين لاحقاً."
                 )}
               </p>
             </div>
+          </div>
+
+          {/* Ethical & Non-Clinical Disclaimer Banner */}
+          <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-start text-xs leading-relaxed flex items-start gap-2.5">
+            <span className="text-base shrink-0">⚖️</span>
+            <p>
+              {localize(formData.language, COGNITIVE_ASSESSMENT_DISCLAIMER_EN, COGNITIVE_ASSESSMENT_DISCLAIMER_AR)}
+            </p>
           </div>
 
           {/* 4 Cognitive Domains Grid */}
@@ -535,7 +546,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
                 <span>{localize(formData.language, "Fluid Reasoning (3Q)", "الاستدلال المرن (3 أسئلة)")}</span>
               </div>
               <p className="text-[10px] text-text-muted leading-tight">
-                {localize(formData.language, "Pattern transformation logic (Gf)", "تحليل الأنماط والتحولات (Gf)")}
+                {localize(formData.language, "Pattern transformation logic", "تحليل الأنماط والتحولات البصرية")}
               </p>
             </div>
 
@@ -545,7 +556,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
                 <span>{localize(formData.language, "Quantitative Logic (3Q)", "المنطق الكمي (3 أسئلة)")}</span>
               </div>
               <p className="text-[10px] text-text-muted leading-tight">
-                {localize(formData.language, "Relational & numeric deduction (Gq)", "الاستنتاج الرياضي التتابعي (Gq)")}
+                {localize(formData.language, "Relational & numeric deduction", "الاستنتاج الرياضي التتابعي")}
               </p>
             </div>
 
@@ -555,7 +566,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
                 <span>{localize(formData.language, "Working Memory (2Q)", "الذاكرة العاملة (سؤالان)")}</span>
               </div>
               <p className="text-[10px] text-text-muted leading-tight">
-                {localize(formData.language, "Spatial & sequence recall (Gwm)", "استبقاء الترتيب المكاني (Gwm)")}
+                {localize(formData.language, "Spatial & sequence recall", "استبقاء الترتيب المكاني")}
               </p>
             </div>
 
@@ -565,7 +576,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
                 <span>{localize(formData.language, "Processing Speed (2Q)", "سرعة المعالجة (سؤالان)")}</span>
               </div>
               <p className="text-[10px] text-text-muted leading-tight">
-                {localize(formData.language, "Perceptual discrimination (Gs)", "التمييز البصري السريع (Gs)")}
+                {localize(formData.language, "Perceptual discrimination", "التمييز البصري السريع")}
               </p>
             </div>
           </div>
@@ -581,7 +592,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
               }}
               className="w-full py-4 px-6 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl shadow-primary/20 hover:bg-primary-press active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
             >
-              <span>{localize(formData.language, "Start Assessment (10 Questions · 10 Mins)", "ابدأ تقييم الذكاء (10 أسئلة · 10 دقائق)")}</span>
+              <span>{localize(formData.language, "Start Learning Style Preview (10 Questions · 10 Mins)", "ابدأ استكشاف أسلوب التعلم (10 أسئلة · 10 دقائق)")}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
             </button>
 
@@ -592,7 +603,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
               {localize(
                 formData.language,
                 "Start with Balanced Baseline (Take Later in Gym)",
-                "البدء بالمستوى المتوازن (خوض الاختبار لاحقاً من الجيم المعرفي)"
+                "البدء بالمستوى المتوازن (خوض الاستكشاف لاحقاً من الجيم المعرفي)"
               )}
             </button>
           </div>
@@ -813,15 +824,21 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
               <Award className="w-8 h-8" />
             </div>
             <h2 className="text-2xl font-black text-text-main tracking-tight uppercase">
-              {localize(formData.language, "Cognitive Calibration Complete", "اكتملت معايرة الذكاء")}
+              {localize(formData.language, "Cognitive Style Discovered", "اكتمل استكشاف أسلوبك المعرفي")}
             </h2>
             <p className="text-xs text-text-muted">
               {localize(
                 formData.language,
-                "Your baseline cognitive profile has been accurately calibrated into your personal AI model.",
-                "تمت معايرة ملفك المعرفي الأساسي بدقة وربطه بنموذج الذكاء الاصطناعي الخاص بك."
+                "Your reasoning and puzzle preferences have been calibrated into your personal AI mentor.",
+                "تمت مواءمة نمط تفكيرك المفضل وربطه بأسلوب الشرح في معلمك الذكي."
               )}
             </p>
+          </div>
+
+          {/* Ethical Disclaimer Banner */}
+          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-start text-[11px] text-amber-900 dark:text-amber-200 leading-relaxed flex items-start gap-2">
+            <span className="shrink-0">⚖️</span>
+            <p>{localize(formData.language, COGNITIVE_ASSESSMENT_DISCLAIMER_EN, COGNITIVE_ASSESSMENT_DISCLAIMER_AR)}</p>
           </div>
 
           {/* Score & Tier Card */}
@@ -829,7 +846,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
             <div className="flex items-center justify-center gap-4">
               <div className="text-center">
                 <span className="text-[10px] uppercase font-bold text-text-muted tracking-widest block">
-                  {localize(formData.language, "Standardized IQ", "معدل الذكاء المعياري")}
+                  {localize(formData.language, "Cognitive Style Index", "مؤشر الأسلوب المعرفي")}
                 </span>
                 <span className="text-4xl font-black text-primary tracking-tight">
                   {computedIq.score}
@@ -838,14 +855,14 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
               <div className="h-10 w-px bg-border" />
               <div className="text-center">
                 <span className="text-[10px] uppercase font-bold text-text-muted tracking-widest block">
-                  {localize(formData.language, "Cognitive Stage", "المرحلة المعرفية")}
+                  {localize(formData.language, "Adaptive Mentorship", "أسلوب التوجيه المفضل")}
                 </span>
                 <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full inline-block mt-1">
-                  {computedIq.level === 'Basic'
-                    ? localize(formData.language, "Basic (< 90)", "المرحلة التأسيسية (< 90)")
-                    : computedIq.level === 'Advanced'
-                    ? localize(formData.language, "Advanced (≥ 115)", "المرحلة المتقدمة (≥ 115)")
-                    : localize(formData.language, "Intermediate (90-114)", "المرحلة المتوسطة (90-114)")}
+                  {computedIq.persona === 'Foundational'
+                    ? localize(formData.language, "Scaffolded Step-by-Step", "تأسيسي متدرج")
+                    : computedIq.persona === 'Socratic'
+                    ? localize(formData.language, "Exploratory Socratic", "استكشافي متعمق")
+                    : localize(formData.language, "Balanced Adaptive", "متوازن متكيف")}
                 </span>
               </div>
             </div>

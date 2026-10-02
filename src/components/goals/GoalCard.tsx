@@ -32,7 +32,7 @@ const PRIORITY_STYLES = {
 
 const STATUS_ICON = {
   'not-started': <Circle className="w-4 h-4 text-slate-500" />,
-  'in-progress': <Clock className="w-4 h-4 text-cyan-400" />,
+  'in-progress': <Clock className="w-4 h-4 text-[#E5A93C]" />,
   'completed':   <CheckCircle2 className="w-4 h-4 text-emerald-400" />,
 };
 
@@ -62,8 +62,8 @@ export default function GoalCard({ goal, uid, onEdit, onDelete, language }: Goal
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className={`bg-[#121524]/90 border rounded-3xl shadow-xl overflow-hidden backdrop-blur-xl transition-all hover:border-slate-700/80 ${
-        overdue ? 'border-rose-500/40' : 'border-slate-800/80'
+      className={`bg-[#0E0610]/95 border rounded-3xl shadow-xl overflow-hidden backdrop-blur-xl ring-1 ring-[#E5A93C]/10 transition-all hover:border-[#E5A93C]/40 ${
+        overdue ? 'border-rose-500/40' : 'border-[#4A1224]/60'
       }`}
     >
       {/* Card header */}
@@ -92,21 +92,21 @@ export default function GoalCard({ goal, uid, onEdit, onDelete, language }: Goal
           <div className="flex items-center gap-1 flex-shrink-0">
             <button
               onClick={() => onEdit(localGoal)}
-              className="p-2 rounded-xl hover:bg-amber-500/15 hover:text-amber-400 text-slate-500 transition-colors"
+              className="p-2 rounded-xl hover:bg-[#4A1224]/40 hover:text-[#E5A93C] text-slate-400 transition-colors"
               title={isArabic ? 'تعديل' : 'Edit'}
             >
               <Edit3 className="w-4 h-4" />
             </button>
             <button
               onClick={() => onDelete(localGoal.id)}
-              className="p-2 rounded-xl hover:bg-rose-500/15 hover:text-rose-400 text-slate-500 transition-colors"
+              className="p-2 rounded-xl hover:bg-rose-500/15 hover:text-rose-400 text-slate-400 transition-colors"
               title={isArabic ? 'حذف' : 'Delete'}
             >
               <Trash2 className="w-4 h-4" />
             </button>
             <button
               onClick={() => setExpanded((p) => !p)}
-              className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 transition-colors"
+              className="p-2 rounded-xl hover:bg-[#4A1224]/30 hover:text-[#E5A93C] text-slate-400 transition-colors"
             >
               {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
@@ -115,18 +115,18 @@ export default function GoalCard({ goal, uid, onEdit, onDelete, language }: Goal
 
         {/* Progress bar */}
         <div className="mt-4 space-y-1.5">
-          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80">
             <span>{isArabic ? 'التقدم' : 'Progress'}</span>
-            <span className="font-mono text-cyan-400 font-bold">{localGoal.progress}%</span>
+            <span className="font-mono text-[#E5A93C] font-bold">{localGoal.progress}%</span>
           </div>
-          <div className="w-full h-2 bg-[#0A0C14] rounded-full overflow-hidden border border-slate-800/60">
+          <div className="w-full h-2 bg-[#080409] rounded-full overflow-hidden border border-[#4A1224]/60">
             <motion.div
               className={`h-full rounded-full ${
                 localGoal.status === 'completed'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
                   : overdue
                   ? 'bg-gradient-to-r from-rose-500 to-red-600'
-                  : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+                  : 'bg-gradient-to-r from-[#4A1224] via-[#831843] to-[#E5A93C]'
               }`}
               initial={{ width: 0 }}
               animate={{ width: `${localGoal.progress}%` }}
@@ -144,14 +144,14 @@ export default function GoalCard({ goal, uid, onEdit, onDelete, language }: Goal
           </span>
 
           {localGoal.milestones.length > 0 && (
-            <span className="text-[10px] font-bold text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full">
+            <span className="text-[10px] font-bold text-slate-300 bg-[#150917] border border-[#4A1224]/50 px-2.5 py-1 rounded-full">
               {localGoal.milestones.filter((m) => m.completed).length} / {localGoal.milestones.length}{' '}
               {isArabic ? 'خطوات' : 'milestones'}
             </span>
           )}
 
-          <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-400 ms-auto">
-            <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#E5A93C]/90 ms-auto">
+            <Calendar className="w-3.5 h-3.5 text-[#E5A93C]" />
             {parseGoalLocalDate(localGoal.deadline).toLocaleDateString(
               isArabic ? 'ar-EG' : 'en-GB',
               { day: 'numeric', month: 'short', year: 'numeric' }
@@ -171,8 +171,8 @@ export default function GoalCard({ goal, uid, onEdit, onDelete, language }: Goal
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-6 pt-0 border-t border-slate-800/80 bg-[#0A0C14]/40">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-4 mb-3">
+            <div className="px-6 pb-6 pt-0 border-t border-[#4A1224]/50 bg-[#080409]/60">
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C] mt-4 mb-3">
                 {isArabic ? 'الخطوات' : 'Milestones'}
               </p>
               {localGoal.milestones.length === 0 ? (

@@ -159,7 +159,7 @@ Provide an honest, constructive 3-point diagnostic:
   return (
     <div className="space-y-6">
       {/* Top Header Card */}
-      <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+      <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
             <BookMarked className="w-6 h-6" />
@@ -175,7 +175,7 @@ Provide an honest, constructive 3-point diagnostic:
         </div>
 
         {/* Sub-tabs */}
-        <div className="flex gap-2 p-1.5 rounded-2xl bg-[#0A0C14] border border-slate-800 max-w-fit pt-2">
+        <div className="flex gap-2 p-1.5 rounded-2xl bg-[#150917] border border-[#4A1224]/60 max-w-fit pt-2">
           <button
             type="button"
             onClick={() => setSubTab('cite')}
@@ -219,7 +219,7 @@ Provide an honest, constructive 3-point diagnostic:
 
       {/* SUBTAB 1: CITATION GENERATOR */}
       {subTab === 'cite' && (
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-1.5">
@@ -234,7 +234,7 @@ Provide an honest, constructive 3-point diagnostic:
                     className={`flex-1 py-2 text-xs font-bold rounded-xl border capitalize transition-all ${
                       sourceType === st
                         ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                        : 'bg-[#0A0C14] text-slate-400 border-slate-800'
+                        : 'bg-[#150917] text-slate-400 border-[#4A1224]/60'
                     }`}
                   >
                     {isAr ? (st === 'article' ? 'مقال/دورية' : st === 'book' ? 'كتاب' : st === 'paper' ? 'بحث مؤتمر' : 'موقع') : st}
@@ -255,8 +255,8 @@ Provide an honest, constructive 3-point diagnostic:
                     onClick={() => setActiveStyle(style)}
                     className={`flex-1 py-2 text-xs font-black rounded-xl border uppercase transition-all ${
                       activeStyle === style
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'bg-[#0A0C14] text-slate-400 border-slate-800'
+                        ? 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/40'
+                        : 'bg-[#150917] text-slate-400 border-[#4A1224]/60'
                     }`}
                   >
                     {style}
@@ -277,7 +277,7 @@ Provide an honest, constructive 3-point diagnostic:
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={isAr ? 'مثال: Attention Is All You Need' : 'e.g. Attention Is All You Need'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -290,7 +290,7 @@ Provide an honest, constructive 3-point diagnostic:
                 value={authors}
                 onChange={(e) => setAuthors(e.target.value)}
                 placeholder={isAr ? 'مثال: Vaswani, A., Shazeer, N., Parmar, N.' : 'e.g. Vaswani, A., Shazeer, N.'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -303,7 +303,7 @@ Provide an honest, constructive 3-point diagnostic:
                 value={publisherOrJournal}
                 onChange={(e) => setPublisherOrJournal(e.target.value)}
                 placeholder={isAr ? 'مثال: NeurIPS Proceedings / Nature' : 'e.g. NeurIPS / Nature / IEEE Trans.'}
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -316,7 +316,7 @@ Provide an honest, constructive 3-point diagnostic:
                   type="text"
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
                 />
               </div>
               <div>
@@ -328,7 +328,7 @@ Provide an honest, constructive 3-point diagnostic:
                   value={volume}
                   onChange={(e) => setVolume(e.target.value)}
                   placeholder="30"
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
                 />
               </div>
               <div>
@@ -340,7 +340,7 @@ Provide an honest, constructive 3-point diagnostic:
                   value={pages}
                   onChange={(e) => setPages(e.target.value)}
                   placeholder="6000-6010"
-                  className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
+                  className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-mono"
                 />
               </div>
             </div>
@@ -354,15 +354,15 @@ Provide an honest, constructive 3-point diagnostic:
                 value={urlOrDoi}
                 onChange={(e) => setUrlOrDoi(e.target.value)}
                 placeholder="10.48550/arXiv.1706.03762"
-                className="w-full bg-[#0A0C14] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none font-mono"
+                className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none font-mono"
               />
             </div>
           </div>
 
           {/* Generated Output Preview Cards */}
-          <div className="space-y-4 pt-4 border-t border-slate-800">
+          <div className="space-y-4 pt-4 border-t border-[#4A1224]/60">
             {/* Full Reference */}
-            <div className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 space-y-2">
+            <div className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
                   {isAr ? `التوثيق في قائمة المراجع (${activeStyle.toUpperCase()} Bibliography):` : `${activeStyle.toUpperCase()} Reference List Item:`}
@@ -381,9 +381,9 @@ Provide an honest, constructive 3-point diagnostic:
             </div>
 
             {/* In-text Citation */}
-            <div className="bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 space-y-2">
+            <div className="bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#E5A93C]">
                   {isAr ? 'التوثيق داخل المتن (In-Text Citation):' : 'In-Text Citation (Within Paragraph):'}
                 </span>
                 <button
@@ -394,7 +394,7 @@ Provide an honest, constructive 3-point diagnostic:
                   {isAr ? 'نسخ التوثيق' : 'Copy'}
                 </button>
               </div>
-              <p className="text-xs text-cyan-300 font-mono select-all">
+              <p className="text-xs text-[#E5A93C] font-mono select-all">
                 {inTextCitation}
               </p>
             </div>
@@ -404,7 +404,7 @@ Provide an honest, constructive 3-point diagnostic:
 
       {/* SUBTAB 2: TONE POLISHER */}
       {subTab === 'polish' && (
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
           <div className="space-y-1">
             <h3 className="text-base font-black text-white">
               {isAr ? 'ترقية المسودة إلى أسلوب علمي أكاديمي محكم' : 'Scholarly Prose Polishing'}
@@ -419,7 +419,7 @@ Provide an honest, constructive 3-point diagnostic:
             onChange={(e) => setRawDraft(e.target.value)}
             rows={5}
             placeholder={isAr ? 'الصق فقرتك المكتوبة هنا وسنقوم بترقيتها وصقل مصطلحاتها...' : 'Paste your rough paragraph or section draft here...'}
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500 leading-relaxed font-sans"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500 leading-relaxed font-sans"
           />
 
           <div className="flex justify-end">
@@ -443,7 +443,7 @@ Provide an honest, constructive 3-point diagnostic:
           </div>
 
           {polishedResult && (
-            <div className="pt-4 border-t border-slate-800 space-y-2">
+            <div className="pt-4 border-t border-[#4A1224]/60 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
                   {isAr ? 'الصياغة الأكاديمية الرصينة المقترحة:' : 'Refined Academic Version:'}
@@ -457,7 +457,7 @@ Provide an honest, constructive 3-point diagnostic:
                 </button>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs md:text-sm text-slate-100 leading-relaxed font-serif">
+              <div className="p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs md:text-sm text-slate-100 leading-relaxed font-serif">
                 {polishedResult}
               </div>
             </div>
@@ -467,7 +467,7 @@ Provide an honest, constructive 3-point diagnostic:
 
       {/* SUBTAB 3: ORIGINALITY & INTEGRITY */}
       {subTab === 'originality' && (
-        <div className="bg-[#121524]/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="bg-[#0E0610]/95 border border-[#4A1224]/60 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl space-y-4">
           <div className="space-y-1">
             <h3 className="text-base font-black text-white">
               {isAr ? 'فحص الأصالة وتجنب الانتحال غير المقصود' : 'Academic Integrity & Synthesis Diagnostic'}
@@ -482,14 +482,14 @@ Provide an honest, constructive 3-point diagnostic:
             onChange={(e) => setOriginalityInput(e.target.value)}
             rows={5}
             placeholder={isAr ? 'الصق الفقرة التي أعدت صياغتها لفحص سلامتها وتوثيقها...' : 'Paste your rewritten paragraph to assess originality and attribution...'}
-            className="w-full bg-[#0A0C14] border border-slate-800 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500 leading-relaxed font-sans"
+            className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-2xl p-4 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-amber-500 leading-relaxed font-sans"
           />
 
           <div className="flex justify-end">
             <button
               onClick={handleCheckOriginality}
               disabled={isCheckingOriginality}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 font-bold text-xs transition-all active:scale-95 disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-[#4A1224]/50 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 font-bold text-xs transition-all active:scale-95 disabled:opacity-50"
             >
               {isCheckingOriginality ? (
                 <>
@@ -506,11 +506,11 @@ Provide an honest, constructive 3-point diagnostic:
           </div>
 
           {originalityFeedback && (
-            <div className="pt-4 border-t border-slate-800 space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400">
+            <div className="pt-4 border-t border-[#4A1224]/60 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#E5A93C]">
                 {isAr ? 'تقرير تشخيص الأصالة والتوصيات الأكاديمية:' : 'Originality Report & Advice:'}
               </span>
-              <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs text-slate-200 whitespace-pre-line leading-relaxed">
+              <div className="p-4 rounded-2xl bg-[#150917] border border-[#4A1224]/60 text-xs text-slate-200 whitespace-pre-line leading-relaxed">
                 {originalityFeedback}
               </div>
             </div>

@@ -58,19 +58,19 @@ export default function ChatBookmarksDrawer({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: isAr ? -380 : 380, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 280 }}
-            className={`fixed inset-y-0 ${isAr ? 'start-0' : 'end-0'} z-50 w-full max-w-sm bg-[#0E111F]/95 border-${isAr ? 'e' : 's'} border-slate-800 shadow-2xl backdrop-blur-2xl flex flex-col`}
+            className={`fixed inset-y-0 ${isAr ? 'start-0' : 'end-0'} z-50 w-full max-w-sm bg-[#0E0610]/95 border-${isAr ? 'e' : 's'} border-[#4A1224]/70 shadow-2xl backdrop-blur-2xl flex flex-col ring-1 ring-[#E5A93C]/10`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-[#12162B]/80">
+            <div className="flex items-center justify-between p-4 border-b border-[#4A1224]/50 bg-[#150917]/90">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                  <Bookmark className="w-4 h-4 fill-amber-400" />
+                <div className="w-8 h-8 rounded-xl bg-[#4A1224]/40 border border-[#E5A93C]/40 flex items-center justify-center text-[#E5A93C]">
+                  <Bookmark className="w-4 h-4 fill-[#E5A93C]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">
                     {localize(language, 'Saved Insights & Notes', 'بنك الأفكار والإجابات المحفوظة')}
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-[#E5A93C]/80">
                     {bookmarks.length} {localize(language, 'saved key points', 'نقاط محفوظة للمراجعة')}
                   </p>
                 </div>
@@ -78,7 +78,7 @@ export default function ChatBookmarksDrawer({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-[#E5A93C] hover:bg-[#4A1224]/30 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -88,7 +88,7 @@ export default function ChatBookmarksDrawer({
             <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
               {bookmarks.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-slate-500">
+                  <div className="w-12 h-12 rounded-2xl bg-[#150917] border border-[#4A1224]/50 flex items-center justify-center text-[#E5A93C]/60">
                     <Bookmark className="w-6 h-6" />
                   </div>
                   <p className="text-xs leading-relaxed font-medium">
@@ -103,15 +103,15 @@ export default function ChatBookmarksDrawer({
                 bookmarks.map((b) => (
                   <div
                     key={b.id}
-                    className="p-3.5 rounded-2xl bg-[#12162A] border border-slate-800 hover:border-amber-500/40 transition-all space-y-2 group shadow-md"
+                    className="p-3.5 rounded-2xl bg-[#150917] border border-[#4A1224]/50 hover:border-[#E5A93C]/50 transition-all space-y-2 group shadow-md"
                   >
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800/80 pb-1.5">
-                      <span className="flex items-center gap-1 font-mono">
-                        <Sparkles className="w-3 h-3 text-amber-400" />
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 border-b border-[#4A1224]/40 pb-1.5">
+                      <span className="flex items-center gap-1 font-mono text-[#E5A93C]/80">
+                        <Sparkles className="w-3 h-3 text-[#E5A93C]" />
                         {new Date(b.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {b.pedagogyStyle && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-semibold text-[9px]">
+                        <span className="px-1.5 py-0.5 rounded bg-[#2D0B16] text-[#E5A93C] border border-[#4A1224]/60 font-semibold text-[9px]">
                           {b.pedagogyStyle}
                         </span>
                       )}
@@ -124,7 +124,7 @@ export default function ChatBookmarksDrawer({
                         <button
                           type="button"
                           onClick={() => handleCopy(b.content)}
-                          className="p-1 rounded hover:text-cyan-400 hover:bg-slate-800 transition-colors text-[11px] flex items-center gap-1"
+                          className="p-1 rounded hover:text-[#E5A93C] hover:bg-[#4A1224]/30 transition-colors text-[11px] flex items-center gap-1"
                           title="Copy"
                         >
                           <Copy className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export default function ChatBookmarksDrawer({
                               onJumpToMessage(b.messageId);
                               onClose();
                             }}
-                            className="p-1 rounded hover:text-emerald-400 hover:bg-slate-800 transition-colors text-[11px] flex items-center gap-1"
+                            className="p-1 rounded hover:text-[#E5A93C] hover:bg-[#4A1224]/30 transition-colors text-[11px] flex items-center gap-1"
                             title="Jump to message"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />

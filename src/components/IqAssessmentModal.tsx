@@ -8,6 +8,8 @@ import {
   calculateStandardizedIq,
   checkIqCooldownEligibility,
   IqQuestion,
+  COGNITIVE_ASSESSMENT_DISCLAIMER_EN,
+  COGNITIVE_ASSESSMENT_DISCLAIMER_AR,
 } from '../lib/iqAssessment';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db, cleanDataForFirestore, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -186,8 +188,8 @@ export default function IqAssessmentModal({
         toast.success(
           localize(
             profile.language,
-            `Cognitive calibration complete! Standardized score: ${iqScore}`,
-            `تم اكتمال المعايرة المعرفية! الدرجة المعيارية: ${iqScore}`
+            `Cognitive style calibrated! Style Index: ${iqScore}`,
+            `تم اكتمال مواءمة الأسلوب المعرفي! مؤشر الأسلوب: ${iqScore}`
           ),
           localize(profile.language, 'Assessment Recorded', 'تم حفظ التقييم')
         );
@@ -203,20 +205,20 @@ export default function IqAssessmentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
       <div
-        className="relative w-full max-w-2xl rounded-[32px] bg-[#121524] border border-slate-800 text-slate-100 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-2xl rounded-[32px] bg-[#0E0610] border border-[#4A1224]/60 text-slate-100 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         dir={isAr ? 'rtl' : 'ltr'}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/80 bg-[#181C2E]/60">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#4A1224]/60 bg-[#150917]/80">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold shadow-md shadow-cyan-500/5">
+            <div className="w-11 h-11 rounded-2xl bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C] flex items-center justify-center font-bold shadow-md shadow-[#E5A93C]/5">
               <Brain className="w-5 h-5" />
             </div>
             <div>
               <h2 className="font-black text-white text-base flex items-center gap-2.5 tracking-tight">
-                {localize(profile.language, 'Scientific Cognitive Assessment', 'التقييم المعرفي العلمي')}
-                <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                  CHC Framework
+                {localize(profile.language, 'Cognitive Style Preview', 'استكشاف الأسلوب المعرفي والتعليمي')}
+                <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-[#4A1224]/30 text-[#E5A93C] border border-[#E5A93C]/20">
+                  Adaptive
                 </span>
               </h2>
               <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -230,7 +232,7 @@ export default function IqAssessmentModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 rounded-2xl text-slate-400 hover:text-white hover:bg-[#181C2E] border border-transparent hover:border-slate-800 transition-all active:scale-95"
+            className="p-2.5 rounded-2xl text-slate-400 hover:text-white hover:bg-[#150917] border border-transparent hover:border-[#4A1224]/60 transition-all active:scale-95"
           >
             <X className="w-5 h-5" />
           </button>
@@ -241,6 +243,11 @@ export default function IqAssessmentModal({
           {/* ─── INTRO STEP ──────────────────────────────────────────────── */}
           {step === 'intro' && (
             <div className="space-y-6">
+              {/* Ethical & Non-Clinical Disclaimer */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed flex items-start gap-2.5">
+                <span className="text-base shrink-0">⚖️</span>
+                <p>{localize(profile.language, COGNITIVE_ASSESSMENT_DISCLAIMER_EN, COGNITIVE_ASSESSMENT_DISCLAIMER_AR)}</p>
+              </div>
               {/* Cooldown Lock Warning if not eligible */}
               {!cooldownInfo.isEligible ? (
                 <div className="p-5 rounded-3xl bg-amber-500/10 border border-amber-500/30 space-y-3 text-amber-200">
@@ -279,8 +286,8 @@ export default function IqAssessmentModal({
 
               {/* Cognitive Domains Breakdown */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-1.5 shadow-inner">
-                  <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-1.5 shadow-inner">
+                  <div className="flex items-center gap-2 text-[#E5A93C] font-bold text-xs">
                     <Layers className="w-4 h-4" />
                     {localize(profile.language, 'Fluid Reasoning (Gf)', 'الاستدلال المرن (Gf)')}
                   </div>
@@ -293,8 +300,8 @@ export default function IqAssessmentModal({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-1.5 shadow-inner">
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-1.5 shadow-inner">
+                  <div className="flex items-center gap-2 text-[#E5A93C] font-bold text-xs">
                     <BarChart3 className="w-4 h-4" />
                     {localize(profile.language, 'Quantitative Logic (Gq)', 'المنطق الرياضي (Gq)')}
                   </div>
@@ -307,7 +314,7 @@ export default function IqAssessmentModal({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-1.5 shadow-inner">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-1.5 shadow-inner">
                   <div className="flex items-center gap-2 text-violet-400 font-bold text-xs">
                     <Brain className="w-4 h-4" />
                     {localize(profile.language, 'Working Memory (Gwm)', 'الذاكرة العاملة (Gwm)')}
@@ -321,7 +328,7 @@ export default function IqAssessmentModal({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-1.5 shadow-inner">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-1.5 shadow-inner">
                   <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
                     <Zap className="w-4 h-4" />
                     {localize(profile.language, 'Processing Speed (Gs)', 'سرعة المعالجة (Gs)')}
@@ -337,7 +344,7 @@ export default function IqAssessmentModal({
               </div>
 
               {/* Instructions */}
-              <div className="text-xs text-slate-400 space-y-1.5 bg-[#0A0C14] p-5 rounded-2xl border border-slate-800 shadow-inner font-medium">
+              <div className="text-xs text-slate-400 space-y-1.5 bg-[#080409] p-5 rounded-2xl border border-[#4A1224]/60 shadow-inner font-medium">
                 <p className="font-bold text-white mb-1">
                   {localize(profile.language, 'Assessment Guidelines:', 'إرشادات الاختبار:')}
                 </p>
@@ -349,7 +356,7 @@ export default function IqAssessmentModal({
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 rounded-2xl border border-slate-800 hover:border-slate-700 bg-[#0A0C14] text-slate-300 hover:text-white text-xs font-bold transition-all active:scale-95"
+                  className="px-6 py-3 rounded-2xl border border-[#4A1224]/60 hover:border-[#4A1224]/50 bg-[#080409] text-slate-300 hover:text-white text-xs font-bold transition-all active:scale-95"
                 >
                   {localize(profile.language, 'Cancel', 'إلغاء')}
                 </button>
@@ -361,7 +368,7 @@ export default function IqAssessmentModal({
                     setStep('active');
                   }}
                   disabled={!cooldownInfo.isEligible}
-                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-cyan-500/20 active:scale-95 transition-all flex items-center gap-2"
+                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-[#E5A93C]/20 active:scale-95 transition-all flex items-center gap-2"
                 >
                   {localize(profile.language, 'Start Assessment', 'ابدأ التقييم')}
                   <ChevronRight className="w-4 h-4" />
@@ -374,12 +381,12 @@ export default function IqAssessmentModal({
           {step === 'active' && currentQ && (
             <div className="space-y-5">
               {/* Progress and Timer Bar */}
-              <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-slate-800/80">
+              <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-[#4A1224]/60">
                 <div className="flex items-center gap-2.5">
                   <span className="font-bold text-white">
                     {localize(profile.language, `Question ${currentIdx + 1} of ${IQ_QUESTION_BATTERY.length}`, `السؤال ${currentIdx + 1} من ${IQ_QUESTION_BATTERY.length}`)}
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold text-[10px]">
+                  <span className="px-2.5 py-0.5 rounded-lg bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C] font-bold text-[10px]">
                     {currentQ.domain}
                   </span>
                 </div>
@@ -391,22 +398,22 @@ export default function IqAssessmentModal({
               </div>
 
               {/* Progress Line */}
-              <div className="w-full h-1.5 bg-[#0A0C14] border border-slate-800/60 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-[#080409] border border-[#4A1224]/50 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 transition-all duration-300"
                   style={{ width: `${((currentIdx + 1) / IQ_QUESTION_BATTERY.length) * 100}%` }}
                 />
               </div>
 
               {/* Question Prompt */}
-              <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 space-y-4 shadow-inner">
+              <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 space-y-4 shadow-inner">
                 <h3 className="font-bold text-white text-sm leading-relaxed">
                   {localize(profile.language, currentQ.promptEn, currentQ.promptAr)}
                 </h3>
 
                 {/* 3x3 Matrix rendering if exists */}
                 {currentQ.matrixData && (
-                  <div className="inline-block p-5 rounded-3xl bg-[#121524] border-2 border-cyan-500/30 shadow-2xl mx-auto">
+                  <div className="inline-block p-5 rounded-3xl bg-[#0E0610] border-2 border-[#E5A93C]/30 shadow-2xl mx-auto">
                     <div className="grid grid-cols-3 gap-2.5 text-center text-xl font-mono">
                       {currentQ.matrixData.grid.map((row, rIdx) =>
                         row.map((cell, cIdx) => {
@@ -419,7 +426,7 @@ export default function IqAssessmentModal({
                               className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black border transition-all ${
                                 isMissing
                                   ? 'bg-amber-500/20 border-amber-500 text-amber-300 animate-pulse shadow-lg shadow-amber-500/10'
-                                  : 'bg-[#0A0C14] border-slate-800 text-slate-200'
+                                  : 'bg-[#080409] border-[#4A1224]/60 text-slate-200'
                               }`}
                             >
                               {cell}
@@ -442,13 +449,13 @@ export default function IqAssessmentModal({
                       onClick={() => handleSelectOption(opt.id)}
                       className={`p-4 rounded-2xl border text-start transition-all text-xs font-semibold flex items-center gap-3 active:scale-[0.99] ${
                         isSelected
-                          ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-500/20 shadow-md'
-                          : 'border-slate-800 bg-[#0A0C14] text-slate-300 hover:border-slate-700 hover:bg-[#181C2E]/60'
+                          ? 'border-[#E5A93C]/60 bg-[#4A1224]/30 text-[#E5A93C] ring-2 ring-[#E5A93C]/20 shadow-md'
+                          : 'border-[#4A1224]/60 bg-[#080409] text-slate-300 hover:border-[#4A1224]/50 hover:bg-[#150917]/80'
                       }`}
                     >
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                          isSelected ? 'border-cyan-400 bg-cyan-500 text-slate-900' : 'border-slate-700 bg-slate-800/40 text-transparent'
+                          isSelected ? 'border-[#E5A93C] bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-900' : 'border-[#4A1224]/50 bg-slate-800/40 text-transparent'
                         }`}
                       >
                         ✓
@@ -466,7 +473,7 @@ export default function IqAssessmentModal({
                 <button
                   onClick={handleNextQuestion}
                   disabled={!userAnswers[currentQ.id]}
-                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider disabled:opacity-40 shadow-xl shadow-cyan-500/20 active:scale-95 transition-all flex items-center gap-2"
+                  className="px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider disabled:opacity-40 shadow-xl shadow-[#E5A93C]/20 active:scale-95 transition-all flex items-center gap-2"
                 >
                   {currentIdx + 1 === IQ_QUESTION_BATTERY.length
                     ? localize(profile.language, 'Finish & Calculate', 'إنهاء وحساب النتيجة')
@@ -480,57 +487,66 @@ export default function IqAssessmentModal({
           {/* ─── RESULTS STEP ────────────────────────────────────────────── */}
           {step === 'results' && assessmentResult && (
             <div className="space-y-6 text-center animate-fadeIn">
-              <div className="w-16 h-16 rounded-3xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto shadow-xl shadow-cyan-500/10">
+              <div className="w-16 h-16 rounded-3xl bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C] flex items-center justify-center mx-auto shadow-xl shadow-[#E5A93C]/10">
                 <Award className="w-8 h-8" />
               </div>
 
               <div>
                 <h3 className="text-2xl font-black text-white tracking-tight">
-                  {localize(profile.language, 'Assessment Complete', 'اكتمل التقييم المعرفي')}
+                  {localize(profile.language, 'Style Discovery Complete', 'اكتمل استكشاف الأسلوب المعرفي')}
                 </h3>
                 <p className="text-xs text-slate-400 mt-1 font-medium">
-                  {localize(profile.language, 'Standardized against normative cognitive benchmarks (Mean: 100, SD: 15).', 'معاير وفقاً للمقاييس المعرفية القياسية (المتوسط: 100، الانحراف: 15).')}
+                  {localize(profile.language, 'Informal exploratory index to personalize AI explanations and guidance pacing.', 'مؤشر استكشافي غير رسمي لتخصيص شروحات الذكاء الاصطناعي وتدرجها.')}
                 </p>
               </div>
 
+              {/* Ethical Disclaimer Banner */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed text-start flex items-start gap-2.5 max-w-lg mx-auto">
+                <span className="text-base shrink-0">⚖️</span>
+                <p>{localize(profile.language, COGNITIVE_ASSESSMENT_DISCLAIMER_EN, COGNITIVE_ASSESSMENT_DISCLAIMER_AR)}</p>
+              </div>
+
               {/* Main Score Card */}
-              <div className="p-8 rounded-3xl bg-[#0A0C14] border border-slate-800 shadow-2xl max-w-sm mx-auto">
+              <div className="p-8 rounded-3xl bg-[#080409] border border-[#4A1224]/60 shadow-2xl max-w-sm mx-auto">
                 <div className="text-xs text-slate-400 font-black tracking-wider uppercase mb-2">
-                  {localize(profile.language, 'Composite Cognitive Score', 'معدل الذكاء المعياري المركب')}
+                  {localize(profile.language, 'Cognitive Style Index', 'مؤشر الأسلوب المعرفي')}
                 </div>
-                <div className="text-6xl font-black text-cyan-400 font-mono tracking-tight">
+                <div className="text-6xl font-black text-[#E5A93C] font-mono tracking-tight">
                   {assessmentResult.iqScore}
                 </div>
-                <div className="mt-4 inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold">
-                  {assessmentResult.recommendedPersona}{' '}
-                  {localize(profile.language, 'Persona Calibrated', 'نمط معاير')}
+                <div className="mt-4 inline-block px-4 py-1.5 rounded-full bg-[#4A1224]/30 border border-[#E5A93C]/20 text-[#E5A93C] text-xs font-bold">
+                  {assessmentResult.recommendedPersona === 'Foundational'
+                    ? localize(profile.language, 'Scaffolded Guidance', 'توجيه تأسيسي متدرج')
+                    : assessmentResult.recommendedPersona === 'Socratic'
+                    ? localize(profile.language, 'Socratic Inquiry', 'توجيه استكشافي متقدم')
+                    : localize(profile.language, 'Balanced Adaptive', 'توجيه متوازن متكيف')}
                 </div>
               </div>
 
               {/* 4 Domain Sub-Scores */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-start">
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60">
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gf Fluid</div>
                   <div className="text-xl font-black text-white font-mono mt-1">
                     {assessmentResult.domainScores.fluidReasoning}%
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60">
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gq Logic</div>
-                  <div className="text-xl font-black text-indigo-400 font-mono mt-1">
+                  <div className="text-xl font-black text-[#E5A93C] font-mono mt-1">
                     {assessmentResult.domainScores.quantitativeLogic}%
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60">
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gwm Memory</div>
                   <div className="text-xl font-black text-violet-400 font-mono mt-1">
                     {assessmentResult.domainScores.workingMemory}%
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-[#0A0C14] border border-slate-800">
+                <div className="p-4 rounded-2xl bg-[#080409] border border-[#4A1224]/60">
                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gs Speed</div>
                   <div className="text-xl font-black text-amber-400 font-mono mt-1">
                     {assessmentResult.domainScores.processingSpeed}%
@@ -539,7 +555,7 @@ export default function IqAssessmentModal({
               </div>
 
               {/* Retest Lock Info */}
-              <div className="p-5 rounded-2xl bg-[#0A0C14] border border-slate-800 text-xs text-slate-400 text-start space-y-1.5">
+              <div className="p-5 rounded-2xl bg-[#080409] border border-[#4A1224]/60 text-xs text-slate-400 text-start space-y-1.5">
                 <div className="font-bold text-white flex items-center gap-2">
                   <Clock className="w-4 h-4 text-amber-400" />
                   {localize(profile.language, 'Exponential Cooldown Scheduled', 'فترة التبريد الزمني القادمة')}
@@ -556,7 +572,7 @@ export default function IqAssessmentModal({
               <div className="flex justify-center pt-2">
                 <button
                   onClick={onClose}
-                  className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider shadow-xl shadow-cyan-500/20 active:scale-95 transition-all"
+                  className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 hover:from-amber-400 hover:to-blue-500 text-white text-xs font-black uppercase tracking-wider shadow-xl shadow-[#E5A93C]/20 active:scale-95 transition-all"
                 >
                   {localize(profile.language, 'Done & Return to Workspace', 'تم والعودة لمساحة العمل')}
                 </button>

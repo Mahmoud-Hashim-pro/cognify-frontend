@@ -17,20 +17,44 @@ import { UserProfile } from "../types";
 //
 // The email-based ADMIN_EMAILS are permanent admins (can't be demoted here).
 
-/** Founder super admins — immutable, cannot be demoted by anyone. */
-export const FOUNDER_SUPERADMIN_EMAILS = [
+/**
+ * Environment variable overrides (allows decoupling founder identities in public repositories)
+ * Reads VITE_FOUNDER_SUPERADMIN_EMAILS / VITE_ADMIN_EMAILS if configured.
+ */
+const getEnvEmails = (key: string, fallback: string[]): string[] => {
+  try {
+    let val: string | undefined;
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env?.[key]) {
+      val = (import.meta as any).env[key];
+    } else if (typeof process !== 'undefined' && process.env?.[key]) {
+      val = process.env[key];
+    }
+    if (val && typeof val === 'string') {
+      return val.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+    }
+  } catch {
+    // Fall back to defaults
+  }
+  return fallback;
+};
+
+/** Founder super admins — immutable, fallback protected. */
+export const FOUNDER_SUPERADMIN_EMAILS = getEnvEmails('VITE_FOUNDER_SUPERADMIN_EMAILS', [
   'modyhashim2006@gmail.com',
   'pro.mahmoud.h@gmail.com',
-];
+]);
 
 /** @deprecated kept as an alias so existing imports keep working. */
 export const SUPERADMIN_EMAILS = FOUNDER_SUPERADMIN_EMAILS;
 
-export const ADMIN_EMAILS = [
+export const ADMIN_EMAILS = getEnvEmails('VITE_ADMIN_EMAILS', [
   'its.alkhateeb@gmail.com',
   'esraahosni8@gmail.com',
   'audit.test.student2026@gmail.com',
-];
+]);
+
+/** Optional revoked/blocked super-admin emails via environment variables */
+export const BLOCKED_SUPERADMIN_EMAILS = getEnvEmails('VITE_BLOCKED_SUPERADMIN_EMAILS', []);
 
 export const norm = (email?: string) => (email || '').toLowerCase().trim();
 
@@ -40,20 +64,33 @@ export const isFounderSuperAdmin = (email?: string) => FOUNDER_SUPERADMIN_EMAILS
 /** Permanent (email-based) admin. */
 export const isPermanentAdmin = (email?: string) => ADMIN_EMAILS.includes(norm(email));
 
-/**
- * Security, DevTools telemetry stream, and Database Operations Hub are strictly restricted
- * to the primary founder account (modyhashim2006@gmail.com).
- */
-export const isSecurityAuditsOwner = (email?: string) => norm(email) === 'modyhashim2006@gmail.com';
-export const isDatabaseHubOwner = (email?: string) => norm(email) === 'modyhashim2006@gmail.com';
+const getPrimaryOwner = (): string => {
+  try {
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_PRIMARY_OWNER_EMAIL) {
+      return (import.meta as any).env.VITE_PRIMARY_OWNER_EMAIL;
+    }
+    if (typeof process !== 'undefined' && process.env?.VITE_PRIMARY_OWNER_EMAIL) {
+      return process.env.VITE_PRIMARY_OWNER_EMAIL;
+    }
+  } catch {}
+  return 'modyhashim2006@gmail.com';
+};
 
 /**
- * Super admin = founder (by email) OR granted at runtime via the isSuperAdmin
- * flag. Takes the whole profile because the runtime grant lives on the document.
+ * Security, DevTools telemetry stream, and Database Operations Hub are strictly restricted
+ * to the primary founder account.
  */
-export const isSuperAdminUser = (u?: Partial<UserProfile> | null) => {
+export const isSecurityAuditsOwner = (email?: string) => norm(email) === norm(getPrimaryOwner());
+export const isDatabaseHubOwner = (email?: string) => norm(email) === norm(getPrimaryOwner());
+
+/**
+ * Super admin = Custom Claims role check (primary: request.auth.token.role == 'superadmin')
+ * OR founder (by env/email) OR granted at runtime via the isSuperAdmin flag.
+ */
+export const isSuperAdminUser = (u?: (Partial<UserProfile> & { customClaims?: { role?: string } }) | null) => {
   if (!u) return false;
-  if (norm(u.email) === 'mariemsayedr33@gmail.com') return false;
+  if (BLOCKED_SUPERADMIN_EMAILS.includes(norm(u.email))) return false;
+  if (u.customClaims?.role === 'superadmin') return true;
   return isFounderSuperAdmin(u.email) || u.isSuperAdmin === true;
 };
 
@@ -64,9 +101,9 @@ export const isSuperAdminUser = (u?: Partial<UserProfile> | null) => {
  */
 export const isPermanent = (email?: string) => isFounderSuperAdmin(email) || isPermanentAdmin(email);
 
-/** A user is an admin if they're permanent, a super admin, or were promoted. */
-export const isAdminUser = (u?: Partial<UserProfile> | null) =>
-  !!u && (isPermanent(u.email) || isSuperAdminUser(u) || u.isAdmin === true);
+/** A user is an admin if they're permanent, a super admin, promoted, or have admin custom claims. */
+export const isAdminUser = (u?: (Partial<UserProfile> & { customClaims?: { role?: string } }) | null) =>
+  !!u && (isPermanent(u.email) || isSuperAdminUser(u) || u.isAdmin === true || u.customClaims?.role === 'admin');
 
 /** Only super admins may grant/revoke admin AND super-admin rights. */
 export const canManageAdmins = (u?: Partial<UserProfile> | null) => isSuperAdminUser(u);

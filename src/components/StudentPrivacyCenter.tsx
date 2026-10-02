@@ -214,7 +214,7 @@ export default function StudentPrivacyCenter({
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 text-start">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="flex items-center justify-between border-b border-[#4A1224]/60 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-2xl bg-teal-500/15 text-teal-400 border border-teal-500/30">
             <Shield className="w-6 h-6" />
@@ -252,9 +252,9 @@ export default function StudentPrivacyCenter({
       {/* Grid: Export & Control Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Export Data Card */}
-        <div className="p-5 rounded-2xl bg-[#121524] border border-slate-800 space-y-3 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 space-y-3 flex flex-col justify-between">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-cyan-400">
+            <div className="flex items-center gap-2 text-[#E5A93C]">
               <Download className="w-5 h-5" />
               <h2 className="text-sm font-black text-white">{L('Export Complete Archive', 'تصدير أرشيف التعلم الشامل')}</h2>
             </div>
@@ -268,15 +268,15 @@ export default function StudentPrivacyCenter({
           <button
             onClick={handleExportData}
             disabled={isExporting}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-700 transition-all active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-[#4A1224]/50 transition-all active:scale-95 disabled:opacity-50"
           >
-            {isExporting ? <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /> : <FileText className="w-4 h-4 text-cyan-400" />}
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin text-[#E5A93C]" /> : <FileText className="w-4 h-4 text-[#E5A93C]" />}
             <span>{isExporting ? L('Generating Archive...', 'جاري تحضير الأرشيف...') : L('Download Full Archive', 'تحميل الأرشيف الشامل')}</span>
           </button>
         </div>
 
         {/* Data Erasure Card */}
-        <div className="p-5 rounded-2xl bg-[#121524] border border-slate-800 space-y-3 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 space-y-3 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-amber-400">
               <Trash2 className="w-5 h-5" />
@@ -299,7 +299,7 @@ export default function StudentPrivacyCenter({
         </div>
 
         {/* Full Account Deletion Card */}
-        <div className="p-5 rounded-2xl bg-[#121524] border border-rose-900/40 space-y-3 flex flex-col justify-between">
+        <div className="p-5 rounded-2xl bg-[#0E0610] border border-rose-900/40 space-y-3 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-rose-400">
               <UserX className="w-5 h-5" />
@@ -327,7 +327,7 @@ export default function StudentPrivacyCenter({
       </div>
 
       {/* Memory Provenance Explorer */}
-      <div className="p-5 rounded-2xl bg-[#121524] border border-slate-800 space-y-4">
+      <div className="p-5 rounded-2xl bg-[#0E0610] border border-[#4A1224]/60 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-white font-black text-sm">
             <Database className="w-4 h-4 text-teal-400" />
@@ -343,7 +343,7 @@ export default function StudentPrivacyCenter({
             {memory.explicitConfirmedInfo.map((fact, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs"
+                className="p-3 rounded-xl bg-[#0E0610]/95 border border-[#4A1224]/60 flex items-center justify-between text-xs"
               >
                 <div className="flex items-center gap-2 text-slate-200 font-medium">
                   <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
@@ -356,7 +356,7 @@ export default function StudentPrivacyCenter({
             ))}
           </div>
         ) : (
-          <div className="p-6 text-center text-slate-500 text-xs rounded-xl bg-slate-900/40 border border-slate-800/60">
+          <div className="p-6 text-center text-slate-500 text-xs rounded-xl bg-[#150917]/40 border border-[#4A1224]/50">
             <Info className="w-4 h-4 mx-auto mb-1.5 opacity-60" />
             <span>{L('No personal memory facts recorded yet. Chat history is stored in your private thread archive.', 'لا توجد حقائق ذاكرة مسجلة حالياً. سجل المحادثات محفوظ في أرشيفك الخاص.')}</span>
           </div>
@@ -366,7 +366,7 @@ export default function StudentPrivacyCenter({
       {/* Reset Memory Confirmation Modal */}
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="max-w-md w-full bg-[#16192b] border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4 text-start">
+          <div className="max-w-md w-full bg-[#16192b] border border-[#4A1224]/50 rounded-3xl p-6 shadow-2xl space-y-4 text-start">
             <div className="flex items-center gap-2.5 text-amber-400">
               <AlertTriangle className="w-6 h-6" />
               <h3 className="text-base font-black text-white">{L('Confirm Memory Reset', 'تأكيد إعادة ضبط الذاكرة')}</h3>
@@ -424,7 +424,7 @@ export default function StudentPrivacyCenter({
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder={profile.email || 'DELETE'}
-                className="w-full px-3.5 py-2.5 bg-[#0A0C14] border border-slate-700 rounded-xl text-xs font-mono text-white placeholder-slate-600 focus:outline-none focus:border-rose-500"
+                className="w-full px-3.5 py-2.5 bg-[#080409] border border-[#4A1224]/50 rounded-xl text-xs font-mono text-white placeholder-slate-600 focus:outline-none focus:border-rose-500"
               />
             </div>
 

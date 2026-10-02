@@ -195,7 +195,8 @@ export function explainPedagogyChoice(
   const hasStrain = struggleScore >= 0.65;
   const consecutiveIncorrect = masteryRec?.consecutiveIncorrect || 0;
   const consecutiveCorrect = masteryRec?.consecutiveCorrect || 0;
-  const accuracyPct = masteryRec && masteryRec.attempts > 0 ? Math.round(masteryRec.accuracy * 100) : 70;
+  const hasEmpiricalAccuracy = typeof masteryRec?.accuracy === 'number' && masteryRec.attempts > 0;
+  const accuracyPct = hasEmpiricalAccuracy ? Math.round(masteryRec!.accuracy * 100) : null;
 
   switch (cleanStrat) {
     case 'worked_example': {
@@ -205,7 +206,7 @@ export function explainPedagogyChoice(
         : `Empirically Calibrated Efficacy for ${conceptTag}`;
       
       const evidence = consecutiveIncorrect >= 2
-        ? `Student encountered ${consecutiveIncorrect} consecutive errors on ${conceptTag} (accuracy: ${accuracyPct}%, cognitive strain: ${(struggleScore).toFixed(2)}). Step-by-step worked examples reduce working memory saturation.`
+        ? `Student encountered ${consecutiveIncorrect} consecutive errors on ${conceptTag}${accuracyPct !== null ? ` (accuracy: ${accuracyPct}%, cognitive strain: ${(struggleScore).toFixed(2)})` : ` (cognitive strain: ${(struggleScore).toFixed(2)})`}. Step-by-step worked examples reduce working memory saturation.`
         : `Historical interaction indicates worked examples yield high conceptual acquisition (${Math.round(score * 100)}% efficacy) during initial phase for ${conceptTag}.`;
 
       return {
@@ -259,12 +260,12 @@ export function explainPedagogyChoice(
     }
 
     case 'socratic': {
-      const isMastery = consecutiveCorrect >= 3 || accuracyPct >= 80;
+      const isMastery = consecutiveCorrect >= 3 || (accuracyPct !== null && accuracyPct >= 80);
       const trigger = isMastery
         ? `High Mastery Streak (${consecutiveCorrect} consecutive correct on ${conceptName})`
         : `Deductive Reasoning & Meta-Cognitive Challenge`;
 
-      const evidence = `Strong performance detected (${consecutiveCorrect} correct answers in a row, ${accuracyPct}% accuracy). Socratic inquiry stimulates higher-order cognitive evaluation and edge-case discovery.`;
+      const evidence = `Strong performance detected (${consecutiveCorrect} correct answers in a row${accuracyPct !== null ? `, ${accuracyPct}% accuracy` : ''}). Socratic inquiry stimulates higher-order cognitive evaluation and edge-case discovery.`;
 
       return {
         strategy: 'socratic',
@@ -280,7 +281,9 @@ export function explainPedagogyChoice(
 
     case 'advanced_rigor': {
       const trigger = `High-Tier Fluency & Algorithmic Rigor`;
-      const evidence = `Consistently high accuracy (${accuracyPct}%) across prerequisites. Ready for formal complexity bounds (Big-O), memory layout architectures, and production-grade constraints.`;
+      const evidence = accuracyPct !== null
+        ? `Consistently high accuracy (${accuracyPct}%) across prerequisites. Ready for formal complexity bounds (Big-O), memory layout architectures, and production-grade constraints.`
+        : `High foundational fluency verified across prerequisites. Ready for formal complexity bounds (Big-O), memory layout architectures, and production-grade constraints.`;
 
       return {
         strategy: 'advanced_rigor',

@@ -751,7 +751,7 @@ export default function AccessibilityOverlay({
       <button
         onClick={() => toggleControlsHidden(false)}
         title="Show accessibility controls"
-        className="fixed bottom-24 start-3 md:start-6 z-50 w-8 h-8 rounded-full bg-[#121524]/90 text-purple-300 shadow-md border border-purple-500/40 backdrop-blur-md flex items-center justify-center hover:bg-purple-600/30 hover:text-white active:scale-95 pointer-events-auto transition-all"
+        className="fixed bottom-24 start-3 md:start-6 z-50 w-8 h-8 rounded-full bg-[#0E0610]/90 text-[#E5A93C]/80 shadow-md border border-[#4A1224]/50 backdrop-blur-md flex items-center justify-center hover:bg-[#4A1224]/30 hover:text-white active:scale-95 pointer-events-auto transition-all"
       >
         <Eye className="w-4 h-4" />
       </button>
@@ -845,7 +845,7 @@ export default function AccessibilityOverlay({
                   className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl transition-all active:scale-95 border-2 ${
                     isListening
                       ? "bg-rose-500 border-rose-400 text-white animate-pulse"
-                      : "bg-slate-900 border-slate-700 text-white hover:bg-slate-800"
+                      : "bg-[#0E0610] border-[#4A1224]/50 text-white hover:bg-[#1A0C1D]"
                   }`}
                   title={isListening ? "Stop listening" : "Start listening"}
                   aria-label={isListening ? "Stop listening" : "Start listening"}
@@ -1000,7 +1000,7 @@ export default function AccessibilityOverlay({
                 ref={videoRef}
                 autoPlay
                 playsInline
-                className={`object-cover bg-slate-900 ${camExpanded ? "w-full h-full" : "w-56 h-44 sm:w-72 sm:h-56"} ${isVisionActive ? "opacity-100" : "opacity-20"}`}
+                className={`object-cover bg-[#0E0610] ${camExpanded ? "w-full h-full" : "w-56 h-44 sm:w-72 sm:h-56"} ${isVisionActive ? "opacity-100" : "opacity-20"}`}
               />
               <canvas
                 ref={canvasRef}
@@ -1032,7 +1032,7 @@ export default function AccessibilityOverlay({
               <button
                 onClick={isVisionActive ? stopVision : startVision}
                 className={`p-5 rounded-3xl shadow-2xl transition-all active:scale-95 flex items-center gap-3 ${
-                  isVisionActive ? "bg-emerald-500 scale-105" : "bg-slate-900"
+                  isVisionActive ? "bg-emerald-500 scale-105" : "bg-[#0E0610]"
                 }`}
               >
                 {isVisionActive ? (

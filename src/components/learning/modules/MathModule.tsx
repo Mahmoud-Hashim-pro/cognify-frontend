@@ -141,7 +141,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
       />
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-slate-900/60 rounded-3xl border border-slate-800">
+        <div className="flex flex-col items-center justify-center p-16 bg-[#0E0610]/70 rounded-3xl border border-[#4A1224]/60">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-slate-400 font-bold text-sm">
             {isArabic ? 'جاري تجهيز مسألة ممتعة لك...' : 'Preparing a fun math question for you...'}
@@ -150,9 +150,9 @@ export const MathModule: React.FC<MathModuleProps> = ({
       ) : currentExercise ? (
         <div className="flex flex-col gap-5">
           {/* Main Question Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border-2 border-blue-500/30 shadow-2xl backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0610]/95 border-2 border-[#4A1224]/70 shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between gap-3 mb-4">
-              <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 font-black text-xs flex items-center gap-1.5 border border-blue-500/30">
+              <span className="px-3 py-1 rounded-full bg-[#4A1224]/40 text-[#E5A93C] font-black text-xs flex items-center gap-1.5 border border-[#4A1224]/70">
                 <Calculator className="w-3.5 h-3.5" />
                 {isArabic ? 'الرياضيات الممتعة' : 'Fun Math'} • {currentExercise.topic}
               </span>
@@ -164,7 +164,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
                     showCounter
                       ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/25'
-                      : 'bg-slate-800/80 hover:bg-slate-700 text-blue-300 border-slate-700'
+                      : 'bg-[#150917]/80 hover:bg-slate-700 text-[#E5A93C] border-[#4A1224]/50'
                   }`}
                   title={isArabic ? 'عداد المساعدة بالنقاط' : 'Visual Counter Aid'}
                 >
@@ -174,7 +174,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
 
                 <button
                   onClick={speakQuestion}
-                  className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all"
+                  className="p-2 rounded-xl bg-[#150917]/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-[#4A1224]/50 transition-all"
                   title={isArabic ? 'استمع للمسألة' : 'Listen to question'}
                 >
                   <Volume2 className="w-4 h-4" />
@@ -184,9 +184,9 @@ export const MathModule: React.FC<MathModuleProps> = ({
 
             {/* Interactive Visual Counter Bar */}
             {showCounter && (
-              <div className="p-4 rounded-2xl bg-slate-950/90 border border-blue-500/40 mb-5 animate-in slide-in-from-top-2">
+              <div className="p-4 rounded-2xl bg-[#080409]/90 border border-[#E5A93C]/40 mb-5 animate-in slide-in-from-top-2">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-black text-blue-300">
+                  <span className="text-xs font-black text-[#E5A93C]">
                     {isArabic ? `النقاط المعدودة: ${activeCounterDots}` : `Counted Dots: ${activeCounterDots}`}
                   </span>
                   <button
@@ -213,8 +213,8 @@ export const MathModule: React.FC<MathModuleProps> = ({
                         }}
                         className={`w-9 h-9 rounded-xl font-black text-xs transition-all flex items-center justify-center ${
                           isFilled
-                            ? 'bg-gradient-to-tr from-blue-600 to-cyan-500 text-white shadow-md shadow-blue-500/30 scale-105'
-                            : 'bg-slate-900 border border-slate-700 text-slate-500 hover:border-slate-500'
+                            ? 'bg-gradient-to-tr from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                            : 'bg-[#150917] border border-[#4A1224]/50 text-slate-500 hover:border-slate-500'
                         }`}
                       >
                         {idx + 1}
@@ -245,7 +245,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
                   const isSelected = selectedOption === originalOpt;
                   const isCorrect = originalOpt === currentExercise.correctAnswer;
 
-                  let buttonStyle = 'bg-slate-950/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-blue-500/50';
+                  let buttonStyle = 'bg-[#080409]/80 hover:bg-slate-800/90 border-[#4A1224]/60 text-slate-200 hover:border-blue-500/50';
 
                   if (isAnswered) {
                     if (isCorrect) {
@@ -253,7 +253,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
                     } else if (isSelected) {
                       buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300';
                     } else {
-                      buttonStyle = 'bg-slate-950/40 border-slate-800 text-slate-500 opacity-60';
+                      buttonStyle = 'bg-[#080409]/40 border-[#4A1224]/60 text-slate-500 opacity-60';
                     }
                   }
 
@@ -265,7 +265,7 @@ export const MathModule: React.FC<MathModuleProps> = ({
                       className={`p-4 rounded-2xl border-2 text-left font-black text-base sm:text-lg transition-all flex items-center justify-between shadow-md active:scale-95 ${buttonStyle}`}
                     >
                       <span>{opt}</span>
-                      <div className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className="w-6 h-6 rounded-full border border-[#4A1224]/50 flex items-center justify-center text-xs font-bold shrink-0">
                         {String.fromCharCode(65 + idx)}
                       </div>
                     </button>

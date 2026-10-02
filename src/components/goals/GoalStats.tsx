@@ -23,8 +23,8 @@ export default function GoalStats({ goals, language }: GoalStatsProps) {
       value: total,
       icon: Target,
       color: 'text-white',
-      border: 'border-slate-800/80',
-      iconBg: 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400',
+      border: 'border-[#4A1224]/60',
+      iconBg: 'bg-[#4A1224]/50 border border-[#E5A93C]/40 text-[#E5A93C]',
     },
     {
       label: isArabic ? 'مكتملة' : 'Completed',
@@ -38,17 +38,17 @@ export default function GoalStats({ goals, language }: GoalStatsProps) {
       label: isArabic ? 'قيد التنفيذ' : 'In Progress',
       value: inProg,
       icon: InProgress,
-      color: 'text-cyan-400',
-      border: 'border-cyan-500/30',
-      iconBg: 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400',
+      color: 'text-[#E5A93C]',
+      border: 'border-[#4A1224]/60',
+      iconBg: 'bg-[#4A1224]/40 border border-[#E5A93C]/30 text-[#E5A93C]',
     },
     {
       label: isArabic ? 'لم تبدأ' : 'Not Started',
       value: notStart,
       icon: Circle,
       color: 'text-slate-300',
-      border: 'border-slate-800/80',
-      iconBg: 'bg-slate-800 border border-slate-700 text-slate-400',
+      border: 'border-[#4A1224]/40',
+      iconBg: 'bg-[#150917] border border-[#4A1224]/50 text-slate-400',
     },
     {
       label: isArabic ? 'متأخرة' : 'Overdue',
@@ -65,14 +65,14 @@ export default function GoalStats({ goals, language }: GoalStatsProps) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className={`bg-[#121524]/90 ${card.border} border rounded-3xl p-5 flex flex-col gap-3 shadow-xl backdrop-blur-xl hover:border-slate-700/80 transition-all`}
+          className={`bg-[#0E0610]/95 ${card.border} border rounded-3xl p-5 flex flex-col gap-3 shadow-xl backdrop-blur-xl ring-1 ring-[#E5A93C]/10 hover:border-[#E5A93C]/40 transition-all`}
         >
           <div className={`${card.iconBg} w-10 h-10 rounded-2xl flex items-center justify-center shrink-0`}>
             <card.icon className="w-5 h-5" />
           </div>
           <div>
             <div className={`text-3xl font-black font-mono tracking-tight ${card.color}`}>{card.value}</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
+            <div className="text-[10px] font-black uppercase tracking-widest text-[#E5A93C]/80 mt-1">
               {card.label}
             </div>
           </div>

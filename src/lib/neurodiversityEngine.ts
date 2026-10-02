@@ -12,7 +12,7 @@
 import { doc, getDoc, setDoc, collection, addDoc, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db, cleanDataForFirestore } from './firebase';
 import { PECSCard, SensoryEmotionLog } from '../types';
-import { loadContacts, isValidContactPhone } from './contacts';
+import { loadContacts, isValidContactPhone, restoreContactsFromCloud } from './contacts';
 import { triggerHapticAlert } from './hapticNavEngine';
 import { dispatchServerEmergencySOS, EmergencyDispatchResult } from './emergencyDispatcher';
 import { speak } from './tts';
@@ -86,6 +86,12 @@ export const INITIAL_PECS_CARDS: PECSCard[] = [
   { id: 'pecs-10', labelAr: 'عايز مساعدة', labelEn: 'Help Me', labelFr: 'Aide-moi', phraseAr: 'ممكن تساعدني في دي لو سمحت؟', phraseEn: 'Can you please help me with this?', phraseFr: "Pouvez-vous m'aider s'il vous plaît ?", category: 'medical', icon: '🤝', color: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' },
   { id: 'pecs-11', labelAr: 'ألم / في حاجة بتوجعني', labelEn: 'In Pain', labelFr: 'Douleur', phraseAr: 'عندي ألم وفي حاجة بتوجعني.', phraseEn: 'I feel pain somewhere in my body.', phraseFr: "J'ai mal quelque part.", category: 'medical', icon: '🩹', color: 'bg-red-500/20 border-red-500/40 text-red-300' },
   { id: 'pecs-12', labelAr: 'عايز أتمشى', labelEn: 'Walk Outside', labelFr: 'Marcher', phraseAr: 'عايز أخرج أتمشى في الهواء.', phraseEn: 'I want to go for a short walk outside.', phraseFr: 'Je veux faire une promenade.', category: 'play', icon: '🌳', color: 'bg-teal-500/20 border-teal-500/40 text-teal-300' },
+
+  // Core Functional Communication & Regulation (Frost & Bondy PECS Standard)
+  { id: 'pecs-13', labelAr: 'استراحة / كفاية', labelEn: 'Break / Stop', labelFr: 'Pause', phraseAr: 'محتاج أوقف النشاط وآخد استراحة هادئة.', phraseEn: 'I need a break and want to stop for now.', phraseFr: "J'ai besoin d'une pause.", category: 'routine', icon: '⏸️', color: 'bg-amber-500/20 border-amber-500/40 text-amber-300' },
+  { id: 'pecs-14', labelAr: 'نعم / أيوة', labelEn: 'Yes', labelFr: 'Oui', phraseAr: 'نعم، أنا موافق وعايز ده.', phraseEn: 'Yes, I agree and want this.', phraseFr: "Oui, je suis d'accord.", category: 'feelings', icon: '✅', color: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' },
+  { id: 'pecs-15', labelAr: 'لا / مش عايز', labelEn: 'No', labelFr: 'Non', phraseAr: 'لا، أنا مش حابب ده دلوقتي.', phraseEn: 'No, I do not want this right now.', phraseFr: 'Non, je ne veux pas ça.', category: 'feelings', icon: '❌', color: 'bg-rose-500/20 border-rose-500/40 text-rose-300' },
+  { id: 'pecs-16', labelAr: 'خايف / قلقان', labelEn: 'Scared', labelFr: 'Peur', phraseAr: 'أنا حاسس بالخوف ومحتاج أطمن.', phraseEn: 'I feel scared and need reassurance.', phraseFr: "J'ai peur et j'ai besoin d'être rassuré.", category: 'feelings', icon: '😨', color: 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300' },
 ];
 
 export const INITIAL_SCHEDULE: VisualScheduleItem[] = [
@@ -370,9 +376,20 @@ export async function dispatchMeltdownCaregiverAlert(
   trigger?: string,
   uid?: string
 ): Promise<EmergencyDispatchResult> {
-  const contacts = loadContacts();
-  const primary = contacts.find((c) => c.isPrimaryEmergency && isValidContactPhone(c.phone)) ||
-                  contacts.find((c) => isValidContactPhone(c.phone));
+  let contacts = loadContacts();
+  let primary = contacts.find((c) => c.isPrimaryEmergency && isValidContactPhone(c.phone)) ||
+                contacts.find((c) => isValidContactPhone(c.phone));
+
+  // If local storage contacts lack a verified phone, attempt fast cloud restoration
+  if (!primary && uid) {
+    try {
+      contacts = await restoreContactsFromCloud(uid);
+      primary = contacts.find((c) => c.isPrimaryEmergency && isValidContactPhone(c.phone)) ||
+                contacts.find((c) => isValidContactPhone(c.phone));
+    } catch {
+      // Fall through to primary
+    }
+  }
 
   const caregiverPhone = primary?.phone || '';
   const caregiverName = primary?.nameAr || primary?.nameEn || 'Primary Caregiver';

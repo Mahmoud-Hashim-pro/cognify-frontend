@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Institution & B2B Cohort Hub Aggregation Engine
  *
  * Provides cohort-level analytics for Universities, Schools, and Organizations.
@@ -38,7 +38,6 @@ export interface InstitutionCohortStats {
   cognitiveLevelDistribution: Record<CognitiveLevel, number>;
   accessibilityModeBreakdown: {
     Vision: number;
-    Motor: number;
     Deaf: number;
     Vocal: number;
     None: number;
@@ -145,7 +144,6 @@ export function computeCohortAnalytics(users: UserProfile[], orgCode?: string): 
 
   const accessibilityModeBreakdown = {
     Vision: 0,
-    Motor: 0,
     Deaf: 0,
     Vocal: 0,
     None: 0,
@@ -160,16 +158,14 @@ export function computeCohortAnalytics(users: UserProfile[], orgCode?: string): 
     cognitiveLevelDistribution[level]++;
 
     // Accessibility mode mapping
-    const mode = u.accessibilityMode;
+    const mode: string = (u.accessibilityMode as string) || '';
     if (!mode || mode === 'None') {
       accessibilityModeBreakdown.None++;
-    } else if (mode === 'Visual') {
+    } else if (mode === 'Visual' || mode === 'Vision') {
       accessibilityModeBreakdown.Vision++;
-    } else if (mode === 'Motor-Euphonia') {
-      accessibilityModeBreakdown.Motor++;
-    } else if (mode === 'Sign-Only' || mode === 'Vocal-Deaf') {
+    } else if (mode === 'Sign-Only' || mode === 'Vocal-Deaf' || mode === 'Deaf') {
       accessibilityModeBreakdown.Deaf++;
-    } else if (mode === 'Speech') {
+    } else if (mode === 'Speech' || mode === 'Vocal') {
       accessibilityModeBreakdown.Vocal++;
     } else {
       accessibilityModeBreakdown.Other++;
@@ -195,7 +191,7 @@ export function computeCohortAnalytics(users: UserProfile[], orgCode?: string): 
         name: u.name || (u.email ? u.email.split('@')[0] : 'Student'),
         emailMasked: maskEmail(u.email),
         cognitiveLevel: level,
-        accessibilityMode: mode || 'None',
+        accessibilityMode: (u.accessibilityMode || 'None') as AccessibilityMode,
         points,
         gpa,
         lastActiveIso: getUserLastActiveIso(u),
@@ -236,15 +232,19 @@ export function computeCohortAnalytics(users: UserProfile[], orgCode?: string): 
     activeStudents: activeCount,
     activeRate,
     averagePoints,
-    cognitiveLevelDistribution,
-    accessibilityModeBreakdown,
-    accessibilityAdoptionRate,
-    averageGpa,
+    cognitiveLevelDistribution: kAnonymitySuppressed
+      ? { Basic: 0, Intermediate: 0, Advanced: 0 }
+      : cognitiveLevelDistribution,
+    accessibilityModeBreakdown: kAnonymitySuppressed
+      ? { Vision: 0, Deaf: 0, Vocal: 0, None: 0, Other: 0 }
+      : accessibilityModeBreakdown,
+    accessibilityAdoptionRate: kAnonymitySuppressed ? 0 : accessibilityAdoptionRate,
+    averageGpa: kAnonymitySuppressed ? null : averageGpa,
     kAnonymitySuppressed,
     kThreshold: K_ANONYMITY_THRESHOLD,
     students: studentSummaries,
-    aggregatedPointRange,
-    aggregatedGpaRange,
+    aggregatedPointRange: kAnonymitySuppressed ? { min: 0, max: 0 } : aggregatedPointRange,
+    aggregatedGpaRange: kAnonymitySuppressed ? null : aggregatedGpaRange,
   };
 }
 
@@ -313,7 +313,6 @@ export function exportCohortCsv(stats: InstitutionCohortStats): string {
   lines.push(`Mode,Student Count,Percentage`);
   const modes = stats.accessibilityModeBreakdown;
   lines.push(`Vision (Visual Accommodations),${modes.Vision},${Math.round((modes.Vision / total) * 1000) / 10}%`);
-  lines.push(`Motor (Motor & Euphonia Assistive),${modes.Motor},${Math.round((modes.Motor / total) * 1000) / 10}%`);
   lines.push(`Deaf (Sign Avatar / Vocal-Deaf),${modes.Deaf},${Math.round((modes.Deaf / total) * 1000) / 10}%`);
   lines.push(`Vocal (Speech & Transcription),${modes.Vocal},${Math.round((modes.Vocal / total) * 1000) / 10}%`);
   lines.push(`None (Standard Interface),${modes.None},${Math.round((modes.None / total) * 1000) / 10}%`);

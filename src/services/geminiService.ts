@@ -24,8 +24,8 @@ async function callText(prompt: string): Promise<string> {
 
 /** Strip a `data:<mime>;base64,` prefix if present, returning raw base64. */
 function rawBase64(data: string): string {
-  const comma = data.indexOf(",");
-  return comma >= 0 ? data.slice(comma + 1) : data;
+  const i = data.indexOf("base64,");
+  return i >= 0 ? data.slice(i + 7) : data;
 }
 
 /**
@@ -279,4 +279,3 @@ Reply with ONLY the JSON array — e.g. ["HELP","WATER"] or [].`;
     return out;
   },
 };
-

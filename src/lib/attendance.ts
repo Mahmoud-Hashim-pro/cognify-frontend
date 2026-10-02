@@ -40,11 +40,12 @@ export function absencesRemaining(s: AttendanceSubject): number | null {
   return Math.max(0, maxAbsences - s.absent);
 }
 
-/** True if the subject is already below its required threshold. */
+/** True if the student has exceeded the maximum allowed absences for the subject. */
 export function isDeprived(s: AttendanceSubject): boolean {
-  const held = s.attended + s.absent;
-  if (!held) return false;
-  return attendancePct(s) < s.threshold;
+  const total = s.totalPlanned && s.totalPlanned > 0 ? s.totalPlanned : s.attended + s.absent;
+  if (!total) return false;
+  const maxAbsences = Math.floor(total * (1 - s.threshold / 100));
+  return s.absent > maxAbsences;
 }
 
 // ─── Firestore CRUD ──────────────────────────────────────────────────────────

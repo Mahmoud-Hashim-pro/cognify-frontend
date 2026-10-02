@@ -5,7 +5,7 @@ import { AriaButton } from './ui/AriaButton';
 import { UserProfile, AccessibilityMode, Message, LanguagePreference } from '../types';
 import { 
   Settings, Eye, Accessibility, Menu, Sparkles, User, Ear, Mic, Brain, 
-  ArrowLeft, ArrowRight, MessageSquare, Activity, Globe, Check, 
+  ArrowLeft, ArrowRight, MessageSquare, Globe, Check, 
   LayoutGrid, Building2, Zap, Radio, Shield, ListFilter, Layers, 
   SlidersHorizontal, CheckCircle2, ChevronRight, Grid, List, BookOpen, ShieldCheck
 } from 'lucide-react';
@@ -14,7 +14,6 @@ import { doc, setDoc } from 'firebase/firestore';
 import { db, cleanDataForFirestore } from '../lib/firebase';
 import { toast } from './Toast';
 import type { ChatInterfaceRef } from './ChatInterface';
-const MotorEuphoniaView = React.lazy(() => import('./MotorEuphoniaView'));
 const VisionCompanionView = React.lazy(() => import('./VisionCompanionView'));
 const ChatInterface = React.lazy(() => import('./ChatInterface'));
 const OrgDashboard = React.lazy(() => import('./OrgDashboard'));
@@ -22,11 +21,13 @@ const NeurodiversityHub = React.lazy(() => import('./NeurodiversityHub'));
 const CaregiverHub = React.lazy(() => import('./CaregiverHub'));
 const AccessibilityPassportModal = React.lazy(() => import('./AccessibilityPassportModal'));
 const VisualComfortModal = React.lazy(() => import('./VisualComfortModal'));
+const AccessibilityPreferencesModal = React.lazy(() => import('./AccessibilityPreferencesModal'));
 const DeafEcosystemView = React.lazy(() => import('./DeafEcosystemView'));
 const CrossDisabilityOrchestrator = React.lazy(() => import('./CrossDisabilityOrchestrator'));
 const LearningHub = React.lazy(() => import('./learning/LearningHub'));
 import { isAccessibilityUser } from '../lib/access';
-import { getTranslation } from '../lib/translations';
+import { getTranslation, isArabicLocale } from '../lib/translations';
+import { createInitialA11yProfile } from '../lib/accessibilityIntelligenceEngine';
 
 import BurgundyConstellationHero from './BurgundyConstellationHero';
 
@@ -38,7 +39,6 @@ export type DisabilityTab =
   | 'studio'
   | 'bridge'
   | 'org'
-  | 'motor'
   | 'vision'
   | 'radar'
   | 'neurodiversity'
@@ -47,7 +47,7 @@ export type DisabilityTab =
   | 'deaf'
   | 'orchestrator';
 
-export type ModuleCategory = 'all' | 'vision' | 'hearing' | 'motor' | 'neuro' | 'caregiver';
+export type ModuleCategory = 'all' | 'vision' | 'hearing' | 'neuro' | 'caregiver';
 
 interface DisabilityModeViewProps {
   profile: UserProfile;
@@ -75,19 +75,17 @@ function detectDirectDisabilityTab(profile: UserProfile): DisabilityTab {
   // 1. If user explicitly clicked and chose a tab before, honor that manual choice!
   try {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('cognify_default_disability_tab') : null;
-    if (saved === 'motor' || saved === 'neurodiversity' || saved === 'deaf' || saved === 'vision') {
+    if (saved === 'hub' || saved === 'neurodiversity' || saved === 'deaf' || saved === 'vision') {
       return saved as DisabilityTab;
     }
   } catch {}
 
   const mode = String(profile?.accessibilityMode || '').toLowerCase().trim();
-  if (mode.includes('motor') || mode === 'speech') return 'motor';
   if (mode.includes('neuro') || mode.includes('cognitiv') || mode.includes('autis')) return 'neurodiversity';
   if (mode.includes('deaf') || mode.includes('sign') || mode.includes('hearing') || mode.includes('vocal')) return 'deaf';
   if (mode.includes('visu') || mode.includes('blind')) return 'vision';
 
   const freeText = String(profile?.disabilityType || '').toLowerCase().trim();
-  if (/motor|euphonia|paraly|quadr|speech|als/.test(freeText)) return 'motor';
   if (/adhd|autis|dyslex|cognitiv|neurodiv|learning/.test(freeText)) return 'neurodiversity';
   if (/deaf|hearing|vocal|sign/.test(freeText)) return 'deaf';
   if (/visual|blind|vision|sight/.test(freeText)) return 'vision';
@@ -102,7 +100,6 @@ function categoryForTab(tab: DisabilityTab): ModuleCategory {
   switch (tab) {
     case 'vision': return 'vision';
     case 'deaf': return 'hearing';
-    case 'motor': return 'motor';
     case 'neurodiversity':
     case 'learning': return 'neuro';
     case 'caregiver': return 'caregiver';
@@ -127,6 +124,8 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
   const [activeTab, setActiveTab] = useState<DisabilityTab>(() => detectDirectDisabilityTab(profile));
   const [showPassportModal, setShowPassportModal] = useState(false);
   const [showVisualComfortModal, setShowVisualComfortModal] = useState(false);
+  const [showA11yPrefsModal, setShowA11yPrefsModal] = useState(false);
+  const [a11yCommProfile, setA11yCommProfile] = useState(() => createInitialA11yProfile(profile?.uid || 'local'));
   const [selectedCategory, setSelectedCategory] = useState<ModuleCategory>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
@@ -152,7 +151,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
   const handleSelectTab = React.useCallback((tab: DisabilityTab) => {
     setActiveTab(tab);
     onTabChange?.(tab);
-    if (tab === 'vision' || tab === 'deaf' || tab === 'motor' || tab === 'neurodiversity') {
+    if (tab === 'vision' || tab === 'deaf' || tab === 'neurodiversity' || tab === 'hub') {
       try {
         localStorage.setItem('cognify_default_disability_tab', tab);
       } catch {}
@@ -160,26 +159,29 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       let newType: string | null = null;
       if (tab === 'vision') { newMode = 'Visual'; newType = 'Visual Impairment'; }
       else if (tab === 'deaf') { newMode = 'Vocal-Deaf'; newType = 'Hearing Impairment'; }
-      else if (tab === 'motor') { newMode = 'Motor-Euphonia'; newType = 'Motor Impairment'; }
       else if (tab === 'neurodiversity') { newMode = 'Neurodiversity'; newType = 'Cognitive/Learning Disability'; }
 
       if (newMode) {
         lastProfileModeRef.current = newMode;
         if (profile?.uid && setProfile) {
           setProfile({ ...profile, accessibilityMode: newMode, disabilityType: newType || profile.disabilityType });
-          setDoc(doc(db, `users/${profile.uid}`), cleanDataForFirestore({ accessibilityMode: newMode, disabilityType: newType }), { merge: true }).catch(() => {});
+          if (profile.uid !== 'guest-explorer') {
+            setDoc(doc(db, `users/${profile.uid}`), cleanDataForFirestore({ accessibilityMode: newMode, disabilityType: newType }), { merge: true }).catch(() => {});
+          }
         }
       }
     }
   }, [profile, setProfile, onTabChange]);
 
   const handleNavigateBack = React.useCallback(() => {
-    if (onNavigate) {
+    if (activeTab !== 'hub') {
+      setActiveTab('hub');
+    } else if (onNavigate) {
       onNavigate('chat');
     } else {
       onMenuClick();
     }
-  }, [onNavigate, onMenuClick]);
+  }, [activeTab, onNavigate, onMenuClick]);
 
   const SUPPORTED_LANGUAGES: { id: LanguagePreference; label: string; flag: string; nativeName: string }[] = [
     { id: 'French', label: 'French', flag: '🇫🇷', nativeName: 'Français' },
@@ -199,6 +201,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
     if (!profile?.uid) return;
     const previousLang = profile.language;
     if (setProfile) setProfile({ ...profile, language: newLang });
+    if (profile.uid === 'guest-explorer') {
+      toast.success(
+        localize(newLang, `Language set to: ${newLang}`, `تم تغيير اللغة إلى: ${newLang}`),
+        localize(newLang, 'Language Updated', 'تم تحديث اللغة')
+      );
+      return;
+    }
     const path = `users/${profile.uid}`;
     try {
       await setDoc(doc(db, path), cleanDataForFirestore({ language: newLang }), { merge: true });
@@ -220,6 +229,13 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
     if (!profile?.uid) return;
     const previousMode = profile.accessibilityMode;
     if (setProfile) setProfile({ ...profile, accessibilityMode: mode });
+    if (profile.uid === 'guest-explorer') {
+      toast.success(
+        localize(profile?.language, `Mode set to: ${mode}`, `تم تفعيل نمط: ${mode}`),
+        localize(profile?.language, 'Accessibility Mode', 'نمط الوصول')
+      );
+      return;
+    }
     const path = `users/${profile.uid}`;
     try {
       await setDoc(doc(db, path), { accessibilityMode: mode }, { merge: true });
@@ -245,8 +261,8 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       titleAr: 'جميع الأدوات',
       emoji: '🌟',
       icon: Sparkles,
-      color: 'text-cyan-400',
-      activeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50',
+      color: 'text-[#E5A93C]',
+      activeBg: 'bg-[#4A1224]/50 text-[#E5A93C] border-[#E5A93C]/50',
       descAr: 'عرض شامل لجميع أدوات ومنظومات إمكانية الوصول والتكيف',
       descEn: 'Full view of all assistive and adaptation suites',
     },
@@ -267,21 +283,10 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       titleAr: 'الصم وضعاف السمع',
       emoji: '👂',
       icon: Ear,
-      color: 'text-indigo-400',
+      color: 'text-[#E5A93C]',
       activeBg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/50',
       descAr: 'استوديو الإشارة ثلاثي الأبعاد، رادار الأصوات والمخاطر، وجسر التخاطب المباشر',
       descEn: '3D sign language avatar, ambient sound & hazard radar, and live human communication bridge',
-    },
-    {
-      id: 'motor' as const,
-      titleEn: 'Motor, ALS & Mobility',
-      titleAr: 'الحركة والشلل والتصلب',
-      emoji: '🦾',
-      icon: Activity,
-      color: 'text-amber-400',
-      activeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/50',
-      descAr: 'حركة الرأس، لوحة العين والرمش، عبارات AAC السريعة، واستغاثة الطوارئ SOS بالعين 4 ثوانٍ',
-      descEn: 'Head pointer, eye-gaze virtual keyboard, contextual AAC, and 4-second eye-closure SOS',
     },
     {
       id: 'neuro' as const,
@@ -325,7 +330,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['Currency Reader', 'Face & Person Memory', 'Color Matching', 'Haptic White Cane', 'Spatial Memory'],
       Icon: Eye,
       accentColor: 'text-emerald-400',
-      borderGlow: 'hover:border-emerald-500/60 border-slate-800',
+      borderGlow: 'hover:border-emerald-500/60 border-[#4A1224]/60',
       bgGlow: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
       buttonCls: 'bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 shadow-teal-500/20',
       matchingMode: 'Visual',
@@ -350,10 +355,10 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
         { tab: 'bridge' as const, labelEn: 'Live Bridge', labelAr: 'جسر التواصل', icon: Ear },
       ],
       Icon: Accessibility,
-      accentColor: 'text-indigo-400',
-      borderGlow: 'hover:border-indigo-500/80 border-indigo-500/40 ring-1 ring-indigo-500/20',
-      bgGlow: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/40',
-      buttonCls: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 text-white shadow-indigo-500/25',
+      accentColor: 'text-[#E5A93C]',
+      borderGlow: 'hover:border-indigo-500/80 border-[#E5A93C]/30 ring-1 ring-indigo-500/20',
+      bgGlow: 'bg-indigo-500/15 text-[#E5A93C] border-[#E5A93C]/30',
+      buttonCls: 'bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-600 text-white shadow-indigo-500/25',
       matchingMode: 'Sign-Only',
     },
     // 3. CROSS-DISABILITY SENSORY BRIDGE (UNIVERSAL MESH)
@@ -371,32 +376,11 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesAr: ['جسر كفيف ⇄ أصم فوري', 'مصفوفة مورس اللمسية بالاهتزاز', 'مسح المفتاح الفردي لشلل ALS', 'استغاثة SOS شاملة متعددة الحواس'],
       quickFeaturesEn: ['Blind ⇄ Deaf Bilateral Relay', 'Tactile Morse Haptics', 'Single-Switch ALS Scanner', 'Omni-Sensory SOS Beacon'],
       Icon: Sparkles,
-      accentColor: 'text-cyan-400',
-      borderGlow: 'hover:border-cyan-500/80 border-cyan-500/40 ring-1 ring-cyan-500/30',
-      bgGlow: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/40',
-      buttonCls: 'bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 text-white shadow-cyan-500/25',
+      accentColor: 'text-[#E5A93C]',
+      borderGlow: 'hover:border-[#E5A93C]/80 border-[#E5A93C]/40 ring-1 ring-[#E5A93C]/30',
+      bgGlow: 'bg-[#4A1224]/40 text-[#E5A93C] border-[#E5A93C]/40',
+      buttonCls: 'bg-gradient-to-r from-amber-400 via-indigo-500 to-purple-600 text-white shadow-[#E5A93C]/20',
       matchingMode: 'Multiple',
-    },
-    // 4. MOTOR & ALS
-    {
-      id: 'motor' as const,
-      category: 'motor' as const,
-      titleEn: 'Motor & Euphonia Control',
-      titleAr: 'التحكم الحركي وإيفونيا',
-      shortEn: 'Motor Control',
-      shortAr: 'التحكم الحركي',
-      badgeEn: 'Quadriplegia & ALS',
-      badgeAr: 'الشلل والتصلب الجانبي',
-      descEn: 'Full hands-free interaction. Head-pointer cursor, eye-blink virtual keyboard, contextual predictive AAC quick bar, and 4-second continuous eye-closure SOS dispatch.',
-      descAr: 'تحكم متكامل بدون لمس عبر حركة الرأس، لوحة العين والرمش، شريط العبارات السريعة التنبؤية، ونداء استغاثة الطوارئ SOS بالعين 4 ثوانٍ مع GPS.',
-      quickFeaturesAr: ['قيادة المؤشر بحركة الرأس', 'لوحة افتراضية بالعين والرمش', 'شريط عبارات تنبؤية حسب الوقت', 'استغاثة SOS بالعين 4 ثوانٍ و GPS', 'تأكيدات همهمات إيفونيا'],
-      quickFeaturesEn: ['Head-Tracking Pointer', 'Eye-Gaze Keyboard', 'Predictive AAC Quick Bar', '4-sec Eye Closure GPS SOS', 'Euphonia Vocal Triggers'],
-      Icon: Activity,
-      accentColor: 'text-amber-400',
-      borderGlow: 'hover:border-amber-500/60 border-slate-800',
-      bgGlow: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-      buttonCls: 'bg-gradient-to-r from-amber-400 via-amber-500 to-rose-400 text-slate-950 shadow-amber-500/20',
-      matchingMode: 'Motor-Euphonia',
     },
     // 4. NEURODIVERSITY & AUTISM
     {
@@ -414,7 +398,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['Custom Spoken PECS Cards', 'Daily Predictability Routine', '4-4-4 Calming Breathing Bubble', 'Server Meltdown Caregiver Alert'],
       Icon: Brain,
       accentColor: 'text-purple-400',
-      borderGlow: 'hover:border-purple-500/60 border-slate-800',
+      borderGlow: 'hover:border-purple-500/60 border-[#4A1224]/60',
       bgGlow: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
       buttonCls: 'bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 text-white shadow-purple-500/20',
       matchingMode: 'Neurodiversity',
@@ -435,7 +419,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['7 Adaptive Subjects', 'OpenDyslexic Font', 'Dynamic Level Adaptation', 'Parent Progress Tracker'],
       Icon: Sparkles,
       accentColor: 'text-amber-400',
-      borderGlow: 'hover:border-amber-500/60 border-slate-800',
+      borderGlow: 'hover:border-amber-500/60 border-[#4A1224]/60',
       bgGlow: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
       buttonCls: 'bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 text-slate-950 shadow-yellow-500/20',
       matchingMode: 'Neurodiversity',
@@ -456,7 +440,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['Live Telemetry Metrics', 'SOS Test Dispatch', 'Vision & Vocal History', 'Encrypted JSON Backup'],
       Icon: Shield,
       accentColor: 'text-rose-400',
-      borderGlow: 'hover:border-rose-500/60 border-slate-800',
+      borderGlow: 'hover:border-rose-500/60 border-[#4A1224]/60',
       bgGlow: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
       buttonCls: 'bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-rose-500/20',
       matchingMode: 'Multiple',
@@ -475,10 +459,10 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesAr: ['تكيف مع سرعة الاستيعاب', 'شرح خطوة بخطوة', 'دعم قارئات الشاشة بالكامل'],
       quickFeaturesEn: ['Adaptive Pace', 'Step-by-Step Guidance', 'Full Screen Reader Support'],
       Icon: MessageSquare,
-      accentColor: 'text-cyan-400',
-      borderGlow: 'hover:border-cyan-500/60 border-slate-800',
-      bgGlow: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
-      buttonCls: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/20',
+      accentColor: 'text-[#E5A93C]',
+      borderGlow: 'hover:border-[#E5A93C]/60 border-[#4A1224]/60',
+      bgGlow: 'bg-[#4A1224]/30 text-[#E5A93C] border-[#E5A93C]/30',
+      buttonCls: 'bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-white shadow-[#E5A93C]/20',
       matchingMode: 'None',
     },
     {
@@ -496,9 +480,9 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['11 Languages & Dialects', 'Custom Profile Activation', 'Contrast Options'],
       Icon: Settings,
       accentColor: 'text-slate-300',
-      borderGlow: 'hover:border-slate-600 border-slate-800',
-      bgGlow: 'bg-slate-800/80 text-slate-300 border-slate-700',
-      buttonCls: 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700',
+      borderGlow: 'hover:border-slate-600 border-[#4A1224]/60',
+      bgGlow: 'bg-[#150917]/80 text-slate-300 border-[#4A1224]/50',
+      buttonCls: 'bg-slate-800 hover:bg-slate-700 text-white border border-[#4A1224]/50',
       matchingMode: '',
     },
     ...(isOrgStaff ? [{
@@ -516,7 +500,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
       quickFeaturesEn: ['Cohort Analytics', 'Adoption Reports'],
       Icon: Building2,
       accentColor: 'text-teal-400',
-      borderGlow: 'hover:border-teal-500/60 border-slate-800',
+      borderGlow: 'hover:border-teal-500/60 border-[#4A1224]/60',
       bgGlow: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
       buttonCls: 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-teal-500/20',
       matchingMode: '',
@@ -524,157 +508,161 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
   ];
 
   // Whether a module card is the one the user's accessibilityMode actually lands them
-  // in — kept in sync with detectDirectDisabilityTab's mapping (Speech -> motor,
-  // Vocal-Deaf/Sign-Only -> deaf) so the "Active Mode" badge and quick-launch card
-  // never point at a different suite than the one Speech/Deaf users are auto-routed to.
+  // in — kept in sync with detectDirectDisabilityTab's mapping (Vocal-Deaf/Sign-Only -> deaf)
+  // so the "Active Mode" badge and quick-launch card never point at a different suite.
   const isModuleActiveForProfile = (m: (typeof MODULES)[number]) => {
     if (!profile.accessibilityMode || profile.accessibilityMode === 'None') return false;
     if (m.matchingMode === profile.accessibilityMode) return true;
     if (m.id === 'deaf' && (profile.accessibilityMode === 'Sign-Only' || profile.accessibilityMode === 'Vocal-Deaf')) return true;
-    if (m.id === 'motor' && profile.accessibilityMode === 'Speech') return true;
     return false;
   };
 
   // Filter modules based on selectedCategory
   const filteredModules = useMemo(() => {
     if (selectedCategory === 'all') return MODULES;
-    return MODULES.filter((m) => m.category === selectedCategory || (m.id === 'orchestrator' && (selectedCategory === 'vision' || selectedCategory === 'hearing' || selectedCategory === 'motor')));
+    return MODULES.filter((m) => m.category === selectedCategory || (m.id === 'orchestrator' && (selectedCategory === 'vision' || selectedCategory === 'hearing')));
   }, [selectedCategory, MODULES]);
 
-  // Current active module metadata for sibling bar
-  const currentModule = MODULES.find((m) => m.id === activeTab);
-  const siblingModules = useMemo(() => {
-    if (!currentModule || currentModule.category === 'caregiver') return [];
-    return MODULES.filter((m) => m.category === currentModule.category);
-  }, [currentModule, MODULES]);
-
   const isAr = profile.language === 'Arabic' || profile.language === 'Egyptian Ammiya';
-  const isDeafActive = activeTab === 'deaf' || activeTab === 'radar' || activeTab === 'bridge';
+  const isDeafActive = activeTab === 'deaf' || activeTab === 'radar' || activeTab === 'bridge' || activeTab === 'studio' || activeTab === 'video';
+
+  // Current active module metadata for sibling bar
+  const currentModule = MODULES.find((m) => m.id === (isDeafActive ? 'deaf' : activeTab));
+  const siblingModules = useMemo(() => {
+    if (isDeafActive || !currentModule || currentModule.category === 'caregiver') return [];
+    return MODULES.filter((m) => m.category === currentModule.category);
+  }, [isDeafActive, currentModule, MODULES]);
 
   return (
-    <div dir={isAr ? 'rtl' : 'ltr'} className="flex-1 flex flex-col h-full bg-[#0d101d] text-slate-100 overflow-hidden relative select-none">
+    <div dir={isAr ? 'rtl' : 'ltr'} className="flex-1 flex flex-col h-full bg-[#080409] text-slate-100 overflow-hidden relative select-none">
       
-      {/* ── TOP NAVIGATION BAR ── */}
-      {!isDeafActive && (
-        <header className="relative z-[9995] px-4 py-2.5 sm:px-6 sm:py-3 shrink-0 flex items-center justify-between border-b border-slate-800 bg-[#121524]/95 backdrop-blur-xl shadow-lg">
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
-            {/* Main App Menu Drawer Button */}
-            <AriaButton
-              onPress={() => {
-                if (isAccessibilityUser(profile) || !onNavigate) onMenuClick();
-                else onNavigate('chat');
-              }}
-              aria-label={isAccessibilityUser(profile)
-                ? localize(profile.language, 'Open menu', 'افتح القائمة')
-                : getTranslation(profile.language, 'back')}
-              className="p-2 text-slate-400 bg-slate-900 border border-slate-800 hover:text-white hover:bg-slate-800 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 cursor-pointer"
-            >
+      {/* ── TOP NAVIGATION BAR (Always visible for seamless cross-disability jumping) ── */}
+      <header className="relative z-[9995] px-3 py-2 sm:px-6 sm:py-3 shrink-0 flex items-center justify-between border-b border-[#4A1224]/60 bg-[#0E0610]/95 backdrop-blur-xl shadow-lg">
+        <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+          {/* Main App Menu Drawer Button */}
+          <AriaButton
+            onPress={() => {
+              if (isAccessibilityUser(profile) || !onNavigate) onMenuClick();
+              else onNavigate('chat');
+            }}
+            aria-label={isAccessibilityUser(profile)
+              ? localize(profile.language, 'Open menu', 'افتح القائمة')
+              : getTranslation(profile.language, 'back')}
+            className="p-2 text-slate-400 bg-[#150917] border border-[#4A1224]/60 hover:text-white hover:bg-slate-800 rounded-xl active:scale-95 transition-all flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-[#E5A93C] cursor-pointer shrink-0"
+          >
+            {isAccessibilityUser(profile)
+              ? <Menu className="w-4 h-4" />
+              : <ArrowLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />}
+            <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">
               {isAccessibilityUser(profile)
-                ? <Menu className="w-4 h-4" />
-                : <ArrowLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />}
-              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">
-                {isAccessibilityUser(profile)
-                  ? localize(profile.language, 'Menu', 'القائمة')
-                  : getTranslation(profile.language, 'back')}
-              </span>
-            </AriaButton>
+                ? localize(profile.language, 'Menu', 'القائمة')
+                : getTranslation(profile.language, 'back')}
+            </span>
+          </AriaButton>
 
-            {/* Primary Disability Mode Switcher: Instant, Uncluttered, Accessible */}
+          {/* Primary Disability Mode Switcher: Instant, Uncluttered, Accessible Across All Suites */}
+          <AriaRadioGroup
+            value={isDeafActive ? 'deaf' : (activeTab as string)}
+            onChange={(suiteId) => handleSelectTab(suiteId as DisabilityTab)}
+            aria-label={localize(profile.language, 'Primary Accessibility Suites', 'منظومات الإتاحة الرئيسية')}
+            orientation="horizontal"
+            className="flex items-center bg-[#150917] border border-[#4A1224]/60 p-1 rounded-2xl shadow-inner gap-1 outline-none overflow-x-auto custom-scrollbar"
+          >
+            {[
+              { id: 'hub' as const, labelAr: 'الرئيسية', labelEn: 'Hub', Icon: LayoutGrid },
+              { id: 'vision' as const, labelAr: 'بصرية', labelEn: 'Visual', Icon: Eye },
+              { id: 'deaf' as const, labelAr: 'سمعية', labelEn: 'Hearing', Icon: Ear },
+              { id: 'neurodiversity' as const, labelAr: 'ذهنية', labelEn: 'Cognitive', Icon: Brain },
+            ].map((suite) => (
+              <AriaRadio
+                key={suite.id}
+                value={suite.id}
+                className={({ isSelected, isFocusVisible }) =>
+                  `px-2 sm:px-3 min-h-[38px] sm:min-h-[40px] py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer outline-none shrink-0 ${
+                    isSelected
+                      ? 'bg-amber-400 text-slate-950 font-black shadow-md'
+                      : 'text-slate-300 hover:text-white hover:bg-[#150917]/70'
+                  } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-slate-900' : ''}`
+                }
+              >
+                <suite.Icon className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">{localize(profile.language, suite.labelEn, suite.labelAr)}</span>
+              </AriaRadio>
+            ))}
+          </AriaRadioGroup>
+        </div>
+
+        {/* Right Header Status / Sibling Switcher */}
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Sibling module pills when inside a suite */}
+          {activeTab !== 'hub' && siblingModules.length > 1 ? (
             <AriaRadioGroup
-              value={((activeTab as string) === 'bridge' || (activeTab as string) === 'radar') ? 'deaf' : (activeTab as string)}
-              onChange={(suiteId) => handleSelectTab(suiteId as DisabilityTab)}
-              aria-label={localize(profile.language, 'Primary Accessibility Suites', 'منظومات الإتاحة الرئيسية')}
+              value={activeTab as string}
+              onChange={(mId) => setActiveTab(mId as DisabilityTab)}
+              aria-label={localize(profile.language, 'Suite Sub-modules', 'أقسام المنظومة')}
               orientation="horizontal"
-              className="flex items-center bg-[#171E2E] border border-slate-800 p-1 rounded-2xl shadow-inner gap-1 outline-none"
+              className="flex items-center bg-[#150917] border border-[#4A1224]/60 p-1 rounded-xl max-w-[280px] sm:max-w-md overflow-x-auto custom-scrollbar gap-1 outline-none"
             >
-              {[
-                { id: 'vision' as const, labelAr: 'بصرية', labelEn: 'Visual', Icon: Eye },
-                { id: 'deaf' as const, labelAr: 'سمعية', labelEn: 'Hearing', Icon: Ear },
-                { id: 'motor' as const, labelAr: 'حركية', labelEn: 'Motor', Icon: Activity },
-                { id: 'neurodiversity' as const, labelAr: 'ذهنية', labelEn: 'Cognitive', Icon: Brain },
-              ].map((suite) => (
+              {siblingModules.map((m) => (
                 <AriaRadio
-                  key={suite.id}
-                  value={suite.id}
+                  key={m.id}
+                  value={m.id}
                   className={({ isSelected, isFocusVisible }) =>
-                    `px-2.5 sm:px-3 min-h-[40px] py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer outline-none ${
+                    `px-3 py-1.5 min-h-[38px] rounded-lg text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer outline-none ${
                       isSelected
-                        ? 'bg-amber-400 text-slate-950 font-black shadow-md'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-                    } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-slate-900' : ''}`
+                        ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                        : 'text-slate-300 hover:text-white'
+                    } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900' : ''}`
                   }
                 >
-                  <suite.Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline">{localize(profile.language, suite.labelEn, suite.labelAr)}</span>
+                  <span
+                    title={localize(profile.language, m.titleEn, m.titleAr)}
+                    className="flex items-center gap-1.5"
+                  >
+                    <m.Icon className="w-3.5 h-3.5" />
+                    <span>{localize(profile.language, m.shortEn, m.shortAr)}</span>
+                  </span>
                 </AriaRadio>
               ))}
             </AriaRadioGroup>
-          </div>
-
-          {/* Right Header Status / Sibling Switcher */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Sibling module pills when inside a suite */}
-            {activeTab !== 'hub' && siblingModules.length > 1 ? (
-              <AriaRadioGroup
-                value={activeTab as string}
-                onChange={(mId) => setActiveTab(mId as DisabilityTab)}
-                aria-label={localize(profile.language, 'Suite Sub-modules', 'أقسام المنظومة')}
-                orientation="horizontal"
-                className="flex items-center bg-[#171E2E] border border-slate-800 p-1 rounded-xl max-w-[280px] sm:max-w-md overflow-x-auto custom-scrollbar gap-1 outline-none"
+          ) : (
+            /* Standard accessibility utilities: Visual Comfort, Passport, AI Preferences & Settings */
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <AriaButton
+                onPress={() => setShowVisualComfortModal(true)}
+                aria-label={localize(profile.language, 'Visual Comfort & Dyslexia Tools', 'أدوات الراحة البصرية وتيسير القراءة')}
+                className="px-2.5 sm:px-3.5 min-h-[38px] sm:min-h-[44px] py-1.5 sm:py-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 text-slate-200 hover:text-white hover:bg-slate-800 transition-all text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
               >
-                {siblingModules.map((m) => (
-                  <AriaRadio
-                    key={m.id}
-                    value={m.id}
-                    className={({ isSelected, isFocusVisible }) =>
-                      `px-3 py-1.5 min-h-[38px] rounded-lg text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer outline-none ${
-                        isSelected
-                          ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
-                          : 'text-slate-300 hover:text-white'
-                      } ${isFocusVisible ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-slate-900' : ''}`
-                    }
-                  >
-                    <span
-                      title={localize(profile.language, m.titleEn, m.titleAr)}
-                      className="flex items-center gap-1.5"
-                    >
-                      <m.Icon className="w-3.5 h-3.5" />
-                      <span>{localize(profile.language, m.shortEn, m.shortAr)}</span>
-                    </span>
-                  </AriaRadio>
-                ))}
-              </AriaRadioGroup>
-            ) : (
-              /* On Hub: show visual comfort button, passport button & settings */
-              <div className="flex items-center gap-2">
-                <AriaButton
-                  onPress={() => setShowVisualComfortModal(true)}
-                  aria-label={localize(profile.language, 'Visual Comfort & Dyslexia Tools', 'أدوات الراحة البصرية وتيسير القراءة')}
-                  className="px-3.5 min-h-[44px] py-2 rounded-xl bg-[#171E2E] border border-slate-800 text-slate-200 hover:text-white hover:bg-slate-800 transition-all text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4 text-amber-400" />
-                  <span>{localize(profile.language, 'Visual Comfort', 'الراحة البصرية')}</span>
-                </AriaButton>
-                <AriaButton
-                  onPress={() => setShowPassportModal(true)}
-                  aria-label={localize(profile.language, 'Universal Accessibility Passport', 'جواز السفر الميسر الشامل')}
-                  className="px-3.5 min-h-[44px] py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-indigo-500/20 border border-amber-500/40 text-amber-200 hover:text-white hover:bg-amber-500/30 transition-all text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
-                >
-                  <ShieldCheck className="w-4 h-4 text-amber-300" />
-                  <span>{localize(profile.language, 'Accommodation Passport', 'جواز السفر الميسر')}</span>
-                </AriaButton>
-                <AriaButton
-                  onPress={() => setActiveTab('settings')}
-                  aria-label={localize(profile.language, 'Settings & Languages', 'الإعدادات واللغات')}
-                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-300 hover:text-white bg-[#171E2E] border border-slate-800 rounded-xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
-                >
-                  <Settings className="w-4 h-4" />
-                </AriaButton>
-              </div>
-            )}
-          </div>
-        </header>
-      )}
+                <BookOpen className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="hidden xl:inline">{localize(profile.language, 'Visual Comfort', 'الراحة البصرية')}</span>
+              </AriaButton>
+              <AriaButton
+                onPress={() => setShowPassportModal(true)}
+                aria-label={localize(profile.language, 'Universal Accessibility Passport', 'جواز السفر الميسر الشامل')}
+                className="px-2.5 sm:px-3.5 min-h-[38px] sm:min-h-[44px] py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-indigo-500/20 border border-amber-500/40 text-amber-200 hover:text-white hover:bg-amber-500/30 transition-all text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
+                <span className="hidden xl:inline">{localize(profile.language, 'Accommodation Passport', 'جواز السفر الميسر')}</span>
+              </AriaButton>
+              <AriaButton
+                onPress={() => setShowA11yPrefsModal(true)}
+                aria-label={localize(profile.language, 'Adaptive Communication Preferences', 'تفضيلات التواصل والذكاء المكيّف')}
+                className="px-2.5 sm:px-3.5 min-h-[38px] sm:min-h-[44px] py-1.5 sm:py-2 rounded-xl bg-[#150917] border border-[#4A1224]/60 text-slate-200 hover:text-white hover:bg-slate-800 transition-all text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
+              >
+                <SlidersHorizontal className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="hidden xl:inline">{localize(profile.language, 'AI Adaptation', 'التكيف الذكي')}</span>
+              </AriaButton>
+              <AriaButton
+                onPress={() => setActiveTab('settings')}
+                aria-label={localize(profile.language, 'Settings & Languages', 'الإعدادات واللغات')}
+                className="p-2 sm:p-2.5 min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center text-slate-300 hover:text-white bg-[#150917] border border-[#4A1224]/60 rounded-xl transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer shrink-0"
+              >
+                <Settings className="w-4 h-4" />
+              </AriaButton>
+            </div>
+          )}
+        </div>
+      </header>
 
       {/* ── MAIN CONTENT CONTAINER ── */}
       <main className="flex-1 min-h-0 flex flex-col overflow-hidden relative">
@@ -731,13 +719,12 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                     {[
                       { id: 'vision' as const, labelAr: 'المرافق البصري الذكي', labelEn: 'Visual Companion', Icon: Eye, descAr: 'قراءة النصوص، العملات، الملابس، وسكانر المحاضرات', descEn: 'AI Eyes, currency, colors & lecture scan', glow: 'hover:border-rose-500/60 hover:shadow-rose-950/40', iconColor: 'text-rose-400', iconBg: 'bg-rose-500/15 border-rose-500/30' },
                       { id: 'deaf' as const, labelAr: 'منظومة الصم المتكاملة', labelEn: 'Deaf Ecosystem', Icon: Ear, descAr: 'استوديو الإشارة 3D، رادار الأصوات، وجسر التواصل', descEn: '3D Sign Avatar, Sound Sentinel & Live Bridge', glow: 'hover:border-amber-500/60 hover:shadow-amber-950/40', iconColor: 'text-amber-400', iconBg: 'bg-amber-500/15 border-amber-500/30' },
-                      { id: 'motor' as const, labelAr: 'التحكم الحركي وإيفونيا', labelEn: 'Motor & Euphonia', Icon: Activity, descAr: 'تتبع الرأس والعين، لوحة الرمش، و SOS الطوارئ', descEn: 'Head pointer, eye-blink AAC & 4s GPS SOS', glow: 'hover:border-amber-500/60 hover:shadow-amber-950/40', iconColor: 'text-amber-300', iconBg: 'bg-amber-500/15 border-amber-500/30' },
                       { id: 'neurodiversity' as const, labelAr: 'التنوع العصبي والتوحد', labelEn: 'Neurodiversity Hub', Icon: Brain, descAr: 'بطاقات PECS الناطقة، الروتين، ومسطرة القراءة', descEn: 'Spoken PECS cards, routines & calm bubble', glow: 'hover:border-purple-500/60 hover:shadow-purple-950/40', iconColor: 'text-purple-400', iconBg: 'bg-purple-500/15 border-purple-500/30' },
                     ].map((s) => (
                       <button
                         key={s.id}
                         onClick={() => handleSelectTab(s.id)}
-                        className={`p-4 min-h-[140px] rounded-2xl bg-[#171E2E] border border-slate-700/80 ${s.glow} hover:bg-slate-800/80 transition-all active:scale-[0.98] shadow-md group flex flex-col justify-between cursor-pointer`}
+                        className={`p-4 min-h-[140px] rounded-2xl bg-[#150917] border border-[#4A1224]/60 ${s.glow} hover:bg-[#150917]/80 transition-all active:scale-[0.98] shadow-md group flex flex-col justify-between cursor-pointer`}
                       >
                         <div>
                           <div className={`w-9 h-9 rounded-xl ${s.iconBg} border flex items-center justify-center ${s.iconColor} mb-2.5 group-hover:scale-105 transition-transform`}>
@@ -761,23 +748,6 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
           {/* ═════════════════════════════════════════════════════════════════════
               ACTIVE MODULE VIEWS (CLEAN & DEDICATED)
              ═════════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'motor' && (
-            <motion.div
-              key="motor-view"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="w-full h-full min-h-0"
-            >
-              <React.Suspense fallback={
-                <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
-                  <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                </div>
-              }>
-                <MotorEuphoniaView profile={profile} />
-              </React.Suspense>
-            </motion.div>
-          )}
 
           {activeTab === 'vision' && (
             <motion.div
@@ -816,8 +786,12 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                   onNavigateBack={handleNavigateBack}
                   onMenuClick={onMenuClick}
                   onTabChange={(tool) => {
-                    setActiveTab(tool);
-                    onTabChange?.(tool);
+                    if (tool === 'vision' || tool === 'neurodiversity' || tool === 'hub') {
+                      handleSelectTab(tool);
+                    } else {
+                      setActiveTab(tool);
+                      onTabChange?.(tool);
+                    }
                   }}
                 />
               </React.Suspense>
@@ -856,7 +830,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
             >
               <React.Suspense fallback={
                 <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
-                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-8 h-8 border-2 border-[#E5A93C] border-t-transparent rounded-full animate-spin" />
                 </div>
               }>
                 <LearningHub
@@ -901,7 +875,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
             >
               <React.Suspense fallback={
                 <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
-                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-8 h-8 border-2 border-[#E5A93C] border-t-transparent rounded-full animate-spin" />
                 </div>
               }>
                 <CrossDisabilityOrchestrator
@@ -923,7 +897,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
             >
               <React.Suspense fallback={
                 <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
-                  <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-8 h-8 border-2 border-[#E5A93C] border-t-transparent rounded-full animate-spin" />
                 </div>
               }>
                 <OrgDashboard profile={profile} />
@@ -939,10 +913,10 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
               exit={{ opacity: 0, y: -10 }}
               className="w-full h-full min-h-0 flex flex-col p-3 sm:p-4 md:p-6 lg:p-8 pb-0"
             >
-              <div className="flex-1 min-h-0 bg-[#121524] rounded-t-3xl shadow-2xl border border-slate-800 overflow-hidden relative flex flex-col">
+              <div className="flex-1 min-h-0 bg-[#0E0610] rounded-t-3xl shadow-2xl border border-[#4A1224]/60 overflow-hidden relative flex flex-col">
                 <React.Suspense fallback={
                   <div className="flex-1 flex items-center justify-center p-8 text-slate-400">
-                    <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-[#E5A93C] border-t-transparent rounded-full animate-spin" />
                   </div>
                 }>
                   <ChatInterface
@@ -972,9 +946,9 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
             >
               <div className="max-w-4xl mx-auto space-y-8 pb-20">
                 {/* Language Selection Card */}
-                <div className="bg-[#181C2E]/90 border border-slate-800 p-6 sm:p-8 rounded-[28px] shadow-2xl backdrop-blur-xl">
+                <div className="bg-[#150917]/90 border border-[#4A1224]/60 p-6 sm:p-8 rounded-[28px] shadow-2xl backdrop-blur-xl">
                   <div className="mb-6 text-start">
-                    <div className="flex items-center gap-2 text-cyan-400 mb-1">
+                    <div className="flex items-center gap-2 text-[#E5A93C] mb-1">
                       <Globe className="w-5 h-5" />
                       <h2 className="text-xl font-black text-white tracking-tight">
                         {localize(profile.language, 'Language Selection', 'اختيار اللغة')}
@@ -998,8 +972,8 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                           onClick={() => updateLanguage(lang.id)}
                           className={`p-3 sm:p-3.5 rounded-2xl border flex items-center justify-between transition-all active:scale-95 ${
                             isSelected
-                              ? 'border-cyan-400 bg-cyan-500/15 shadow-sm text-cyan-300 font-bold'
-                              : 'border-slate-800 bg-slate-900 hover:border-slate-700 text-slate-200'
+                              ? 'border-[#E5A93C] bg-[#4A1224]/40 shadow-sm text-[#E5A93C] font-bold'
+                              : 'border-[#4A1224]/60 bg-[#150917] hover:border-[#4A1224]/50 text-slate-200'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
@@ -1009,7 +983,7 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                               <p className="text-[10px] text-slate-400 mt-0.5 truncate">{lang.label}</p>
                             </div>
                           </div>
-                          {isSelected && <Check className="w-4 h-4 text-cyan-400 shrink-0" />}
+                          {isSelected && <Check className="w-4 h-4 text-[#E5A93C] shrink-0" />}
                         </button>
                       );
                     })}
@@ -1017,9 +991,9 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                 </div>
 
                 {/* Accessibility Mode Selector */}
-                <div className="bg-[#181C2E]/90 border border-slate-800 p-6 sm:p-8 rounded-[28px] shadow-2xl backdrop-blur-xl">
+                <div className="bg-[#150917]/90 border border-[#4A1224]/60 p-6 sm:p-8 rounded-[28px] shadow-2xl backdrop-blur-xl">
                   <div className="mb-6 text-start">
-                    <div className="flex items-center gap-2 text-cyan-400 mb-1">
+                    <div className="flex items-center gap-2 text-[#E5A93C] mb-1">
                       <Accessibility className="w-5 h-5" />
                       <h2 className="text-xl font-black text-white tracking-tight">
                         {localize(profile.language, 'Accessibility Accommodations', 'تسهيلات إمكانية الوصول')}
@@ -1041,7 +1015,6 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                       { mode: 'Visual' as const, labelEn: 'Visual & Screen Adaptation', labelAr: 'التكيف البصري وضعاف البصر', icon: Eye },
                       { mode: 'Vocal-Deaf' as const, labelEn: 'Vocal-Deaf Bridge', labelAr: 'الصم المتحدثين وجسر السمع', icon: Ear },
                       { mode: 'Sign-Only' as const, labelEn: 'Sign Language', labelAr: 'لغة الإشارة التفاعلية', icon: Accessibility },
-                      { mode: 'Motor-Euphonia' as const, labelEn: 'Motor & Hands-Free', labelAr: 'التحكم الحركي وبدون لمس', icon: Activity },
                       { mode: 'Neurodiversity' as const, labelEn: 'Neurodiversity & Autism', labelAr: 'التنوع العصبي والتوحد', icon: Brain },
                     ].map(({ mode, labelEn, labelAr, icon: ModeIcon }) => {
                       const isSelected = profile.accessibilityMode === mode;
@@ -1051,17 +1024,17 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                           onClick={() => updateMode(mode)}
                           className={`p-4 rounded-2xl border text-start flex items-start gap-3 transition-all active:scale-95 ${
                             isSelected
-                              ? 'border-cyan-400 bg-cyan-500/15 shadow-sm ring-1 ring-cyan-400'
-                              : 'border-slate-800 bg-slate-900 hover:border-slate-700 text-slate-300'
+                              ? 'border-[#E5A93C] bg-[#4A1224]/40 shadow-sm ring-1 ring-[#E5A93C]'
+                              : 'border-[#4A1224]/60 bg-[#150917] hover:border-[#4A1224]/50 text-slate-300'
                           }`}
                         >
-                          <div className={`p-2 rounded-xl shrink-0 ${isSelected ? 'bg-cyan-500/20 text-cyan-400' : 'bg-slate-800 text-slate-400'}`}>
+                          <div className={`p-2 rounded-xl shrink-0 ${isSelected ? 'bg-[#4A1224]/50 text-[#E5A93C]' : 'bg-slate-800 text-slate-400'}`}>
                             <ModeIcon className="w-5 h-5" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
                               <span className="font-bold text-sm text-white">{localize(profile.language, labelEn, labelAr)}</span>
-                              {isSelected && <Check className="w-4 h-4 text-cyan-400 shrink-0" />}
+                              {isSelected && <Check className="w-4 h-4 text-[#E5A93C] shrink-0" />}
                             </div>
                             <p className="text-xs text-slate-400 leading-relaxed">
                               {mode === 'None' && localize(profile.language, 'Standard cognitive experience without overlays.', 'واجهة قياسية طبيعية.')}
@@ -1069,7 +1042,6 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
                               {mode === 'Visual' && localize(profile.language, 'Spoken scene description, currency reader, and haptic white cane.', 'وصف بصري فوري، قارئ عملات، ونبضات لمسية.')}
                               {mode === 'Vocal-Deaf' && localize(profile.language, 'High-contrast text captions and direct two-way bridge.', 'نصوص متباينة وتواصل مباشر.')}
                               {mode === 'Sign-Only' && localize(profile.language, '3D sign avatar, reverse sign-to-speech, and sign lexicons.', 'أفاتار إشارة ونطق الإشارة لصوت.')}
-                              {mode === 'Motor-Euphonia' && localize(profile.language, 'Hands-free head tracking, eye-blink keyboard, and 4s eye SOS.', 'حركة الرأس، لوحة العين، واستغاثة 4 ثوانٍ.')}
                               {mode === 'Neurodiversity' && localize(profile.language, 'PECS visual cards, visual daily schedule, and calming bubble.', 'بطاقات PECS، جدول بصري، وفقاعة تنفس.')}
                             </p>
                           </div>
@@ -1099,6 +1071,19 @@ const DisabilityModeView = React.forwardRef<ChatInterfaceRef, DisabilityModeView
         onClose={() => setShowVisualComfortModal(false)}
         language={profile.language}
       />
+
+      {/* Adaptive Accessibility Communication Preferences Modal */}
+      <React.Suspense fallback={null}>
+        {showA11yPrefsModal && (
+          <AccessibilityPreferencesModal
+            isOpen={showA11yPrefsModal}
+            onClose={() => setShowA11yPrefsModal(false)}
+            profile={a11yCommProfile}
+            onProfileUpdated={setA11yCommProfile}
+            lang={isArabicLocale(profile.language) ? 'ar' : 'en'}
+          />
+        )}
+      </React.Suspense>
     </div>
   );
 });
