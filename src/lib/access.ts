@@ -8,7 +8,8 @@ export type AppView =
   | 'admin' | 'goals' | 'gpa' | 'analytics' | 'planner' | 'support' | 'memory'
   | 'gym' | 'iq' | 'institution' | 'france' | 'privacy' | 'intelligence'
   | 'teacher' | 'parent' | 'privacy_security' | 'evaluation' | 'ai_quality'
-  | 'resilience' | 'tenancy' | 'developer_api' | 'retention';
+  | 'resilience' | 'tenancy' | 'developer_api' | 'retention'
+  | 'learning-studio';
 
 /** A user counts as an accessibility user if they picked the Special Needs path
  *  OR have a real accessibility mode enabled. */

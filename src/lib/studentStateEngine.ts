@@ -26,6 +26,7 @@ import {
 import { buildPersonalLearningModel } from './personalLearningModel';
 import { generatePersonalLearningProfile } from './learningProfileService';
 import { createDefaultAccessibilityState } from './accessibilityStateEngine';
+import { enforceNonDiagnosticInvariant } from './accessibilityIntelligenceEngine';
 import type {
   PedagogyStrategy,
   StrategyOutcomeMetrics,
@@ -670,13 +671,15 @@ export class StudentStateManager {
       }
 
       const ref = studentStateDoc(s.uid);
-      const cleanPatch = cleanDataForFirestore(patch);
+      const sanitizedPatch = enforceNonDiagnosticInvariant(patch, 'strip');
+      const cleanPatch = cleanDataForFirestore(sanitizedPatch);
 
       try {
         await updateDoc(ref, cleanPatch as Record<string, any>);
       } catch (err: any) {
         if (err?.code === 'not-found' || err?.message?.includes('No document to update')) {
-          await setDoc(ref, cleanDataForFirestore(s), { merge: true });
+          const sanitizedState = enforceNonDiagnosticInvariant(s, 'strip');
+          await setDoc(ref, cleanDataForFirestore(sanitizedState), { merge: true });
         } else {
           console.warn('[StudentStateManager] Firestore dot-path update warning:', err);
         }

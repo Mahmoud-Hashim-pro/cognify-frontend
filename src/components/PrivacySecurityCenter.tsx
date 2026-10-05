@@ -22,6 +22,8 @@ import {
   GENESIS_PREV_HASH,
   sha256
 } from '../lib/privacySecurityEngine';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import type { AuditLogEntry, CascadeErasureManifest } from '../types/privacySecurity';
 
 interface PrivacySecurityCenterProps {
@@ -158,7 +160,7 @@ export const PrivacySecurityCenter: React.FC<PrivacySecurityCenterProps> = ({
   };
 
   // Handle Cascade Erasure
-  const handleExecuteErasure = () => {
+  const handleExecuteErasure = async () => {
     // 1. Purge local device caches for student
     if (typeof localStorage !== 'undefined') {
       try {
@@ -167,7 +169,16 @@ export const PrivacySecurityCenter: React.FC<PrivacySecurityCenterProps> = ({
       } catch {}
     }
 
-    // 2. Prepare store targets for cascade wipe
+    // 2. Remote Firestore state wipe if student is registered
+    try {
+      if (activeStudent.uid && !activeStudent.uid.startsWith('student_demo') && activeStudent.uid !== 'student_48291') {
+        await deleteDoc(doc(db, 'users', activeStudent.uid, 'studentState', 'current'));
+      }
+    } catch (err) {
+      console.warn('[handleExecuteErasure] Remote Firestore purge notice:', err);
+    }
+
+    // 3. Prepare store targets for cascade wipe
     const profileStore = new Map<string, StudentState>();
     profileStore.set(activeStudent.uid, activeStudent);
     const presenceStore = new Map<string, any>();

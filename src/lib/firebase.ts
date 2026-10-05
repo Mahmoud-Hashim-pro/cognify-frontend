@@ -39,7 +39,7 @@ const isIframeOrRestricted = (): boolean => {
 /**
  * Synchronous check for Firestore initialization.
  * Prevents false positives in restricted/sandboxed iframes by verifying environment boundaries
- * before attempting persistent cache, avoiding async persistence failures.
+ * and cached failure state before attempting persistent cache.
  */
 const isIndexedDBSupported = (): boolean => {
   try {
@@ -49,6 +49,13 @@ const isIndexedDBSupported = (): boolean => {
     if (isIframeOrRestricted()) {
       return false;
     }
+    // Fast-fail if previous run detected broken IndexedDB in this environment
+    try {
+      if (window.localStorage && window.localStorage.getItem('__cognify_idb_failed__') === '1') {
+        return false;
+      }
+    } catch {}
+
     const idb = window.indexedDB;
     if (typeof idb.open !== 'function') {
       return false;
@@ -64,15 +71,20 @@ const isIndexedDBSupported = (): boolean => {
       try {
         e.preventDefault();
         e.stopPropagation?.();
+        window.localStorage?.setItem('__cognify_idb_failed__', '1');
       } catch {}
     };
     req.onblocked = (e) => {
       try {
         e.preventDefault();
+        window.localStorage?.setItem('__cognify_idb_failed__', '1');
       } catch {}
     };
     return true;
   } catch {
+    try {
+      window.localStorage?.setItem('__cognify_idb_failed__', '1');
+    } catch {}
     return false;
   }
 };
@@ -86,6 +98,11 @@ export const probeIndexedDBAsync = (): Promise<boolean> =>
       if (typeof window === 'undefined' || !window.indexedDB || isIframeOrRestricted()) {
         return resolve(false);
       }
+      try {
+        if (window.localStorage && window.localStorage.getItem('__cognify_idb_failed__') === '1') {
+          return resolve(false);
+        }
+      } catch {}
       const req = window.indexedDB.open('__firebase_probe__');
       req.onsuccess = () => {
         try {
@@ -96,6 +113,7 @@ export const probeIndexedDBAsync = (): Promise<boolean> =>
       };
       req.onerror = (e) => {
         e.preventDefault();
+        try { window.localStorage?.setItem('__cognify_idb_failed__', '1'); } catch {}
         resolve(false);
       };
     } catch {
@@ -135,8 +153,20 @@ try {
     }, firebaseConfig.firestoreDatabaseId);
   }
 } catch (error) {
-  console.warn("Firestore custom initialization failed, falling back to standard getFirestore", error);
-  safeDb = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  console.warn("Firestore custom initialization failed, falling back to memory cache", error);
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('__cognify_idb_failed__', '1');
+    }
+  } catch {}
+  try {
+    safeDb = initializeFirestore(app, {
+      localCache: memoryLocalCache(),
+      experimentalForceLongPolling: true,
+    }, firebaseConfig.firestoreDatabaseId);
+  } catch {
+    safeDb = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  }
 }
 
 export const db = safeDb;

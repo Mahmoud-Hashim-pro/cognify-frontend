@@ -64,6 +64,18 @@
   }
 }
 
+/* Mobile GPU Compositing & Performance Optimization */
+@media (max-width: 768px) {
+  .backdrop-blur-2xl,
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  .blur-\[140px\] {
+    display: none !important;
+  }
+}
+
 /* Premium Obsidian & Frosted Glass Design Tokens - Royal Burgundy & Champagne Gold */
 .cognify-aurora-bg {
   background-color: #080409;

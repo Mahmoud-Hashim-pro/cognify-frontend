@@ -69,8 +69,14 @@ export { exportToWordDocument, DOC_HISTORY_KEY } from './DocumentStudioModal';
 export type { SavedDocItem, DocChatMessage } from './DocumentStudioModal';
 import DocumentStudioModal from './DocumentStudioModal';
 import SpatialMemoryTrajectoryView from './SpatialMemoryTrajectoryView';
+import ParentalConsentModal from './ParentalConsentModal';
 
 export default function VisionCompanionView({ profile, setProfile }: VisionCompanionViewProps) {
+  const isMinorStudent = Boolean((profile.age && profile.age < 18) || (profile as any).isMinor);
+  const [showConsentModal, setShowConsentModal] = useState<boolean>(
+    Boolean(isMinorStudent && !profile.parentalConsent?.verified)
+  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -443,7 +449,16 @@ export default function VisionCompanionView({ profile, setProfile }: VisionCompa
   useEffect(() => {
     isMountedRef.current = true;
     unlockSpeechSynthesis();
-    startCamera();
+    if (!isMinorStudent || profile.parentalConsent?.verified) {
+      startCamera();
+    } else {
+      setStatus('camera-denied');
+      setAnnounce(
+        companionLang === 'ar'
+          ? 'يتطلب استخدام الكاميرا للطلاب القاصرين موافقة ولي الأمر الرسمية.'
+          : 'Parental or guardian consent is required before camera activation for minor students.'
+      );
+    }
     return () => {
       isMountedRef.current = false;
       streamRef.current?.getTracks().forEach((tr) => tr.stop());
@@ -1099,14 +1114,31 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
           <div className="text-center p-8 max-w-sm z-20">
             <AlertTriangle className="w-12 h-12 text-amber-400 mx-auto mb-3" />
             <p className="text-white font-bold mb-2 text-sm sm:text-base">
-              {t('Camera access is needed for the Visual Companion to work.', 'محتاجين إذن الكاميرا عشان الرفيق البصري يشتغل.')}
+              {isMinorStudent && !profile.parentalConsent?.verified
+                ? t(
+                    'Parental or guardian consent is legally required before camera activation for minor students.',
+                    'مطلوب قانونيًا موافقة ولي الأمر قبل تفعيل الكاميرا للطلاب القاصرين.'
+                  )
+                : t(
+                    'Camera access is needed for the Visual Companion to work.',
+                    'محتاجين إذن الكاميرا عشان الرفيق البصري يشتغل.'
+                  )}
             </p>
-            <button
-              onClick={() => startCamera()}
-              className="mt-3 px-6 py-3 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl"
-            >
-              {t('Try again', 'حاول تاني')}
-            </button>
+            {isMinorStudent && !profile.parentalConsent?.verified ? (
+              <button
+                onClick={() => setShowConsentModal(true)}
+                className="mt-3 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm shadow-xl transition-all cursor-pointer"
+              >
+                {t('Open Parental Consent Portal', 'فتح بوابة موافقة ولي الأمر')}
+              </button>
+            ) : (
+              <button
+                onClick={() => startCamera()}
+                className="mt-3 px-6 py-3 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl cursor-pointer"
+              >
+                {t('Try again', 'حاول تاني')}
+              </button>
+            )}
           </div>
         ) : status === 'unsupported' ? (
           <div className="text-center p-8 max-w-sm text-white z-20">
@@ -2192,6 +2224,28 @@ Golden rule: Cut straight to the bottom line and essential takeaways with zero f
         profile={profile}
         companionLang={companionLang}
         onAnnounce={(msg) => setAnnounce(msg)}
+      />
+
+      {/* Parental Consent Modal for Minors */}
+      <ParentalConsentModal
+        isOpen={showConsentModal}
+        profile={profile}
+        requiredScope="camera"
+        onConsentGranted={(consent) => {
+          setShowConsentModal(false);
+          if (setProfile) {
+            setProfile({
+              ...profile,
+              parentalConsent: consent,
+              parentEmail: consent.parentEmail,
+            });
+          }
+          startCamera();
+        }}
+        onCancel={() => {
+          setShowConsentModal(false);
+          setStatus('camera-denied');
+        }}
       />
     </div>
   );

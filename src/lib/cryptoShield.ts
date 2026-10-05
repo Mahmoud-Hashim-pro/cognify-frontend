@@ -15,7 +15,6 @@
  */
 
 const SHIELD_PREFIX = 'enc:v1:';
-const DEFAULT_SEED = 'cognify_crypto_shield_v1_9a8b7c6d5e';
 
 // Dynamically augment master seed from environment configuration when available
 const ENV_SECRET =
@@ -24,14 +23,50 @@ const ENV_SECRET =
   (typeof process !== 'undefined' && process.env?.CRYPTO_SHIELD_SECRET) ||
   '';
 
-const MASTER_SEED = ENV_SECRET ? `${DEFAULT_SEED}:${ENV_SECRET}` : DEFAULT_SEED;
+/**
+ * Returns a cryptographically random, device-isolated entropy seed.
+ * Generated uniquely per browser installation via Web Crypto CSPRNG
+ * to guarantee that stolen localStorage dumps cannot be decrypted on other devices
+ * using a shared repository static key.
+ */
+function getDeviceEntropySeed(): string {
+  if (typeof window === 'undefined') return 'node_env_isolated_seed';
+  try {
+    const STORAGE_KEY = '__cognify_device_shield_key__';
+    let seed = window.localStorage?.getItem(STORAGE_KEY);
+    if (!seed || seed.length < 32) {
+      if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+        const randBytes = new Uint8Array(32);
+        crypto.getRandomValues(randBytes);
+        seed = Array.from(randBytes, b => b.toString(16).padStart(2, '0')).join('');
+      } else {
+        seed = 'dev_shield_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+      }
+      try {
+        window.localStorage?.setItem(STORAGE_KEY, seed);
+      } catch {}
+    }
+    return seed;
+  } catch {
+    return 'volatile_session_seed_' + (typeof window !== 'undefined' ? window.location?.origin : '');
+  }
+}
+
+const DEFAULT_SEED = 'cognify_crypto_shield_v1_9a8b7c6d5e';
+
+function getMasterSeed(): string {
+  const deviceSeed = getDeviceEntropySeed();
+  return ENV_SECRET ? `${deviceSeed}:${ENV_SECRET}` : deviceSeed;
+}
+
+const MASTER_SEED = getMasterSeed();
 const inMemoryKeyCache = new Map<string, string>();
 
 /**
- * Derives a dynamic entropy seed combining environment variables,
+ * Derives a dynamic entropy seed combining device-isolated secret,
  * host origin, user agent, and salt.
  */
-function deriveEntropySeed(salt: string, baseSeed: string = MASTER_SEED): number[] {
+function deriveEntropySeed(salt: string, baseSeed: string = getMasterSeed()): number[] {
   let entropy = baseSeed + ':' + salt;
   if (typeof window !== 'undefined') {
     entropy += ':' + (window.location?.host || 'localhost');

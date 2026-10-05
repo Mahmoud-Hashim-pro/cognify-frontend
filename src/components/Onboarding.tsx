@@ -1082,7 +1082,7 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
                     {s.label}
                   </span>
                 </div>
-                {i < arr.length - 1 && <div className={`w-10 md:w-16 h-[2px] mx-2 md:mx-4 transition-colors ${step > s.id ? 'bg-[#4F46E5]' : 'bg-surface-3'}`} />}
+                {i < arr.length - 1 && <div className={`w-6 sm:w-10 md:w-16 h-[2px] mx-1 sm:mx-2 md:mx-4 transition-colors ${step > s.id ? 'bg-[#4F46E5]' : 'bg-surface-3'}`} />}
               </div>
             ))}
           </div>

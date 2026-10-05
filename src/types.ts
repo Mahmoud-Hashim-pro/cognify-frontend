@@ -140,6 +140,8 @@ export interface UserProfile {
   points: number;
   quizDuration?: number; // in seconds
   onboardingComplete: boolean;
+  age?: number;
+  isMinor?: boolean;
   photoURL?: string;
   questionHistory: { score: number; date: string }[];
   /** @deprecated chatHistory has been migrated to users/{uid}/threads subcollection. Kept as optional for legacy read-path migration only. */

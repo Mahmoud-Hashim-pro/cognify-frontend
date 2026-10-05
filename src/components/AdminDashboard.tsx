@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { UserProfile, CognitiveLevel, AccountPath, AccessibilityMode, LoginHistoryRecord } from "../types";
 import { auth, db, handleFirestoreError, OperationType } from "../lib/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { collection, onSnapshot, deleteDoc, doc, updateDoc, query, limit } from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, updateDoc, query, limit, getDocs } from "firebase/firestore";
 import { toast } from "./Toast";
 import {
   FOUNDER_SUPERADMIN_EMAILS, ADMIN_EMAILS, norm,
@@ -432,6 +432,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
 
   // Handlers for Database Administration Actions
   const handleDownloadFullBackup = () => {
+    if (!canManageAdmins) {
+      toast.error("Only super administrators are authorized to download full database snapshots.", "Access Denied");
+      return;
+    }
     const { blob, filename } = generateFullSystemBackupJson(users, securityAudits);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -570,13 +574,41 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
       toast.error("You can't delete your own account from here.", "Not allowed");
       return;
     }
-    if (window.confirm(`Delete "${u.name || u.email}"? This action cannot be undone.`)) {
+    if (window.confirm(`Delete "${u.name || u.email}"? This action will permanently remove their profile document, chat threads, goals, learning records, and subcollections.`)) {
+      setBusyUid(u.uid);
       try {
+        const subcollections = [
+          'threads',
+          'goals',
+          'learningEvents',
+          'learningProfile',
+          'exerciseHistory',
+          'loginHistory',
+          'neurodiversity',
+          'sensoryLogs',
+          'studentState',
+          'spatialMemories',
+          'caregiverLinks'
+        ];
+
+        await Promise.all(
+          subcollections.map(async (sub) => {
+            try {
+              const snap = await getDocs(collection(db, "users", u.uid, sub));
+              await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
+            } catch (err) {
+              console.warn(`[handleDeleteUser] Cascade delete subcollection "${sub}" skipped:`, err);
+            }
+          })
+        );
+
         await deleteDoc(doc(db, "users", u.uid));
-        toast.success(`User "${u.name || u.email}" deleted successfully.`, "Deleted");
+        toast.success(`User "${u.name || u.email}" and all associated data records were permanently deleted.`, "Account & Data Purged");
       } catch (error) {
         console.error("Delete user error:", error);
         toast.error("Failed to delete user.", "Delete failed");
+      } finally {
+        if (isMountedRef.current) setBusyUid(null);
       }
     }
   };
@@ -703,6 +735,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
   };
 
   const handleUpdatePoints = async (u: UserProfile, delta: number) => {
+    if (!canManageAdmins) {
+      toast.error("Only super administrators are authorized to update student points.", "Unauthorized");
+      return;
+    }
     const newPoints = Math.max(0, (u.points || 0) + delta);
     setBusyUid(u.uid);
     try {
@@ -720,6 +756,10 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
   };
 
   const handleUpdateCognitiveLevel = async (u: UserProfile, newLevel: CognitiveLevel) => {
+    if (!canManageAdmins) {
+      toast.error("Only super administrators are authorized to change cognitive level.", "Unauthorized");
+      return;
+    }
     setBusyUid(u.uid);
     try {
       await updateDoc(doc(db, "users", u.uid), { level: newLevel });
@@ -3096,15 +3136,20 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2">
-                    <button
-                      type="button"
-                      onClick={handleDownloadFullBackup}
-                      className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-emerald-500/40 rounded-2xl transition-all group text-left cursor-pointer"
-                    >
-                      <Download className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform mb-2" />
-                      <span className="text-xs font-black uppercase text-white tracking-wider">Download Full JSON Snapshot</span>
-                      <span className="text-[11px] text-slate-400 mt-1">Complete system backup with metadata, users, chats &amp; security audits</span>
-                    </button>
+                    {canManageAdmins && (
+                      <button
+                        type="button"
+                        onClick={handleDownloadFullBackup}
+                        className="flex flex-col items-start p-4 bg-[#080409]/80 hover:bg-slate-800/80 border border-[#4A1224]/60 hover:border-emerald-500/40 rounded-2xl transition-all group text-left cursor-pointer"
+                      >
+                        <Download className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform mb-2" />
+                        <span className="text-xs font-black uppercase text-white tracking-wider flex items-center gap-1.5">
+                          Download Full JSON Snapshot
+                          <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Super Admin</span>
+                        </span>
+                        <span className="text-[11px] text-slate-400 mt-1">Complete system backup with metadata, users, chats &amp; security audits</span>
+                      </button>
+                    )}
 
                     <button
                       type="button"
@@ -4148,30 +4193,34 @@ export default function AdminDashboard({ profile, onMenuClick, onNavigateBack }:
                         </button>
                       )}
 
-                      <button
-                        onClick={() => handleUpdatePoints(selectedUserForModal, 50)}
-                        disabled={busyUid === selectedUserForModal.uid}
-                        className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 text-xs font-bold rounded-xl hover:bg-[#E5A93C] transition-colors disabled:opacity-50"
-                      >
-                        +50 Points
-                      </button>
-                      <button
-                        onClick={() => handleUpdatePoints(selectedUserForModal, -50)}
-                        disabled={busyUid === selectedUserForModal.uid}
-                        className="px-3.5 py-1.5 bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
-                      >
-                        -50 Points
-                      </button>
-                      <select
-                        value={selectedUserForModal.level || 'Intermediate'}
-                        onChange={(e) => handleUpdateCognitiveLevel(selectedUserForModal, e.target.value as CognitiveLevel)}
-                        disabled={busyUid === selectedUserForModal.uid}
-                        className="bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
-                      >
-                        <option value="Basic">Level: Basic</option>
-                        <option value="Intermediate">Level: Intermediate</option>
-                        <option value="Advanced">Level: Advanced</option>
-                      </select>
+                      {canManageAdmins && (
+                        <>
+                          <button
+                            onClick={() => handleUpdatePoints(selectedUserForModal, 50)}
+                            disabled={busyUid === selectedUserForModal.uid}
+                            className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 via-[#E5A93C] to-rose-600 text-slate-950 text-xs font-bold rounded-xl hover:bg-[#E5A93C] transition-colors disabled:opacity-50"
+                          >
+                            +50 Points
+                          </button>
+                          <button
+                            onClick={() => handleUpdatePoints(selectedUserForModal, -50)}
+                            disabled={busyUid === selectedUserForModal.uid}
+                            className="px-3.5 py-1.5 bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
+                          >
+                            -50 Points
+                          </button>
+                          <select
+                            value={selectedUserForModal.level || 'Intermediate'}
+                            onChange={(e) => handleUpdateCognitiveLevel(selectedUserForModal, e.target.value as CognitiveLevel)}
+                            disabled={busyUid === selectedUserForModal.uid}
+                            className="bg-[#150917] border border-[#4A1224]/50 text-white text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer"
+                          >
+                            <option value="Basic">Level: Basic</option>
+                            <option value="Intermediate">Level: Intermediate</option>
+                            <option value="Advanced">Level: Advanced</option>
+                          </select>
+                        </>
+                      )}
                       <select
                         value={selectedUserForModal.country && selectedUserForModal.country !== 'Unknown' && selectedUserForModal.country !== 'N/A' ? selectedUserForModal.country : ''}
                         onChange={(e) => handleUpdateCountry(selectedUserForModal, e.target.value)}

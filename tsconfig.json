@@ -24,5 +24,9 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "noEmit": true
-  }
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

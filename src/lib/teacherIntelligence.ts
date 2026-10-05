@@ -114,7 +114,7 @@ export function detectStruggleClusters(
         struggleRatePercentage: Math.round(struggleRate * 100),
         averageAccuracy: Math.round(avgAcc * 100) / 100,
         diagnosedPrerequisiteGap: prerequisiteGap,
-        commonErrorPatterns: ['unhandled_edge_case', 'syntax_boundary_mismatch'],
+        commonErrorPatterns: [],
       });
     }
   }

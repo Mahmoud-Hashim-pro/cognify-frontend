@@ -782,6 +782,17 @@ const ChatInterface = React.forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ 
           setMessagesLoading(false);
         }).catch((err) => {
           console.error('[ChatInterface] Failed to decrypt snapshot messages:', err);
+          const isArabic = isArabicLocale(profile.language);
+          setMessages([
+            {
+              id: 'decrypt-notice',
+              role: 'assistant',
+              content: isArabic
+                ? 'تعذّر فك تشفير المحادثات السابقة من هذا الجهاز لاختلاف مفتاح التشفير المحلي. يمكنك متابعة التعلم في محادثة جديدة.'
+                : 'Could not decrypt previous messages from this device due to a different local device key. You can continue learning in a new conversation.',
+              timestamp: new Date().toISOString()
+            }
+          ]);
           setMessagesLoading(false);
         });
       } else {
@@ -1403,7 +1414,7 @@ const ChatInterface = React.forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ 
   return (
     <div className={`flex-1 flex flex-col bg-[#080409] text-slate-100 overflow-hidden relative selection:bg-[#E5A93C]/30 selection:text-white ${isEmbedded ? 'h-full' : 'h-[var(--app-h,100dvh)]'}`}>
       {/* Ambient background lighting orbs - Royal Burgundy & Champagne Gold */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 hidden md:block">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
         <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/10 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/15 rounded-full blur-[140px]" />
@@ -1547,7 +1558,7 @@ const ChatInterface = React.forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ 
                 <span>Cognify</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#4A1224]/60 text-[#E5A93C] border border-[#E5A93C]/40">2.0</span>
               </span>
-              <span className="text-xs md:text-sm font-semibold text-[#E5A93C]/80 truncate max-w-[140px] md:max-w-xs flex items-center gap-1.5">
+              <span className="text-xs md:text-sm font-semibold text-[#E5A93C]/80 truncate max-w-[100px] xs:max-w-[140px] md:max-w-xs flex items-center gap-1.5">
                 <span className="text-[#4A1224]">·</span> {activeThread?.title || localize(profile.language, 'AI Session', 'جلسة ذكية')}
               </span>
             </div>
@@ -2710,7 +2721,7 @@ const ChatInterface = React.forwardRef<ChatInterfaceRef, ChatInterfaceProps>(({ 
                   <button
                     type="button"
                     onClick={() => setShowFrenchTravelAssistant(true)}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-[#4A1224]/60 to-[#831843]/40 text-[#E5A93C] border border-[#831843]/50 hover:border-[#E5A93C]/60 hover:bg-[#4A1224]/80 active:scale-95 transition-all shadow-sm shrink-0"
+                    className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-[#4A1224]/60 to-[#831843]/40 text-[#E5A93C] border border-[#831843]/50 hover:border-[#E5A93C]/60 hover:bg-[#4A1224]/80 active:scale-95 transition-all shadow-sm shrink-0"
                     title={localize(profile.language, 'Open France Travel Assistant', 'دليل ومترجم فرنسا')}
                   >
                     <span>🇫🇷</span>

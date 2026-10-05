@@ -382,7 +382,7 @@ export default function Login({ onDirectPreview }: LoginProps = {}) {
   return (
     <div className="min-h-screen bg-[#080409] text-slate-100 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans relative overflow-x-hidden selection:bg-[#E5A93C]/30 selection:text-white" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Background ambient lighting - Royal Burgundy & Gold nebulae */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden hidden md:block">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/25 rounded-full blur-[140px]" />
         <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/12 rounded-full blur-[140px]" />
         <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/18 rounded-full blur-[140px]" />

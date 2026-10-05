@@ -2,17 +2,19 @@ import { localize } from '../lib/translations';
 import React, { useState } from 'react';
 import { UserProfile, EducationLevel } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { User, Mail, Shield, Award, Languages, Globe, BookOpen, GraduationCap, Briefcase, MapPin, Calendar, Clock, MessageSquare, Edit3, Save, X, Camera, Eye, Brain as BrainIcon, Menu, Sprout, Heart, ThumbsUp, ThumbsDown, Loader2, ArrowLeft } from 'lucide-react';
+import { User, Mail, Shield, Award, Languages, Globe, BookOpen, GraduationCap, Briefcase, MapPin, Calendar, Clock, MessageSquare, Edit3, Save, X, Camera, Eye, Brain as BrainIcon, Menu, Sprout, Heart, ThumbsUp, ThumbsDown, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { formatDate } from '../lib/utils';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType, cleanDataForFirestore } from '../lib/firebase';
 import { getTranslation } from '../lib/translations';
+import ParentalConsentModal from './ParentalConsentModal';
 
 interface ProfilePageProps {
   profile: UserProfile;
   onMenuClick?: () => void;
   setProfile?: (profile: UserProfile) => void;
   onNavigateBack?: () => void;
+  onNavigate?: (view: any) => void;
 }
 
 const SUSTAINABILITY_GOALS = [
@@ -22,10 +24,11 @@ const SUSTAINABILITY_GOALS = [
   { id: 'zero-hunger', label: 'Zero Hunger / Sustainable Food', icon: Sprout }
 ];
 
-export default function ProfilePage({ profile, onMenuClick, setProfile, onNavigateBack }: ProfilePageProps) {
+export default function ProfilePage({ profile, onMenuClick, setProfile, onNavigateBack, onNavigate }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState<UserProfile>(profile);
   const [saving, setSaving] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const [feedbackStats, setFeedbackStats] = useState<{
     upvotes: number;
@@ -550,9 +553,109 @@ export default function ProfilePage({ profile, onMenuClick, setProfile, onNaviga
                 )}
               </div>
             )}
+            {/* Guardian & Privacy Protection Section */}
+            <div className="bg-[#080409]/90 border border-[#4A1224]/60 rounded-3xl p-6 sm:p-8 backdrop-blur-xl relative overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-amber-500/10 rounded-2xl text-amber-400 border border-amber-500/20">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white">
+                      {localize(profile.language, 'Guardian & Data Privacy Settings', 'إعدادات ولي الأمر والخصوصية')}
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {localize(profile.language, 'Manage parental consent, camera permissions, and GDPR data rights', 'إدارة موافقة ولي الأمر وصلاحيات الكاميرا وحقوق حماية البيانات')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-[#150917] border border-[#4A1224]/50 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
+                        {localize(profile.language, 'Parental Consent Status', 'حالة موافقة ولي الأمر')}
+                      </span>
+                      {profile.parentalConsent?.verified ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          {localize(profile.language, 'Verified', 'موثّق وموافق')}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                          {localize(profile.language, 'Not Configured', 'غير مسجل')}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      {profile.parentalConsent?.parentName
+                        ? `${localize(profile.language, 'Guardian', 'ولي الأمر')}: ${profile.parentalConsent.parentName} (${profile.parentEmail || profile.parentalConsent.parentEmail})`
+                        : localize(profile.language, 'Grant camera and microphone authorization for minors.', 'تفويض استخدام الكاميرا والميكروفون للطلاب القاصرين.')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowConsentModal(true)}
+                    className="mt-4 w-full py-2.5 px-4 bg-[#1F0D22] hover:bg-[#2A122E] border border-[#4A1224] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    {profile.parentalConsent?.verified
+                      ? localize(profile.language, 'Update Consent Terms', 'تحديث شروط الموافقة')
+                      : localize(profile.language, 'Open Consent Form', 'فتح نموذج موافقة ولي الأمر')}
+                  </button>
+                </div>
+
+                <div className="p-4 bg-[#150917] border border-[#4A1224]/50 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#E5A93C]">
+                        {localize(profile.language, 'GDPR & Privacy Center', 'مركز الخصوصية والـ GDPR')}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E5A93C]/15 text-[#E5A93C] border border-[#E5A93C]/30">
+                        {localize(profile.language, 'Zero-Knowledge', 'معالجة محلية')}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300">
+                      {localize(
+                        profile.language,
+                        'Download your full data package, inspect differential privacy noise, or exercise GDPR Article 17 erasure.',
+                        'تحميل حزمة بياناتك الكاملة، فحص معايير الخصوصية التفاضلية، أو طلب مسح البيانات (حق النسيان).'
+                      )}
+                    </p>
+                  </div>
+                  {onNavigate && (
+                    <button
+                      onClick={() => onNavigate('privacy_security')}
+                      className="mt-4 w-full py-2.5 px-4 bg-[#1F0D22] hover:bg-[#2A122E] border border-[#4A1224] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Globe className="w-4 h-4 text-[#E5A93C]" />
+                      {localize(profile.language, 'Open Privacy & Security Terminal', 'فتح مركز الأمان والخصوصية')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Parental Consent Modal */}
+      <ParentalConsentModal
+        isOpen={showConsentModal}
+        profile={profile}
+        requiredScope="all"
+        onConsentGranted={(consent) => {
+          setShowConsentModal(false);
+          if (setProfile) {
+            setProfile({
+              ...profile,
+              parentalConsent: consent,
+              parentEmail: consent.parentEmail,
+            });
+          }
+        }}
+        onCancel={() => setShowConsentModal(false)}
+      />
     </div>
   );
 }

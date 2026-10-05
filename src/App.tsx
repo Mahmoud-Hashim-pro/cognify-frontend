@@ -6,8 +6,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import Sidebar from "./components/Sidebar";
 import ErrorBoundary from "./components/ErrorBoundary";
-import AccessibilityOverlay from "./components/AccessibilityOverlay";
-import LiveCaptions from "./components/LiveCaptions";
 import ReadAloudSelection from "./components/ReadAloudSelection";
 import { motion, AnimatePresence } from "motion/react";
 import { Message, UserProfile, AccessibilityMode, CognitiveLevel } from "./types";
@@ -77,6 +75,7 @@ const StudentMemoryPage = lazyWithRetry(() => import("./components/StudentMemory
 const StudentPrivacyCenter = lazyWithRetry(() => import("./components/StudentPrivacyCenter"));
 const InstitutionCohortHub = lazyWithRetry(() => import("./components/InstitutionCohortHub"));
 const CognitiveGym = lazyWithRetry(() => import("./components/CognitiveGym"));
+const LearningDisabilityStudio = lazyWithRetry(() => import("./components/LearningDisabilityStudio"));
 const IqAssessmentModal = lazyWithRetry(() => import("./components/IqAssessmentModal"));
 const FrenchTravelVoiceAssistant = lazyWithRetry(() => import("./components/FrenchTravelVoiceAssistant"));
 const ChatInterface = lazyWithRetry(() => import("./components/ChatInterface"));
@@ -90,6 +89,8 @@ const DeveloperApiConsole = lazyWithRetry(() => import("./components/DeveloperAp
 const SystemResilienceDashboard = lazyWithRetry(() => import("./components/SystemResilienceDashboard"));
 const PrivacySecurityCenter = lazyWithRetry(() => import("./components/PrivacySecurityCenter"));
 const AiQualityGuardMonitor = lazyWithRetry(() => import("./components/AiQualityGuardMonitor"));
+const AccessibilityOverlay = lazyWithRetry(() => import("./components/AccessibilityOverlay"));
+const LiveCaptions = lazyWithRetry(() => import("./components/LiveCaptions"));
 
 /** Every hash route the app answers to — the single source of truth for both the
  *  initial read on mount and the popstate handler, so they can't drift apart. */
@@ -98,7 +99,7 @@ const VALID_VIEWS = [
   'admin', 'goals', 'gpa', 'analytics', 'planner', 'support', 'memory',
   'institution', 'gym', 'iq', 'france', 'privacy', 'intelligence',
   'teacher', 'parent', 'privacy_security', 'evaluation', 'ai_quality',
-  'resilience', 'tenancy', 'developer_api', 'retention',
+  'resilience', 'tenancy', 'developer_api', 'retention', 'learning-studio',
 ] as const;
 
 function createGuestProfile(): UserProfile {
@@ -1037,6 +1038,7 @@ export default function App() {
             onMenuClick={() => setIsMobileMenuOpen(true)}
             onNavigateBack={() => navigateTo(homeViewFor(profile))}
             setProfile={setProfile}
+            onNavigate={(v) => navigateTo(v)}
           />
         );
       case 'intelligence':
@@ -1203,6 +1205,7 @@ export default function App() {
               </button>
             </header>
             <PrivacySecurityCenter
+              currentStudent={activeProfile.studentState}
               isArabic={isArabicLocale(activeProfile.language)}
             />
           </div>
@@ -1264,6 +1267,16 @@ export default function App() {
           />
         );
 
+      case 'learning-studio':
+        return (
+          <LearningDisabilityStudio
+            profile={activeProfile}
+            onMenuClick={() => setIsMobileMenuOpen(true)}
+            onNavigateBack={() => navigateTo(homeViewFor(profile))}
+            onOpenCognitiveGym={() => navigateTo('gym')}
+          />
+        );
+
       case 'france':
         return (
           <FrenchTravelVoiceAssistant
@@ -1312,7 +1325,7 @@ export default function App() {
         return (
           <div className="flex-1 flex flex-col bg-[#080409] text-slate-100 relative overflow-hidden font-sans custom-scrollbar">
             {/* Ambient Lighting Orbs - Royal Burgundy & Champagne Gold */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+            <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 hidden md:block">
               <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#4A1224]/20 rounded-full blur-[140px]" />
               <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[#E5A93C]/10 rounded-full blur-[140px]" />
               <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-[#831843]/15 rounded-full blur-[140px]" />
@@ -1641,6 +1654,7 @@ export default function App() {
               isDarkMode={isDarkMode}
               toggleTheme={toggleTheme}
               openLiveCaptions={() => setIsLiveCaptionsOpen(true)}
+              onClose={() => setIsMobileMenuOpen(false)}
             />
         </div>
 
@@ -1668,30 +1682,34 @@ export default function App() {
           // without needing the floating accessibility eye button overlay.
           && currentView !== 'disability'
           && currentView !== 'video' && (
-          <AccessibilityOverlay
-            mode={!profile.accessibilityMode || profile.accessibilityMode === 'None' ? 'Vocal-Deaf' : profile.accessibilityMode}
-            profile={profile}
-            aiResponse={currentAIResponse}
-            isListening={isSTTActive}
-            onTranscription={(text) => {
-              setExternalMessage(text);
-              // Reset so it doesn't keep triggering if ChatInterface clears it
-              setTimeout(() => setExternalMessage(""), 500);
-            }} 
-            onToggleListening={() => {
-              if (chatRef.current) {
-                chatRef.current.toggleSTT();
-              }
-            }}
-          />
+          <Suspense fallback={null}>
+            <AccessibilityOverlay
+              mode={!profile.accessibilityMode || profile.accessibilityMode === 'None' ? 'Vocal-Deaf' : profile.accessibilityMode}
+              profile={profile}
+              aiResponse={currentAIResponse}
+              isListening={isSTTActive}
+              onTranscription={(text) => {
+                setExternalMessage(text);
+                // Reset so it doesn't keep triggering if ChatInterface clears it
+                setTimeout(() => setExternalMessage(""), 500);
+              }} 
+              onToggleListening={() => {
+                if (chatRef.current) {
+                  chatRef.current.toggleSTT();
+                }
+              }}
+            />
+          </Suspense>
         )}
 
         <AnimatePresence>
           {isLiveCaptionsOpen && (
-            <LiveCaptions
-              language={isArabicLocale(profile?.language) ? 'ar-EG' : 'en-US'}
-              onClose={() => setIsLiveCaptionsOpen(false)} 
-            />
+            <Suspense fallback={null}>
+              <LiveCaptions
+                language={isArabicLocale(profile?.language) ? 'ar-EG' : 'en-US'}
+                onClose={() => setIsLiveCaptionsOpen(false)} 
+              />
+            </Suspense>
           )}
         </AnimatePresence>
 

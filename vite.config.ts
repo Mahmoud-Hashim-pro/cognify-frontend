@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => {
             'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
             'vendor-motion': ['motion/react'],
             'vendor-icons': ['lucide-react'],
+            'vendor-mediapipe': ['@mediapipe/hands', '@mediapipe/camera_utils'],
           },
         },
       },

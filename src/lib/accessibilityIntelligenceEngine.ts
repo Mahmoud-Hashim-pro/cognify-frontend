@@ -61,6 +61,38 @@ export const FORBIDDEN_CLINICAL_KEYWORDS: readonly string[] = Object.freeze([
 ]);
 
 /**
+ * Allowed functional UI and feature identifiers that refer to accessibility tools,
+ * views, or ergonomic settings without assigning a clinical or deficit label to a student.
+ */
+export const ALLOWED_FUNCTIONAL_IDENTIFIERS: readonly string[] = Object.freeze([
+  'autism_hub',
+  'autism & neurodiversity hub',
+  'autism hub',
+  'neurodiversity_hub',
+  'dyslexia_font',
+  'dyslexiafont',
+  'dyslexia_ruler',
+  'dyslexiaruler',
+  'opendyslexic',
+  'visual_comfort',
+  'sensory_regulation',
+  'pecs',
+  'visual_schedule'
+]);
+
+function isAllowedFunctionalContext(text: string, path: string): boolean {
+  const normText = normalizeForComparison(text);
+  const normPath = normalizeForComparison(path);
+  return ALLOWED_FUNCTIONAL_IDENTIFIERS.some(allowed =>
+    normText === allowed ||
+    normPath.includes(allowed) ||
+    normText.includes('opendyslexic') ||
+    normPath.includes('visualcomfort') ||
+    normPath.includes('readingruler')
+  );
+}
+
+/**
  * Normalizes input string for robust keyword matching (lowercase, strips punctuation).
  */
 function normalizeForComparison(text: string): string {
@@ -83,6 +115,9 @@ export function validateNonDiagnosticInvariant(
 
   // Primitive strings
   if (typeof profileOrPrefs === 'string') {
+    if (isAllowedFunctionalContext(profileOrPrefs, currentPath)) {
+      return { valid: true, violations: [] };
+    }
     const normalized = normalizeForComparison(profileOrPrefs);
     for (const keyword of FORBIDDEN_CLINICAL_KEYWORDS) {
       const normKeyword = normalizeForComparison(keyword);
@@ -113,6 +148,9 @@ export function validateNonDiagnosticInvariant(
   if (typeof profileOrPrefs === 'object') {
     for (const [key, value] of Object.entries(profileOrPrefs)) {
       const fieldPath = currentPath ? `${currentPath}.${key}` : key;
+      if (isAllowedFunctionalContext(key, fieldPath)) {
+        continue;
+      }
       const normalizedKey = normalizeForComparison(key);
 
       // Check key name
