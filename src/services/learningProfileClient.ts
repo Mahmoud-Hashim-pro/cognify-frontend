@@ -17,6 +17,7 @@ import {
   createInitialStudentState,
 } from '../lib/studentStateEngine';
 import { getApiUrl } from '../config/api';
+import { auth } from '../lib/firebase';
 
 export interface UseLearningProfileResult {
   profile: PersonalLearningProfile;
@@ -38,11 +39,19 @@ export async function fetchPersonalLearningProfile(
   const manager = getStudentStateManager(effectiveUid);
 
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    } catch {}
+
     const response = await fetch(getApiUrl('/api/student/learningProfile'), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         uid: effectiveUid,
         displayName,

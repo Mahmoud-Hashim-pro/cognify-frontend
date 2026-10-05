@@ -138,19 +138,38 @@ const isLocalStorageSupported = (): boolean => {
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
+// Determine active Firestore database ID.
+// If not specified or set to default/ai-studio placeholder, omit to use standard (default) database.
+const configuredDatabaseId = (import.meta as any).env?.VITE_FIREBASE_DATABASE_ID || (firebaseConfig as any).firestoreDatabaseId;
+const targetDatabaseId = (!configuredDatabaseId || configuredDatabaseId === '(default)' || configuredDatabaseId.startsWith('ai-studio-'))
+  ? undefined
+  : configuredDatabaseId;
+
+const initDb = (settings: any) => {
+  return targetDatabaseId
+    ? initializeFirestore(app, settings, targetDatabaseId)
+    : initializeFirestore(app, settings);
+};
+
+const getFallbackDb = () => {
+  return targetDatabaseId
+    ? getFirestore(app, targetDatabaseId)
+    : getFirestore(app);
+};
+
 // Initialize Firestore safely with IndexedDB support checks
 let safeDb;
 try {
   if (isIndexedDBSupported() && isLocalStorageSupported()) {
-    safeDb = initializeFirestore(app, {
+    safeDb = initDb({
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
       experimentalForceLongPolling: true,
-    }, firebaseConfig.firestoreDatabaseId);
+    });
   } else {
-    safeDb = initializeFirestore(app, {
+    safeDb = initDb({
       localCache: memoryLocalCache(),
       experimentalForceLongPolling: true,
-    }, firebaseConfig.firestoreDatabaseId);
+    });
   }
 } catch (error) {
   console.warn("Firestore custom initialization failed, falling back to memory cache", error);
@@ -160,12 +179,12 @@ try {
     }
   } catch {}
   try {
-    safeDb = initializeFirestore(app, {
+    safeDb = initDb({
       localCache: memoryLocalCache(),
       experimentalForceLongPolling: true,
-    }, firebaseConfig.firestoreDatabaseId);
+    });
   } catch {
-    safeDb = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+    safeDb = getFallbackDb();
   }
 }
 

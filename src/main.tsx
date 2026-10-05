@@ -63,7 +63,7 @@ function notifyGenericError() {
   }
 }
 
-const BENIGN = /AbortError|aborted|ResizeObserver|Load failed|NetworkError when attempting|cancell?ed|startTime|reportAllChanges|vercel\.live|Cross-Origin-Opener-Policy|window\.closed|optout|Blocked a frame|play\(\) request was interrupted|The request is not allowed by the user agent|NotAllowedError|NotFoundError: Requested device not found|OverconstrainedError|WebChannelConnection.*transport errored|Missing or insufficient permissions|FIRESTORE.*INTERNAL ASSERTION FAILED|client is offline/i;
+const BENIGN = /AbortError|aborted|ResizeObserver|Load failed|NetworkError when attempting|cancell?ed|startTime|reportAllChanges|vercel\.live|Cross-Origin-Opener-Policy|window\.closed|optout|Blocked a frame|play\(\) request was interrupted|The request is not allowed by the user agent|NotAllowedError|NotFoundError: Requested device not found|OverconstrainedError|WebChannelConnection.*transport errored|Missing or insufficient permissions|FIRESTORE.*INTERNAL ASSERTION FAILED|client is offline|A data sync error occurred/i;
 
 // Auto-recover from dynamic chunk import failures / stale deployments
 window.addEventListener('vite:preloadError', (event) => {

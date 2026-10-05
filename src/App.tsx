@@ -697,7 +697,11 @@ export default function App() {
       clearTimeout(watchdog);
       setProfileSyncFailed(true); // sync FAILED — don't fall through to Onboarding
       setProfileLoading(false);
-      handleFirestoreError(err, OperationType.LIST, path);
+      try {
+        handleFirestoreError(err, OperationType.LIST, path);
+      } catch {
+        // Logged cleanly; UI presents recovery retry state
+      }
     });
 
     return () => {
