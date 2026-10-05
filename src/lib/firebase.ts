@@ -139,11 +139,21 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 
 // Determine active Firestore database ID.
-// If not specified or set to default/ai-studio placeholder, omit to use standard (default) database.
-const configuredDatabaseId = (import.meta as any).env?.VITE_FIREBASE_DATABASE_ID || (firebaseConfig as any).firestoreDatabaseId;
-const targetDatabaseId = (!configuredDatabaseId || configuredDatabaseId === '(default)' || configuredDatabaseId.startsWith('ai-studio-'))
-  ? undefined
-  : configuredDatabaseId;
+const getEnvDatabaseId = (): string | undefined => {
+  if (typeof process !== 'undefined' && process.env?.VITE_FIREBASE_DATABASE_ID) {
+    return process.env.VITE_FIREBASE_DATABASE_ID;
+  }
+  try {
+    const meta = (new Function('return import.meta'))();
+    return meta?.env?.VITE_FIREBASE_DATABASE_ID;
+  } catch {
+    return undefined;
+  }
+};
+const configuredDatabaseId = getEnvDatabaseId() || (firebaseConfig as any).firestoreDatabaseId || 'ai-studio-c1720b7c-bffb-4282-b9a9-7c611643d7c2';
+const targetDatabaseId = configuredDatabaseId && configuredDatabaseId !== '(default)'
+  ? configuredDatabaseId
+  : undefined;
 
 const initDb = (settings: any) => {
   return targetDatabaseId
@@ -163,12 +173,12 @@ try {
   if (isIndexedDBSupported() && isLocalStorageSupported()) {
     safeDb = initDb({
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-      experimentalForceLongPolling: true,
+      experimentalAutoDetectLongPolling: true,
     });
   } else {
     safeDb = initDb({
       localCache: memoryLocalCache(),
-      experimentalForceLongPolling: true,
+      experimentalAutoDetectLongPolling: true,
     });
   }
 } catch (error) {
@@ -181,7 +191,7 @@ try {
   try {
     safeDb = initDb({
       localCache: memoryLocalCache(),
-      experimentalForceLongPolling: true,
+      experimentalAutoDetectLongPolling: true,
     });
   } catch {
     safeDb = getFallbackDb();
