@@ -128,14 +128,11 @@ export default function Onboarding({ onComplete, user }: OnboardingProps) {
           accessibilityMode = 'Vocal-Deaf';
         } else if (disabilityType === 'Speech Impairment') {
           accessibilityMode = 'Speech';
-        } else if (disabilityType === 'Cognitive/Learning Disability') {
-          accessibilityMode = 'Neurodiversity';
         }
       }
 
       try {
-        const mappedTab = accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
-                          accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+        const mappedTab = accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
         localStorage.setItem('cognify_default_disability_tab', mappedTab);
       } catch {}
 

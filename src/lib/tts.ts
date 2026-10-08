@@ -66,13 +66,16 @@ export function cleanForSpeech(text: string): string {
     .replace(/Textes?( visibles?)?:\s*(Aucun[^\n.]*)[.]?/gi, "")
     .replace(/\*\*(Description de la scène|Description):\*\*/gi, "")
     .replace(/(Description de la scène|Description):/gi, "")
+    // Strip bullet list prefixes (- , * , • ) at line starts
+    .replace(/^\s*[-*•]\s+/gm, "")
     // Strip spoken symbol words (asterisk / star / استريك / نجمة)
     .replace(/(?:^|\s+)(asterisk|استريك|استريسك|نجمة|بوليت)[.,!?:؛،]?(?=\s+|$)/giu, " ")
     // Strip markdown formatting symbols (*, #, _, `, ~, [], (), <>)
     .replace(/[*+#_`~\[\]()<>]/g, "")
-    // Strip bullet dashes and clean spacing
-    .replace(/^\s*[-•]\s+/gm, "")
-    .replace(/\s+-\s+/g, " ")
+    // Strip stray system placeholder tokens in speech
+    .replace(/\bOther\b/gi, "")
+    .replace(/\besraahosni\w*\b/gi, "")
+    .replace(/\bN\/A\b/gi, "")
     .replace(/\s{2,}/g, " ")
     .trim();
 }
@@ -101,15 +104,47 @@ if (typeof window !== "undefined" && "speechSynthesis" in window) {
 
 function pickVoice(targetLang: string): SpeechSynthesisVoice | undefined {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return undefined;
-  const voices = cachedVoices.length ? cachedVoices : window.speechSynthesis.getVoices();
+  const live = window.speechSynthesis.getVoices();
+  const voices = live && live.length > 0 ? live : cachedVoices;
   const lower = targetLang.toLowerCase();
+  const isAr = lower.startsWith("ar");
+
   let best: SpeechSynthesisVoice | undefined;
   let bestScore = 0;
   for (const v of voices) {
-    const s = rank(v, lower);
-    if (s > bestScore) { bestScore = s; best = v; }
+    if (isAr) {
+      const vLang = (v.lang || "").toLowerCase();
+      const vName = (v.name || "").toLowerCase();
+      const isVoiceAr = vLang.startsWith("ar") || /arabic|hoda|naayf|salma|laila|tarik|maged|google عربي|عربي/i.test(vName);
+      if (!isVoiceAr) continue;
+      let s = vLang === lower ? 10 : vLang.startsWith("ar") ? 6 : 4;
+      if (QUALITY_HINTS.test(vName)) s += 4;
+      if (!v.localService) s += 2;
+      if (s > bestScore) { bestScore = s; best = v; }
+    } else {
+      const s = rank(v, lower);
+      if (s > bestScore) { bestScore = s; best = v; }
+    }
   }
   return best;
+}
+
+/** Fallback to native Google/Web audio stream if the client OS lacks an Arabic TTS voice. */
+export function playArabicAudioFallback(text: string, cb?: SpeakCallbacks): boolean {
+  if (typeof window === "undefined" || !text.trim()) return false;
+  try {
+    const clean = cleanForSpeech(text).slice(0, 180);
+    if (!clean) return false;
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(clean)}&tl=ar&client=tw-ob`;
+    const audio = new Audio(url);
+    cb?.onStart?.();
+    audio.onended = () => cb?.onEnd?.();
+    audio.onerror = () => cb?.onError?.('audio-fallback-fail');
+    audio.play().catch(() => cb?.onError?.('audio-play-blocked'));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Build a configured utterance with the best voice for the given language. */
@@ -220,6 +255,23 @@ export function speak(
   language?: string,
   cb?: SpeakCallbacks,
 ): void {
+  const isExplicitArabic =
+    language === "Arabic" ||
+    language === "Egyptian Ammiya" ||
+    language === "ar" ||
+    language === "ar-SA" ||
+    language === "ar-EG";
+  const hasArabicChars = /[؀-ۿ]/.test(text);
+
+  if (isExplicitArabic || hasArabicChars) {
+    const arabicVoice = pickVoice("ar-EG") || pickVoice("ar-SA") || pickVoice("ar");
+    if (!arabicVoice) {
+      // Browser/OS lacks native Arabic TTS engine -> play high-fidelity Arabic audio directly
+      const audioFallbackStarted = playArabicAudioFallback(text, cb);
+      if (audioFallbackStarted) return;
+    }
+  }
+
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     cb?.onError?.("unsupported");
     return;

@@ -3,7 +3,7 @@ export type UserRole = 'Student' | 'Professional';
 export type EducationLevel = 'Primary' | 'Secondary' | 'University' | 'Professional';
 export type Field = 'Medicine' | 'Engineering' | 'Business' | 'General' | 'Other';
 import type { StudentState } from './types/studentState';
-export type AccessibilityMode = 'None' | 'Speech' | 'Visual' | 'Vocal-Deaf' | 'Sign-Only' | 'Neurodiversity';
+export type AccessibilityMode = 'None' | 'Speech' | 'Visual' | 'Vocal-Deaf' | 'Sign-Only';
 export type LanguagePreference = 'English' | 'Arabic' | 'Egyptian Ammiya' | 'French' | 'Spanish' | 'German' | 'Italian' | 'Portuguese' | 'Russian' | 'Chinese' | 'Japanese';
 export type AccountPath = 'Graduation Project' | 'Special Needs' | 'Normal';
 

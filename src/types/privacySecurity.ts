@@ -6,6 +6,30 @@
 
 import type { StudentState } from './studentState';
 
+/**
+ * Canonical list of all subcollections partitioned under `users/{uid}/*`
+ * Used across admin deletion, client self-service GDPR cascade erasure, data export, and audit logging.
+ */
+export const USER_SUBCOLLECTIONS = [
+  'threads',
+  'goals',
+  'learningEvents',
+  'learningProfile',
+  'exerciseHistory',
+  'loginHistory',
+  'studentState',
+  'spatialMemories',
+  'caregiverLinks',
+  'courses',
+  'notes',
+  'attendance',
+  'planner',
+  'neurodiversity',
+  'sensoryLogs',
+] as const;
+
+export type UserSubcollectionName = typeof USER_SUBCOLLECTIONS[number];
+
 export interface DifferentialPrivacyConfig {
   epsilon: number;        // Privacy parameter (e.g. 0.1 to 2.0). Smaller = more privacy, more noise.
   sensitivity: number;    // Global sensitivity (Delta f), default 1.0 or scale max

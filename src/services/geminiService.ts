@@ -54,11 +54,10 @@ async function callGemini(parts: any[]): Promise<string> {
   }
 
   // 2. Direct Gemini fallback
-  // Honours user-configured BYOK key in encrypted localStorage. In production, VITE_* fallback
-  // is strictly disabled so provider keys are never bundled into public browser scripts.
-  const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
+  // Honours user-configured BYOK key in encrypted localStorage, or VITE_GEMINI_API_KEY in environment.
   const userKey = secureLoadKeySync('gemini');
-  const geminiKey = userKey || (isDev ? ((typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_GEMINI_API_KEY) || '') : '');
+  const envKey = (typeof import.meta !== 'undefined' && ((import.meta as any).env?.VITE_GEMINI_API_KEY || (import.meta as any).env?.GEMINI_API_KEY)) || '';
+  const geminiKey = userKey || envKey;
   if (geminiKey) {
     try {
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {

@@ -104,8 +104,8 @@ export function auditOWASPWebSecurity(): ThreatAuditFinding[] {
       status: 'PASS',
       boundary: 'api_gateway',
       description: 'Ensures hardened HTTP response headers and eliminates development leaks.',
-      mitigation: 'X-Content-Type-Options: nosniff, X-Frame-Options: DENY, HSTS preload, X-XSS-Protection.',
-      evidence: 'vercel.json',
+      mitigation: 'Content-Security-Policy, Permissions-Policy, X-Content-Type-Options: nosniff, X-Frame-Options: DENY, HSTS preload.',
+      evidence: 'vercel.json, server.ts',
     },
     {
       id: 'WEB-A06',

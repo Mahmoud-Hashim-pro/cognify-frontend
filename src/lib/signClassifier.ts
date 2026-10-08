@@ -21,7 +21,11 @@
  *   clf.smoother.handLost();
  */
 
-import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs-core';
+import * as tfLayers from '@tensorflow/tfjs-layers';
+import '@tensorflow/tfjs-backend-cpu';
+import '@tensorflow/tfjs-backend-webgl';
+import type { LayersModel } from '@tensorflow/tfjs-layers';
 
 export const SIGN_LETTERS = 'ABCDEFGHIKLMNOPQRSTUVWXY'; // 24 static letters, no J/Z
 
@@ -110,7 +114,7 @@ export class SignSmoother {
 /* Classifier                                                          */
 /* ------------------------------------------------------------------ */
 export class SignClassifier {
-  private model: tf.LayersModel | null = null;
+  private model: LayersModel | null = null;
   private crop28: HTMLCanvasElement;
   public smoother = new SignSmoother();
 
@@ -124,7 +128,7 @@ export class SignClassifier {
 
   async load(modelUrl = '/models/sign/model.json'): Promise<boolean> {
     try {
-      this.model = await tf.loadLayersModel(modelUrl);
+      this.model = await tfLayers.loadLayersModel(modelUrl);
       // warm-up so the first real frame isn't slow
       tf.tidy(() => {
         const out = this.model!.predict(tf.zeros([1, 28, 28, 1])) as tf.Tensor;
@@ -181,14 +185,13 @@ export class SignClassifier {
 
     // grayscale + normalize + predict
     const { letter, confidence } = tf.tidy(() => {
-      const rgb = tf.browser.fromPixels(this.crop28, 3).toFloat();
+      const rgb = tf.cast(tf.browser.fromPixels(this.crop28, 3), 'float32');
       // luminance grayscale, matching dataset preprocessing
-      const gray = rgb
-        .mul(tf.tensor1d([0.299, 0.587, 0.114]))
-        .sum(2)
-        .expandDims(2)              // [28,28,1]
-        .div(255)
-        .expandDims(0);             // [1,28,28,1]
+      const luminance = tf.sum(tf.mul(rgb, tf.tensor1d([0.299, 0.587, 0.114])), 2);
+      const gray = tf.expandDims(
+        tf.div(tf.expandDims(luminance, 2), 255),
+        0
+      );
       const probs = (this.model!.predict(gray) as tf.Tensor).dataSync();
       let bi = 0;
       for (let i = 1; i < probs.length; i++) if (probs[i] > probs[bi]) bi = i;

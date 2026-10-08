@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Eye, Ear, Brain, Hand, Check, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
+import { Eye, Ear, Hand, Check, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
 import { UserProfile } from '../types';
 import { isArabicLocale, localize } from '../lib/translations';
 
@@ -8,16 +8,16 @@ interface BurgundyConstellationHeroProps {
   profile: UserProfile;
   onLaunchPrimary: () => void;
   onExploreModes: () => void;
-  onSelectSuite?: (suiteId: 'vision' | 'deaf' | 'neurodiversity') => void;
+  onSelectSuite?: (suiteId: 'vision' | 'deaf') => void;
   isDarkMode?: boolean;
   toggleTheme?: () => void;
 }
 
 interface ConstellationNode {
-  id: 'vision' | 'hearing' | 'sign' | 'neuro';
+  id: 'vision' | 'hearing' | 'sign';
   labelAr: string;
   labelEn: string;
-  suiteId: 'vision' | 'deaf' | 'neurodiversity';
+  suiteId: 'vision' | 'deaf';
   Icon: React.ComponentType<{ className?: string }>;
   x: number; // percentage in SVG viewBox 0-400
   y: number; // percentage in SVG viewBox 0-300
@@ -45,62 +45,48 @@ export default function BurgundyConstellationHero({
     ? isFemaleUser ? 'استكشفي الأوضاع' : 'استكشف الأوضاع'
     : 'Explore Assistive Suites';
 
-  // The 4 true interconnected disability symbols
+  // The 3 interconnected sensory disability symbols (Vision, Hearing, 3D Sign)
   const nodes: ConstellationNode[] = [
     {
       id: 'vision',
-      labelAr: 'البصر',
-      labelEn: 'Vision',
+      labelAr: 'البصر (كاميرا ذكية)',
+      labelEn: 'Vision (AI Eyes)',
       suiteId: 'vision',
       Icon: Eye,
       x: 200,
-      y: 42,
+      y: 50,
       color: '#FB7185', // Rose
       glowColor: 'rgba(251, 113, 133, 0.45)',
     },
     {
       id: 'hearing',
-      labelAr: 'السمع',
-      labelEn: 'Hearing',
+      labelAr: 'السمع والكلام',
+      labelEn: 'Hearing & Speech',
       suiteId: 'deaf',
       Icon: Ear,
-      x: 320,
-      y: 110,
+      x: 310,
+      y: 210,
       color: '#E5A93C', // Gold
       glowColor: 'rgba(229, 169, 60, 0.45)',
     },
     {
       id: 'sign',
-      labelAr: 'لغة الإشارة',
-      labelEn: 'Sign Language',
+      labelAr: 'لغة الإشارة 3D',
+      labelEn: '3D Sign Language',
       suiteId: 'deaf',
       Icon: Hand,
-      x: 260,
-      y: 220,
+      x: 90,
+      y: 210,
       color: '#F43F5E', // Deep Rose
       glowColor: 'rgba(244, 63, 94, 0.45)',
     },
-    {
-      id: 'neuro',
-      labelAr: 'العقل',
-      labelEn: 'Cognitive',
-      suiteId: 'neurodiversity',
-      Icon: Brain,
-      x: 80,
-      y: 110,
-      color: '#C084FC', // Purple
-      glowColor: 'rgba(192, 132, 252, 0.45)',
-    },
   ];
 
-  // Connections between all 4 nodes (complete unified network)
+  // Connections between all 3 nodes (closed sensory loop)
   const connections: [number, number][] = [
     [0, 1], // Vision - Hearing
     [1, 2], // Hearing - Sign
-    [2, 3], // Sign - Neuro
-    [3, 0], // Neuro - Vision
-    [0, 2], // Vision - Sign
-    [1, 3], // Hearing - Neuro
+    [2, 0], // Sign - Vision
   ];
 
   return (

@@ -28,10 +28,13 @@ import { speak } from '../lib/tts';
 import { toast } from './Toast';
 import {
   ARSL_LECTURES_CATALOG,
+  ARSL_OFFICIAL_BOOK_CATALOG,
+  ARSL_OFFICIAL_SIGNS,
   ARSL_DICTIONARY,
   ArslSignEntry,
   ArslLectureInfo,
   lookupArslSign,
+  searchArslDictionary,
   hamnosysToThreePose
 } from '../lib/arslDictionary';
 import {
@@ -53,17 +56,19 @@ interface ArSLTrainingStudioProps {
 }
 
 type StudioTab = 'curriculum' | 'camera_recognizer' | 'training_confusion' | 'extractor';
+type CatalogMode = 'official_book' | 'interactive_curriculum';
 
 export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps) {
   const isAr = isArabicLocale(profile.language);
   const [activeTab, setActiveTab] = useState<StudioTab>('curriculum');
+  const [catalogMode, setCatalogMode] = useState<CatalogMode>('official_book');
 
-  // ── TAB 1: CURRICULUM & 24 LECTURES STATE ──
-  const [selectedLectureId, setSelectedLectureId] = useState<number>(3);
+  // ── TAB 1: CURRICULUM & 28 OFFICIAL BOOK CHAPTERS STATE ──
+  const [selectedLectureId, setSelectedLectureId] = useState<number>(1);
   const [selectedSign, setSelectedSign] = useState<ArslSignEntry | null>(() => {
-    return ARSL_DICTIONARY.find((s) => s.lectureId === 3) || ARSL_DICTIONARY[0];
+    return ARSL_OFFICIAL_SIGNS[0] || ARSL_DICTIONARY[0];
   });
-  const [avatarWords, setAvatarWords] = useState<string[]>(['السلام عليكم']);
+  const [avatarWords, setAvatarWords] = useState<string[]>(['الأسرة']);
   const [isAvatarPlaying, setIsAvatarPlaying] = useState<boolean>(true);
   const [curriculumSearch, setCurriculumSearch] = useState<string>('');
 
@@ -83,22 +88,31 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
   const [confusionReport, setConfusionReport] = useState<ConfusionMatrixReport | null>(null);
   const [selectedConfusionCell, setSelectedConfusionCell] = useState<{ actual: number; predicted: number } | null>(null);
 
-  // Filtered lectures and signs
+  // Active Catalog based on mode
+  const activeCatalog = useMemo(() => {
+    return catalogMode === 'official_book' ? ARSL_OFFICIAL_BOOK_CATALOG : ARSL_LECTURES_CATALOG;
+  }, [catalogMode]);
+
+  // Filtered lectures / chapters
   const filteredLectures = useMemo(() => {
-    if (!curriculumSearch.trim()) return ARSL_LECTURES_CATALOG;
+    if (!curriculumSearch.trim()) return activeCatalog;
     const term = curriculumSearch.toLowerCase();
-    return ARSL_LECTURES_CATALOG.filter(
+    return activeCatalog.filter(
       (l) => l.titleAr.toLowerCase().includes(term) || l.topicAr.toLowerCase().includes(term) || l.titleEn.toLowerCase().includes(term)
     );
-  }, [curriculumSearch]);
+  }, [activeCatalog, curriculumSearch]);
 
   const lectureSigns = useMemo(() => {
-    return ARSL_DICTIONARY.filter((s) => s.lectureId === selectedLectureId);
-  }, [selectedLectureId]);
+    if (curriculumSearch.trim()) {
+      return searchArslDictionary(curriculumSearch, undefined, 100);
+    }
+    const source = catalogMode === 'official_book' ? ARSL_OFFICIAL_SIGNS : ARSL_DICTIONARY;
+    return source.filter((s) => s.lectureId === selectedLectureId);
+  }, [catalogMode, selectedLectureId, curriculumSearch]);
 
   const currentLecture = useMemo(() => {
-    return ARSL_LECTURES_CATALOG.find((l) => l.id === selectedLectureId) || ARSL_LECTURES_CATALOG[2];
-  }, [selectedLectureId]);
+    return activeCatalog.find((l) => l.id === selectedLectureId) || activeCatalog[0];
+  }, [activeCatalog, selectedLectureId]);
 
   // Initial load: Initialize recognizer & run benchmark confusion matrix evaluation
   useEffect(() => {
@@ -315,18 +329,59 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto min-h-0 p-3 sm:p-5">
-        {/* ── TAB 1: 24 LECTURES & 3D AVATAR VIEWER ── */}
+        {/* ── TAB 1: 24 LECTURES / 28 BOOK CHAPTERS & 3D AVATAR VIEWER ── */}
         {activeTab === 'curriculum' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
-            {/* Left Column: Lectures List (4 cols) */}
+            {/* Left Column: Lectures / Chapters List (4 cols) */}
             <div className="lg:col-span-4 flex flex-col gap-3 min-h-[350px]">
+              {/* Catalog Mode Selector */}
+              <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#080409] rounded-2xl border border-[#4A1224]/60 text-xs font-bold">
+                <button
+                  onClick={() => {
+                    setCatalogMode('official_book');
+                    setSelectedLectureId(1);
+                    if (ARSL_OFFICIAL_SIGNS[0]) handleSelectSign(ARSL_OFFICIAL_SIGNS[0]);
+                  }}
+                  className={`py-2 px-2 rounded-xl transition-all text-center flex flex-col items-center gap-0.5 ${
+                    catalogMode === 'official_book'
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span className="text-[11px] leading-tight font-black">{isAr ? 'القاموس الإشاري الموحد' : 'Unified ArSL Book'}</span>
+                  <span className="text-[9px] opacity-80 font-normal">{isAr ? '28 باباً — 1,413 إشارة' : '28 Chapters — 1,413 Signs'}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setCatalogMode('interactive_curriculum');
+                    setSelectedLectureId(3);
+                    const first = ARSL_DICTIONARY.find((s) => s.lectureId === 3);
+                    if (first) handleSelectSign(first);
+                  }}
+                  className={`py-2 px-2 rounded-xl transition-all text-center flex flex-col items-center gap-0.5 ${
+                    catalogMode === 'interactive_curriculum'
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span className="text-[11px] leading-tight font-black">{isAr ? 'المنهج التفاعلي' : 'Curriculum Modules'}</span>
+                  <span className="text-[9px] opacity-80 font-normal">{isAr ? '24 وحدة موضوعية' : '24 Thematic Modules'}</span>
+                </button>
+              </div>
+
+              {/* Search Bar */}
               <div className="relative">
                 <Search className="w-4 h-4 absolute top-2.5 right-3 text-slate-500" />
                 <input
                   type="text"
                   value={curriculumSearch}
                   onChange={(e) => setCurriculumSearch(e.target.value)}
-                  placeholder={isAr ? 'ابحث في المحاضرات والمفردات...' : 'Search lectures & signs...'}
+                  placeholder={
+                    isAr
+                      ? `ابحث في المعجم الكامل (1,413 إشارة)...`
+                      : `Search all 1,413 ArSL signs...`
+                  }
                   className="w-full bg-[#150917] border border-[#4A1224]/60 rounded-xl px-3 py-2 pr-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
@@ -337,7 +392,8 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                     key={lec.id}
                     onClick={() => {
                       setSelectedLectureId(lec.id);
-                      const firstSign = ARSL_DICTIONARY.find((s) => s.lectureId === lec.id);
+                      const source = catalogMode === 'official_book' ? ARSL_OFFICIAL_SIGNS : ARSL_DICTIONARY;
+                      const firstSign = source.find((s) => s.lectureId === lec.id);
                       if (firstSign) handleSelectSign(firstSign);
                     }}
                     className={`p-3 rounded-2xl border transition-all cursor-pointer text-start ${
@@ -403,9 +459,17 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
 
               {/* Signs List */}
               <div className="flex-1 overflow-y-auto space-y-2 pr-1 max-h-[500px]">
+                {curriculumSearch.trim() && (
+                  <div className="px-2 py-1 text-[11px] text-purple-300 font-bold flex items-center justify-between">
+                    <span>{isAr ? `نتائج البحث عن: "${curriculumSearch}"` : `Search results for: "${curriculumSearch}"`}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-950 border border-purple-500/30 text-purple-300 font-mono">
+                      {lectureSigns.length} {isAr ? 'إشارة' : 'signs'}
+                    </span>
+                  </div>
+                )}
                 {lectureSigns.length === 0 ? (
                   <div className="p-6 text-center text-xs text-slate-500 bg-[#150917]/40 rounded-2xl border border-[#4A1224]/60">
-                    {isAr ? 'تم فهرسة المحاضرة في المعجم. اختر إشارة من المحاضرات 3 أو 4 أو 7 أو 11 أو 15 أو 16.' : 'Select another lecture to preview signs.'}
+                    {isAr ? 'لم يتم العثور على إشارات مطابقة. جرب كلمة أخرى.' : 'No matching signs found. Try another search.'}
                   </div>
                 ) : (
                   lectureSigns.map((sign) => (
@@ -419,12 +483,19 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                       }`}
                     >
                       <div>
-                        <div className="font-black text-sm text-white flex items-center gap-2">
+                        <div className="font-black text-sm text-white flex items-center gap-2 flex-wrap">
                           <span>{sign.arabicName}</span>
                           <span className="text-[10px] text-slate-400 font-normal">({sign.englishName})</span>
                         </div>
-                        <div className="text-[10px] text-purple-300 mt-0.5">
-                          {isAr ? `ترميز: ${sign.hamnosys.handshape} | موضع: ${sign.hamnosys.location}` : `HamNoSys: ${sign.hamnosys.handshape}`}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] text-purple-300">
+                            {isAr ? `ترميز: ${sign.hamnosys.handshape} | موضع: ${sign.hamnosys.location}` : `HamNoSys: ${sign.hamnosys.handshape}`}
+                          </span>
+                          {sign.pageNumber && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-mono">
+                              {isAr ? `ص ${sign.pageNumber}` : `p. ${sign.pageNumber}`}
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -433,7 +504,7 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                           e.stopPropagation();
                           handleSelectSign(sign);
                         }}
-                        className="p-2 rounded-xl bg-purple-600/30 text-purple-300 hover:bg-purple-600 hover:text-white transition-all"
+                        className="p-2 rounded-xl bg-purple-600/30 text-purple-300 hover:bg-purple-600 hover:text-white transition-all shrink-0 ml-2"
                         title={isAr ? 'تشغيل الأفاتار' : 'Play 3D Sign'}
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
@@ -506,6 +577,26 @@ export default function ArSLTrainingStudio({ profile }: ArSLTrainingStudioProps)
                       <span className="font-mono text-purple-300 font-bold">{selectedSign.hamnosys.nonManual || 'neutral'}</span>
                     </div>
                   </div>
+
+                  {selectedSign.pageNumber && (
+                    <div className="bg-[#080409] p-2 rounded-xl border border-indigo-500/30 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400">{isAr ? 'المرجع في القاموس الإشاري الموحد:' : 'Official ArSL Book Reference:'}</span>
+                      <span className="font-bold text-indigo-300">{isAr ? `صفحة ${selectedSign.pageNumber} من 1,418` : `Page ${selectedSign.pageNumber} of 1,418`}</span>
+                    </div>
+                  )}
+
+                  {selectedSign.aliases && selectedSign.aliases.length > 0 && (
+                    <div className="bg-[#080409] p-2 rounded-xl border border-[#4A1224]/60 text-[11px]">
+                      <span className="text-slate-500 block mb-1">{isAr ? 'المرادفات واللهجات الدارجة:' : 'Dialectal Aliases:'}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {selectedSign.aliases.map((al, idx) => (
+                          <span key={idx} className="px-1.5 py-0.5 rounded bg-purple-950/60 border border-purple-500/20 text-purple-300 text-[10px]">
+                            {al}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <p className="text-[11px] text-slate-300 leading-relaxed bg-[#080409]/60 p-2.5 rounded-xl border border-[#4A1224]/60">
                     {isAr ? selectedSign.descriptionAr : selectedSign.descriptionEn}

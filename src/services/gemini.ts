@@ -36,20 +36,17 @@ export async function getAuthHeaders(forceRefresh = false): Promise<Record<strin
 
 export function getGeminiKeys(): string[] {
   // Provider keys live server-side in /api/gemini/*. For in-browser direct fallback,
-  // honour encrypted user-pasted BYOK key first. In production, VITE_* fallback is strictly
-  // disabled to prevent exposing provider keys in public JS bundles.
+  // honour encrypted user-pasted BYOK key first, or VITE_GEMINI_API_KEY configured in environment.
   const localKey = secureLoadKeySync('gemini');
   if (localKey) return splitKeys(localKey);
-  const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
-  const envKey = isDev ? ((import.meta as any).env?.VITE_GEMINI_API_KEY || '') : '';
+  const envKey = (typeof import.meta !== 'undefined' && ((import.meta as any).env?.VITE_GEMINI_API_KEY || (import.meta as any).env?.GEMINI_API_KEY)) || '';
   return splitKeys(envKey);
 }
 
 export function getGroqKeys(): string[] {
   const localKey = secureLoadKeySync('groq');
   if (localKey) return splitKeys(localKey);
-  const isDev = typeof import.meta !== 'undefined' && Boolean((import.meta as any).env?.DEV);
-  const envKey = isDev ? ((import.meta as any).env?.VITE_GROQ_API_KEY || '') : '';
+  const envKey = (typeof import.meta !== 'undefined' && ((import.meta as any).env?.VITE_GROQ_API_KEY || (import.meta as any).env?.GROQ_API_KEY)) || '';
   return splitKeys(envKey);
 }
 
@@ -971,24 +968,6 @@ export async function* generateAdaptiveResponseStream(
     let isMissingBackend = isHtml || res.status === 404;
 
     if (!res.ok || isMissingBackend) {
-      // Automatic transparent fallback to live Cloud Run Full-Stack backend
-      try {
-        const cloudRunRes = await fetch('https://ais-pre-yrqajcztyb24fektpr6ddb-78152961995.europe-west1.run.app/api/gemini/generateAdaptiveResponseStream', {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ message, profile, history, attachments, studentState }),
-          signal
-        });
-        if (cloudRunRes.ok && !cloudRunRes.headers.get('Content-Type')?.includes('text/html')) {
-          res = cloudRunRes;
-          isMissingBackend = false;
-        }
-      } catch {
-        // Continue to client-side fallback
-      }
-    }
-
-    if (!res.ok || isMissingBackend) {
       if (isMissingBackend) {
         backendUp = false; // genuinely no serverless backend on this host
       }
@@ -1067,24 +1046,13 @@ export async function* generateAdaptiveResponseStream(
         }
       }
 
-      const cloudRunUrl = "https://ais-pre-yrqajcztyb24fektpr6ddb-78152961995.europe-west1.run.app";
       const explanationText = isArabic 
-        ? `⚠️ **تنبيه هام حول بيئة التشغيل من كوجنيفي:**
+        ? `⚠️ **تعذّر الاتصال بخدمة الذكاء الاصطناعي حالياً:**
         
-أنت تقوم حاليًا بتصفح التطبيق عبر استضافة ساكنة بدون خادم خلفي نشط (Static Hosting)، وهي لا تدعم الـ Express Backend اللازم لتشغيل وظائف الذكاء الاصطناعي السحابية.
+السيرفر مجهد أو جاري تهيئة الاتصال السحابي. يمكنك المحاولة مجدداً بعد لحظات، أو وضع مفتاح Gemini الخاص بك في صفحة **الإعدادات** بالتطبيق لتمكين المعالجة الفورية.`
+        : `⚠️ **AI Service Currently Unavailable:**
 
-للحصول على كامل أداء كوجنيفي، من فضلك افتح رابط التشغيل المباشر والكامل للـ Full-Stack على منصة **Cloud Run** من جوجل:
-👉 **[زيارة رابط التشغيل المتكامل والكامل من هنا](${cloudRunUrl})**
-
-*إذا كنت تفضل استخدام Vercel، يمكنك ببساطة وضع مفتاحك الخاص للذكاء الاصطناعي باسم \`VITE_GEMINI_API_KEY\` في إعدادات البيئة بـ Vercel أو في صفحة الإعدادات بالتطبيق ليعمل معك مباشرة.*`
-        : `⚠️ **Cognify Deployment Warning:**
-
-You are currently accessing the application on a Static Host without an active API backend. This environment does not run server-side AI endpoints.
-
-To experience Cognify's full-stack features, please use our fully integrated **Cloud Run** preview URL:
-👉 **[Open the Full-Stack Cloud Run App Here](${cloudRunUrl})**
-
-*If you prefer to host on Vercel, you can configure your own Gemini API key inside Vercel's environment variables as \`VITE_GEMINI_API_KEY\` or enter it directly in Settings to enable in-browser processing.*`;
+The server is currently busy or re-establishing cloud connection. Please try again in a moment, or configure your Gemini API key in **Settings** to enable direct processing.`;
 
       yield { text: explanationText, done: true, error: true };
       return;
@@ -1184,17 +1152,6 @@ export async function generateAdaptiveResponse(
 
     const isHtml = res.headers.get('Content-Type')?.includes('text/html');
     if (!res.ok || isHtml) {
-      try {
-        const cloudRunRes = await fetch('https://ais-pre-yrqajcztyb24fektpr6ddb-78152961995.europe-west1.run.app/api/gemini/generateAdaptiveResponse', {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ message, profile, history, attachments, studentState })
-        });
-        if (cloudRunRes.ok && !cloudRunRes.headers.get('Content-Type')?.includes('text/html')) {
-          const data = await cloudRunRes.json();
-          return data.result;
-        }
-      } catch {}
       if (isHtml || res.status === 404) backendUp = false;
       return direct();
     }

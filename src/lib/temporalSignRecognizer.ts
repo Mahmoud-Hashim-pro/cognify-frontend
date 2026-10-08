@@ -8,7 +8,11 @@
  * - Real-time continuous prediction at 30+ FPS on CPU / WebGL.
  */
 
-import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs-core';
+import * as tfLayers from '@tensorflow/tfjs-layers';
+import '@tensorflow/tfjs-backend-cpu';
+import '@tensorflow/tfjs-backend-webgl';
+import type { History, LayersModel } from '@tensorflow/tfjs-layers';
 
 export interface Point3D {
   x: number;
@@ -91,7 +95,7 @@ export function extractFrameFeatures(rightHand?: Point3D[] | null, leftHand?: Po
 }
 
 export class TemporalSignRecognizer {
-  private model: tf.LayersModel | null = null;
+  private model: LayersModel | null = null;
   private frameBuffer: number[][] = [];
   private classList = ARSL_CORE_CLASSES;
   private lastPrediction: string | null = null;
@@ -117,26 +121,26 @@ export class TemporalSignRecognizer {
     const inputDim = TEMPORAL_WINDOW_SIZE * FEATURES_PER_FRAME;
     const numClasses = this.classList.length;
 
-    const model = tf.sequential();
+    const model = tfLayers.sequential();
     
     // Dense Representation Layer
-    model.add(tf.layers.dense({
+    model.add(tfLayers.layers.dense({
       units: 128,
       activation: 'relu',
       inputShape: [inputDim],
-      kernelRegularizer: tf.regularizers.l2({ l2: 1e-4 }),
+      kernelRegularizer: tfLayers.regularizers.l2({ l2: 1e-4 }),
     }));
     
-    model.add(tf.layers.dropout({ rate: 0.25 }));
+    model.add(tfLayers.layers.dropout({ rate: 0.25 }));
 
     // Intermediate Temporal Abstraction Layer
-    model.add(tf.layers.dense({
+    model.add(tfLayers.layers.dense({
       units: 64,
       activation: 'relu',
     }));
 
     // Softmax Classification Head
-    model.add(tf.layers.dense({
+    model.add(tfLayers.layers.dense({
       units: numClasses,
       activation: 'softmax',
     }));
@@ -223,7 +227,7 @@ export class TemporalSignRecognizer {
     ys: number[][],
     epochs: number = 25,
     onProgress?: (metric: TrainingMetric) => void
-  ): Promise<tf.History> {
+  ): Promise<History> {
     if (!this.model) {
       await this.initializeModel();
     }

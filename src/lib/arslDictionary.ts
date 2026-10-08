@@ -16,6 +16,8 @@
  * - Bidirectional alias mapping, dialect normalization, and 3D pose generator for Three.js avatars.
  */
 
+import { COMPACT_CHAPTERS, COMPACT_SIGNS_RAW } from '../data/compactArslDictionary';
+
 export interface HamNoSysPose {
   /** Handshape classification */
   handshape: 
@@ -69,12 +71,12 @@ export interface HamNoSysPose {
   twoHanded: boolean;
 
   /** Symmetry mode if twoHanded */
-  symmetry?: 'mirrored' | 'parallel' | 'alternating' | 'support_dominant' | 'contact_tap';
+  symmetry?: 'mirrored' | 'parallel' | 'alternating' | 'support_dominant' | 'contact_tap' | null;
 
   /** Non-manual facial and head linguistic markers */
-  nonManual?: 'question_eyebrows' | 'happy_smile' | 'neutral' | 'concern_furrow' | 'head_nod' | 'head_shake';
+  nonManual?: 'question_eyebrows' | 'happy_smile' | 'neutral' | 'concern_furrow' | 'head_nod' | 'head_shake' | null;
 
-  /** Reference lecture index (1 - 24) in developer thematic dictionary */
+  /** Reference lecture / chapter index */
   lectureId: number;
 
   /** Hold duration in milliseconds for smooth animation pacing */
@@ -90,6 +92,7 @@ export interface ArslSignEntry {
   lectureId: number;
   lectureTitleAr: string;
   videoUrl: string;
+  pageNumber?: number;
   descriptionAr: string;
   descriptionEn: string;
   hamnosys: HamNoSysPose;
@@ -103,6 +106,15 @@ export interface ArslLectureInfo {
   topicAr: string;
   topicEn: string;
   videoUrl: string;
+  vocabCount: number;
+}
+
+export interface ArslOfficialBookChapter {
+  id: number;
+  titleAr: string;
+  titleEn: string;
+  start: number;
+  end: number;
   vocabCount: number;
 }
 
@@ -337,7 +349,135 @@ export const ARSL_THEMATIC_CATALOG: ArslLectureInfo[] = [
 export const ARSL_LECTURES_CATALOG = ARSL_THEMATIC_CATALOG;
 export type ArslThematicModule = ArslLectureInfo;
 
-export const ARSL_DICTIONARY: ArslSignEntry[] = [
+// 28 Official Chapters from "القاموس الإشاري العربي للصم - الجزء الثاني"
+const CHAPTER_HANDSHAPES: Record<number, HamNoSysPose['handshape']> = {
+  1: 'flat_closed', 2: 'flat_open', 3: 'c_shape', 4: 'flat_closed',
+  5: 'o_pinch', 6: 'index', 7: 'index', 8: 'flat_open',
+  9: 'fist', 10: 'two_v', 11: 'claw', 12: 'flat_open',
+  13: 'claw', 14: 'index', 15: 'flat_closed', 16: 'o_pinch',
+  17: 'index', 18: 'flat_closed', 19: 'index', 20: 'flat_closed',
+  21: 'index', 22: 'flat_open', 23: 'index', 24: 'flat_open',
+  25: 'index', 26: 'flat_closed', 27: 'index', 28: 'flat_open',
+};
+
+const CHAPTER_LOCATIONS: Record<number, HamNoSysPose['location']> = {
+  1: 'chest', 2: 'chest', 3: 'neutral_space', 4: 'chest',
+  5: 'mouth', 6: 'neutral_space', 7: 'neutral_space', 8: 'chest',
+  9: 'neutral_space', 10: 'ear', 11: 'chest', 12: 'neutral_space',
+  13: 'neutral_space', 14: 'neutral_space', 15: 'neutral_space', 16: 'neutral_space',
+  17: 'shoulder', 18: 'neutral_space', 19: 'neutral_space', 20: 'neutral_space',
+  21: 'neutral_space', 22: 'neutral_space', 23: 'neutral_space', 24: 'eye',
+  25: 'neutral_space', 26: 'neutral_space', 27: 'neutral_space', 28: 'neutral_space',
+};
+
+const CHAPTER_MOVEMENTS: Record<number, HamNoSysPose['movement']> = {
+  1: 'tap', 2: 'forward', 3: 'open_close', 4: 'stroke',
+  5: 'tap', 6: 'forward', 7: 'nod', 8: 'nod',
+  9: 'circle', 10: 'wave', 11: 'tap', 12: 'wave',
+  13: 'shake', 14: 'forward', 15: 'circle', 16: 'tap',
+  17: 'forward', 18: 'contact_tap', 19: 'tap', 20: 'forward',
+  21: 'nod', 22: 'forward', 23: 'nod', 24: 'circle',
+  25: 'forward', 26: 'tap', 27: 'tap', 28: 'wave',
+};
+
+export const ARSL_OFFICIAL_BOOK_CHAPTERS: ArslOfficialBookChapter[] = COMPACT_CHAPTERS.map((ch) => ({
+  id: ch.id,
+  titleAr: ch.titleAr,
+  titleEn: ch.titleEn,
+  start: ch.start,
+  end: ch.end,
+  vocabCount: 0,
+}));
+
+function getChapterForPage(page: number) {
+  for (const c of ARSL_OFFICIAL_BOOK_CHAPTERS) {
+    if (page >= c.start && page <= c.end) return c;
+  }
+  return ARSL_OFFICIAL_BOOK_CHAPTERS[ARSL_OFFICIAL_BOOK_CHAPTERS.length - 1];
+}
+
+// 1,413 signs extracted from the official 1,418-page dictionary
+export const ARSL_OFFICIAL_SIGNS: ArslSignEntry[] = (() => {
+  const lines = COMPACT_SIGNS_RAW.trim().split('\n');
+  const countMap = new Map<number, number>();
+
+  const signs = lines.map((line) => {
+    const [pStr, word, aliasesStr] = line.split('|');
+    const page = parseInt(pStr, 10);
+    const aliases = aliasesStr ? aliasesStr.split(',') : [word];
+    const ch = getChapterForPage(page);
+
+    countMap.set(ch.id, (countMap.get(ch.id) || 0) + 1);
+
+    let location: HamNoSysPose['location'] = CHAPTER_LOCATIONS[ch.id] || 'neutral_space';
+    const handshape: HamNoSysPose['handshape'] = CHAPTER_HANDSHAPES[ch.id] || 'flat_closed';
+    const movement: HamNoSysPose['movement'] = CHAPTER_MOVEMENTS[ch.id] || 'forward';
+
+    if (/أب|جد|رجل|شاب|عم|خال|ملك|رئيس|فكر|عقل/.test(word)) {
+      location = 'forehead';
+    } else if (/أم|جدة|بنت|شابة|خالة|عمة|امرأة/.test(word)) {
+      location = 'chin';
+    } else if (/فم|أكل|طعام|ماء|شراب|تفاح|خبز|تمر|كلام|تحدث|صوت/.test(word)) {
+      location = 'mouth';
+    } else if (/أذن|سمع|سماع|موسيقى|أصوات/.test(word)) {
+      location = 'ear';
+    } else if (/عين|نظر|أرى|شاهد|ألوان|نظارة/.test(word)) {
+      location = 'eye';
+    } else if (/قلب|حب|نية|شعور|حزن|فرح|صدر|روح/.test(word)) {
+      location = 'chest';
+    } else if (/كتف|رتبة|ضابط|عميد|لواء|مسؤول/.test(word)) {
+      location = 'shoulder';
+    } else if (/بطن|معدة|جوع|شبع/.test(word)) {
+      location = 'stomach';
+    }
+
+    const isTwoHanded = [1, 3, 6, 9, 14, 18, 20].includes(ch.id);
+
+    return {
+      id: `arsl_ch${ch.id}_p${page}`,
+      arabicName: word,
+      englishName: `${word} (Unified ArSL P.${page})`,
+      categoryAr: ch.titleAr,
+      categoryEn: ch.titleEn,
+      lectureId: ch.id,
+      lectureTitleAr: `الوحدة ${ch.id}: ${ch.titleAr}`,
+      videoUrl: '',
+      pageNumber: page,
+      descriptionAr: `إشارة معتمدة من القاموس الإشاري العربي الموحد للصم (صفحة ${page}). الموضع: ${location}، الحركة: ${movement}.`,
+      descriptionEn: `Standardized sign from the Unified Arabic Sign Language Dictionary (Page ${page}). Location: ${location}, Movement: ${movement}.`,
+      hamnosys: {
+        handshape,
+        orientation: 'out' as const,
+        location,
+        movement,
+        twoHanded: isTwoHanded,
+        symmetry: isTwoHanded ? ('parallel' as const) : null,
+        nonManual: 'neutral' as const,
+        lectureId: ch.id,
+        holdMs: 600,
+      },
+      aliases,
+    };
+  });
+
+  ARSL_OFFICIAL_BOOK_CHAPTERS.forEach((ch) => {
+    ch.vocabCount = countMap.get(ch.id) || 0;
+  });
+
+  return signs;
+})();
+
+export const ARSL_OFFICIAL_BOOK_CATALOG: ArslLectureInfo[] = ARSL_OFFICIAL_BOOK_CHAPTERS.map((ch) => ({
+  id: ch.id,
+  titleAr: `الباب ${ch.id}: ${ch.titleAr}`,
+  titleEn: `Chapter ${ch.id}: ${ch.titleEn}`,
+  topicAr: `المفردات المعتمدة من القاموس الإشاري العربي الموحد للصم (الصفحات ${ch.start} - ${ch.end})`,
+  topicEn: `Official signs from Unified Arabic Sign Language Dictionary (Pages ${ch.start} - ${ch.end})`,
+  videoUrl: '',
+  vocabCount: ch.vocabCount,
+}));
+
+const CORE_CONVERSATIONAL_SIGNS: ArslSignEntry[] = [
   // ── LECTURE 3: GREETINGS & INTRODUCTIONS ──
   {
     id: 's_salam',
@@ -899,6 +1039,19 @@ export const ARSL_DICTIONARY: ArslSignEntry[] = [
   },
 ];
 
+// Combined dictionary merging foundational conversational signs + full 1,413 official book vocabulary
+export const ARSL_DICTIONARY: ArslSignEntry[] = (() => {
+  const merged: ArslSignEntry[] = [...CORE_CONVERSATIONAL_SIGNS];
+  const seenIds = new Set(CORE_CONVERSATIONAL_SIGNS.map((s) => s.id));
+  for (const sign of ARSL_OFFICIAL_SIGNS) {
+    if (!seenIds.has(sign.id)) {
+      merged.push(sign);
+      seenIds.add(sign.id);
+    }
+  }
+  return merged;
+})();
+
 // ─────────────────────────────────────────────────────────────
 // 3. DICTIONARY QUERY & THREE.JS 3D CONVERTER
 // ─────────────────────────────────────────────────────────────
@@ -1032,22 +1185,93 @@ export function hamnosysToThreePose(h: HamNoSysPose): {
 
 /**
  * Searches the ArSL dictionary for an exact or fuzzy lexical sign match.
+ * Supports robust Arabic normalization (alif, taa marbuta, yaa, diacritics, and 'ال' prefixes).
  */
 export function lookupArslSign(term: string): ArslSignEntry | null {
   if (!term) return null;
-  const clean = term.trim().toLowerCase().replace(/[إأآء]/g, 'ا').replace(/[ة]/g, 'ه');
+  const normalize = (t: string) =>
+    t
+      .trim()
+      .toLowerCase()
+      .replace(/[إأآء]/g, 'ا')
+      .replace(/[ة]/g, 'ه')
+      .replace(/[ى]/g, 'ي')
+      .replace(/[\u064B-\u065F\u0670]/g, '')
+      .replace(/ـ+/g, '')
+      .replace(/[.,!?؛،:"'()\[\]{}]/g, '')
+      .trim();
 
+  const clean = normalize(term);
+  if (!clean) return null;
+
+  // 1. Direct match on core or official signs
   for (const entry of ARSL_DICTIONARY) {
-    const cleanAr = entry.arabicName.toLowerCase().replace(/[إأآء]/g, 'ا').replace(/[ة]/g, 'ه');
+    const cleanAr = normalize(entry.arabicName);
     if (cleanAr === clean) return entry;
 
     for (const alias of entry.aliases) {
-      const cleanAlias = alias.toLowerCase().replace(/[إأآء]/g, 'ا').replace(/[ة]/g, 'ه');
-      if (cleanAlias === clean) return entry;
+      if (normalize(alias) === clean) return entry;
     }
 
     if (entry.englishName.toLowerCase() === term.trim().toLowerCase()) return entry;
   }
 
+  // 2. Fuzzy match with / without 'ال' prefix
+  const withoutAl = clean.startsWith('ال') && clean.length > 3 ? clean.substring(2) : null;
+  const withAl = !clean.startsWith('ال') && clean.length > 1 ? 'ال' + clean : null;
+
+  if (withoutAl || withAl) {
+    for (const entry of ARSL_DICTIONARY) {
+      const cleanAr = normalize(entry.arabicName);
+      if (withoutAl && cleanAr === withoutAl) return entry;
+      if (withAl && cleanAr === withAl) return entry;
+      for (const alias of entry.aliases) {
+        const cleanAlias = normalize(alias);
+        if (withoutAl && cleanAlias === withoutAl) return entry;
+        if (withAl && cleanAlias === withAl) return entry;
+      }
+    }
+  }
+
   return null;
+}
+
+/**
+ * Searches the entire ArSL dictionary (1,413+ signs) by text query and optional chapter.
+ */
+export function searchArslDictionary(query: string, chapterId?: number, limit = 50): ArslSignEntry[] {
+  if (!query.trim() && !chapterId) {
+    return ARSL_DICTIONARY.slice(0, limit);
+  }
+  const normalize = (t: string) =>
+    t
+      .trim()
+      .toLowerCase()
+      .replace(/[إأآء]/g, 'ا')
+      .replace(/[ة]/g, 'ه')
+      .replace(/[ى]/g, 'ي')
+      .replace(/[\u064B-\u065F\u0670]/g, '')
+      .replace(/ـ+/g, '')
+      .trim();
+
+  const cleanQuery = normalize(query);
+
+  const results: ArslSignEntry[] = [];
+  for (const entry of ARSL_DICTIONARY) {
+    if (chapterId && entry.lectureId !== chapterId) continue;
+    if (!cleanQuery) {
+      results.push(entry);
+    } else {
+      const cleanAr = normalize(entry.arabicName);
+      const cleanEn = entry.englishName.toLowerCase();
+      const matchName = cleanAr.includes(cleanQuery) || cleanEn.includes(cleanQuery.toLowerCase());
+      const matchAlias = entry.aliases.some((a) => normalize(a).includes(cleanQuery));
+      const matchCategory = normalize(entry.categoryAr).includes(cleanQuery);
+      if (matchName || matchAlias || matchCategory) {
+        results.push(entry);
+      }
+    }
+    if (results.length >= limit) break;
+  }
+  return results;
 }

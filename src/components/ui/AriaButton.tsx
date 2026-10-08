@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button as ReactAriaButton, type ButtonProps as ReactAriaButtonProps } from 'react-aria-components';
+import { Button as ReactAriaButton, type ButtonProps as ReactAriaButtonProps } from 'react-aria-components/Button';
 import { cn } from '../../lib/utils';
 
 export interface AriaButtonProps extends ReactAriaButtonProps {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RadioGroup, Radio } from 'react-aria-components';
+import { RadioGroup, Radio } from 'react-aria-components/RadioGroup';
 import { AriaButton } from './ui/AriaButton';
 import { signInWithGoogle, signInWithGoogleRedirect, loginWithEmail, registerWithEmail, auth, clearPreLoginState } from '../lib/firebase';
 import { sendPasswordResetEmail, getRedirectResult } from 'firebase/auth';
@@ -18,7 +18,7 @@ type AccountPath = 'Normal' | 'Graduation Project' | 'Special Needs';
 // 'Neurodiversity' instead of 'Hearing' / 'Motor' / 'Cognitive'). DISABILITY_MODE_MAP
 // below is the single place that translates between the two — every option here
 // MUST have an entry there, or that user silently ends up with accessibilityMode 'None'.
-type DisabilityOption = 'Visual' | 'Hearing' | 'Speech' | 'Cognitive';
+type DisabilityOption = 'Visual' | 'Hearing' | 'Speech';
 
 // The one source of truth for turning a picker chip into the real, canonical
 // AccessibilityMode value used everywhere else in the app (DisabilityModeView's
@@ -28,7 +28,6 @@ const DISABILITY_MODE_MAP: Record<DisabilityOption, AccessibilityMode> = {
   'Visual': 'Visual',
   'Hearing': 'Vocal-Deaf',
   'Speech': 'Speech',
-  'Cognitive': 'Neurodiversity',
 };
 
 // Human-readable label stored in profile.disabilityType for display + as a free-text
@@ -38,7 +37,6 @@ const DISABILITY_LABEL_MAP: Record<DisabilityOption, string> = {
   'Visual': 'Visual Impairment',
   'Hearing': 'Hearing Impairment',
   'Speech': 'Speech Impairment',
-  'Cognitive': 'Cognitive/Learning Disability',
 };
 
 // Each Special Needs accessibility feature, tagged with which disability chip(s) it's the primary match for.
@@ -67,13 +65,6 @@ const SPECIAL_NEEDS_FEATURES: {
     title: { en: 'Deaf & Hard of Hearing Suite (All-in-One)', ar: 'منظومة الصم وضعاف السمع الشاملة (الكل في واحد)' },
     description: { en: '3D sign language studio, sound & hazard radar, and a live two-way communication bridge', ar: 'استوديو لغة إشارة ثلاثي الأبعاد، رادار للأصوات والمخاطر، وجسر تواصل مباشر ثنائي الاتجاه' },
     matches: ['Hearing'],
-  },
-  {
-    key: 'cognitive-scaffolding',
-    Icon: Brain,
-    title: { en: 'Neurodiversity & Autism Hub', ar: 'واحة التوحد وصعوبات التعلم' },
-    description: { en: 'Spoken PECS cards, visual daily routines, and calming sensory tools', ar: 'بطاقات PECS ناطقة، جدول روتين يومي بصري، وأدوات تهدئة حسية' },
-    matches: ['Cognitive'],
   },
   {
     // These last three aren't tied to any single chip (matches: []) — available to
@@ -546,8 +537,8 @@ export default function Login({ onDirectPreview }: LoginProps = {}) {
                                     "ذكاء اصطناعي يفهم مقررات كليتك وتخصصك بدقة. يدعم صياغة الرسالة، توثيق المراجع، ومتابعة تسليمات مشروعك."
                                   )}
                                   {activePreviewPath === 'Special Needs' && t(
-                                    "Assistive multi-modal suite for visual, hearing, and neurodiversity needs with 3D sign avatar, Vision OCR, and spoken tools.",
-                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية والتوحد مع أفاتار 3D، كاميرا ذكية، وأدوات صوتية."
+                                    "Assistive multi-modal suite for visual and hearing needs with 3D sign avatar, camera sign reader, and spoken tools.",
+                                    "منظومة إتاحة شاملة للإعاقات البصرية والسمعية مع أفاتار 3D، كاميرا قراءة الإشارة، وأدوات بصرية وصوتية."
                                   )}
                                 </p>
                               </div>
@@ -691,7 +682,7 @@ export default function Login({ onDirectPreview }: LoginProps = {}) {
                         <span className="text-slate-300 font-semibold text-[11px] sm:text-xs">
                           {activePreviewPath === 'Normal' && t("Adaptive AI Chat · GPA Engine · Spaced Retention · Cognitive Tests", "دردشة تكيّفية · حاسبة GPA · تكرار متباعد · اختبارات ذهنية")}
                           {activePreviewPath === 'Graduation Project' && t("All Normal Features + Faculty Context + Thesis AI + Citations", "كل مميزات العادي + ربط الكلية + إرشاد الرسالة + توثيق المراجع")}
-                          {activePreviewPath === 'Special Needs' && t("All Normal Features + 3D Sign Language + Vision AI Eyes + Autism Oasis", "كل مميزات العادي + لغة إشارة 3D + رفيق بصري + واحة التوحد")}
+                          {activePreviewPath === 'Special Needs' && t("All Normal Features + 3D Sign Language + Camera Sign Reader + Vision AI Eyes", "كل مميزات العادي + لغة إشارة 3D + كاميرا قراءة الإشارة + رفيق بصري")}
                         </span>
                       </div>
                     </div>
@@ -908,12 +899,11 @@ export default function Login({ onDirectPreview }: LoginProps = {}) {
                                 onChange={(val) => setSelectedDisability(val as DisabilityOption)}
                                 aria-label={t("Accessibility focus", "نوع الإتاحة المطلوب")}
                                 orientation="horizontal"
-                                className="grid grid-cols-3 gap-1 outline-none"
+                                className="grid grid-cols-2 gap-1.5 outline-none"
                               >
                                 {[
-                                  { id: 'Visual' as const, label: t('Visual', 'بصري') },
-                                  { id: 'Hearing' as const, label: t('Sign 3D', 'إشارة 3D') },
-                                  { id: 'Cognitive' as const, label: t('Autism', 'توحد') },
+                                  { id: 'Visual' as const, label: t('Visual (AI Eyes)', 'بصري (مكفوفين)') },
+                                  { id: 'Hearing' as const, label: t('Hearing (3D Sign)', 'سمعي (لغة إشارة)') },
                                 ].map((item) => (
                                   <Radio
                                     key={item.id}

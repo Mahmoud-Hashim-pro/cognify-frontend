@@ -8,6 +8,7 @@ import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { deleteUser, signOut } from 'firebase/auth';
 import { getLearningEventHistory } from '../lib/learningEvents';
 import { getSpatialObjects } from '../lib/spatialMemoryEngine';
+import { USER_SUBCOLLECTIONS } from '../types/privacySecurity';
 
 interface StudentPrivacyCenterProps {
   profile: UserProfile;
@@ -129,9 +130,8 @@ export default function StudentPrivacyCenter({
     setDeleteAccountError(null);
 
     try {
-      // 1. Cascade delete all subcollections
-      const subcollections = ['learningEvents', 'threads', 'studentState', 'goals', 'courses', 'notes', 'attendance', 'planner'];
-      for (const sub of subcollections) {
+      // 1. Cascade delete all subcollections using canonical schema
+      for (const sub of USER_SUBCOLLECTIONS) {
         try {
           const colRef = collection(db, 'users', profile.uid, sub);
           const snap = await getDocs(colRef);

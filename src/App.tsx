@@ -75,7 +75,6 @@ const StudentMemoryPage = lazyWithRetry(() => import("./components/StudentMemory
 const StudentPrivacyCenter = lazyWithRetry(() => import("./components/StudentPrivacyCenter"));
 const InstitutionCohortHub = lazyWithRetry(() => import("./components/InstitutionCohortHub"));
 const CognitiveGym = lazyWithRetry(() => import("./components/CognitiveGym"));
-const LearningDisabilityStudio = lazyWithRetry(() => import("./components/LearningDisabilityStudio"));
 const IqAssessmentModal = lazyWithRetry(() => import("./components/IqAssessmentModal"));
 const FrenchTravelVoiceAssistant = lazyWithRetry(() => import("./components/FrenchTravelVoiceAssistant"));
 const ChatInterface = lazyWithRetry(() => import("./components/ChatInterface"));
@@ -99,7 +98,7 @@ const VALID_VIEWS = [
   'admin', 'goals', 'gpa', 'analytics', 'planner', 'support', 'memory',
   'institution', 'gym', 'iq', 'france', 'privacy', 'intelligence',
   'teacher', 'parent', 'privacy_security', 'evaluation', 'ai_quality',
-  'resilience', 'tenancy', 'developer_api', 'retention', 'learning-studio',
+  'resilience', 'tenancy', 'developer_api', 'retention',
 ] as const;
 
 function createGuestProfile(): UserProfile {
@@ -521,8 +520,7 @@ export default function App() {
           data.accessibilityMode = preLoginMode as AccessibilityMode;
           if (preLoginDis) data.disabilityType = preLoginDis;
           try {
-            const mappedTab = preLoginMode === 'Neurodiversity' ? 'neurodiversity' :
-                              preLoginMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+            const mappedTab = preLoginMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
             localStorage.setItem('cognify_default_disability_tab', mappedTab);
           } catch {}
           setDoc(doc(db, path), cleanDataForFirestore({ 
@@ -611,14 +609,11 @@ export default function App() {
               accessibilityMode = 'Vocal-Deaf';
             } else if (disabilityType === 'Speech Impairment') {
               accessibilityMode = 'Speech';
-            } else if (disabilityType === 'Cognitive/Learning Disability') {
-              accessibilityMode = 'Neurodiversity';
             }
           }
 
           try {
-            const mappedTab = accessibilityMode === 'Neurodiversity' ? 'neurodiversity' :
-                              accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+            const mappedTab = accessibilityMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
             localStorage.setItem('cognify_default_disability_tab', mappedTab);
           } catch {}
 
@@ -1268,16 +1263,6 @@ export default function App() {
             onMenuClick={() => setIsMobileMenuOpen(true)}
             onOpenIqModal={() => setIsIqModalOpen(true)}
             onNavigateBack={() => navigateTo(homeViewFor(profile))}
-          />
-        );
-
-      case 'learning-studio':
-        return (
-          <LearningDisabilityStudio
-            profile={activeProfile}
-            onMenuClick={() => setIsMobileMenuOpen(true)}
-            onNavigateBack={() => navigateTo(homeViewFor(profile))}
-            onOpenCognitiveGym={() => navigateTo('gym')}
           />
         );
 

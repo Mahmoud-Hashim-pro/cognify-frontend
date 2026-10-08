@@ -1,7 +1,7 @@
 import { localize, isArabicLocale, getTranslation } from '../lib/translations';
 import { useState } from "react";
 import { UserProfile, CognitiveLevel, UserRole, ChatThread } from "../types";
-import { User, Settings, GraduationCap, Accessibility, LifeBuoy, MessageSquare, BarChart3, AlertCircle, LogOut, Plus, ChevronRight, X, Moon, Sun, Mic, Target, Calculator, CalendarCheck, LayoutDashboard, CalendarDays, Sparkles, Brain, Building2, Flame, Layers, Heart, ShieldCheck, BookOpen } from "lucide-react";
+import { User, Settings, GraduationCap, Accessibility, LifeBuoy, MessageSquare, BarChart3, AlertCircle, LogOut, Plus, ChevronRight, X, Moon, Sun, Mic, Target, Calculator, CalendarCheck, LayoutDashboard, CalendarDays, Sparkles, Brain, Building2, Flame, Layers, Heart, ShieldCheck } from "lucide-react";
 import { logout, db, cleanDataForFirestore } from "../lib/firebase";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { isAdminUser } from "../lib/roles";
@@ -210,16 +210,6 @@ export default function Sidebar({ profile, setProfile, currentView, setCurrentVi
         >
           <Flame className={navIcon(currentView === 'gym')} />
           {localize(profile.language, 'Cognitive Gym', 'الجيم المعرفي')}
-        </button>
-
-        {/* Specific Learning Disabilities Studio */}
-        <button
-          onClick={() => setCurrentView('learning-studio')}
-          className={navBtn(currentView === 'learning-studio')}
-          aria-current={currentView === 'learning-studio' ? 'page' : undefined}
-        >
-          <BookOpen className={navIcon(currentView === 'learning-studio')} />
-          {localize(profile.language, 'Learning Studio (SLD)', 'صعوبات التعلم')}
         </button>
 
         {/* France Travel & Voice Assistant */}

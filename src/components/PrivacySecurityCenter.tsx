@@ -22,9 +22,10 @@ import {
   GENESIS_PREV_HASH,
   sha256
 } from '../lib/privacySecurityEngine';
-import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import type { AuditLogEntry, CascadeErasureManifest } from '../types/privacySecurity';
+import { doc, deleteDoc, collection, getDocs } from 'firebase/firestore';
+import { db, auth } from '../lib/firebase';
+import { deleteUser, signOut } from 'firebase/auth';
+import { USER_SUBCOLLECTIONS, type AuditLogEntry, type CascadeErasureManifest } from '../types/privacySecurity';
 
 interface PrivacySecurityCenterProps {
   currentStudent?: StudentState;
@@ -161,24 +162,68 @@ export const PrivacySecurityCenter: React.FC<PrivacySecurityCenterProps> = ({
 
   // Handle Cascade Erasure
   const handleExecuteErasure = async () => {
-    // 1. Purge local device caches for student
+    const isRealUser = Boolean(
+      activeStudent.uid &&
+      !activeStudent.uid.startsWith('student_demo') &&
+      activeStudent.uid !== 'student_48291'
+    );
+
+    // 1. Purge local device caches for student.
     if (typeof localStorage !== 'undefined') {
       try {
-        localStorage.removeItem(`cognify_student_state_${activeStudent.uid}`);
-        localStorage.removeItem(`cognify_events_${activeStudent.uid}`);
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('cognify_') || k.startsWith('firebase:') || k.includes(activeStudent.uid))) {
+            keysToRemove.push(k);
+          }
+        }
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
       } catch {}
     }
-
-    // 2. Remote Firestore state wipe if student is registered
-    try {
-      if (activeStudent.uid && !activeStudent.uid.startsWith('student_demo') && activeStudent.uid !== 'student_48291') {
-        await deleteDoc(doc(db, 'users', activeStudent.uid, 'studentState', 'current'));
-      }
-    } catch (err) {
-      console.warn('[handleExecuteErasure] Remote Firestore purge notice:', err);
+    if (typeof sessionStorage !== 'undefined') {
+      try { sessionStorage.clear(); } catch {}
     }
 
-    // 3. Prepare store targets for cascade wipe
+    // Demo data can still exercise the cryptographic receipt flow locally.
+    // Real users must have every remote deletion succeed before a "completed"
+    // receipt is shown. This prevents a false GDPR-erasure success state.
+    const remoteFailures: string[] = [];
+
+    if (isRealUser) {
+      for (const sub of USER_SUBCOLLECTIONS) {
+        try {
+          const colRef = collection(db, 'users', activeStudent.uid, sub);
+          const snap = await getDocs(colRef);
+          await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
+        } catch (e) {
+          remoteFailures.push(`${sub}: ${e instanceof Error ? e.message : 'delete failed'}`);
+        }
+      }
+
+      if (remoteFailures.length === 0) {
+        try {
+          await deleteDoc(doc(db, 'users', activeStudent.uid));
+        } catch (e) {
+          remoteFailures.push(`users/${activeStudent.uid}: ${e instanceof Error ? e.message : 'root document delete failed'}`);
+        }
+      }
+
+      if (remoteFailures.length > 0) {
+        console.warn('[handleExecuteErasure] Remote cascade deletion incomplete:', remoteFailures);
+        setErasureManifest(null);
+        setErasureConfirmed(false);
+        alert(
+          isArabic
+            ? `فشل المحو الكامل. لم يتم إصدار إيصال نجاح. الأخطاء: ${remoteFailures.slice(0, 3).join('; ')}`
+            : `Complete erasure failed. No success receipt was issued. Failures: ${remoteFailures.slice(0, 3).join('; ')}`
+        );
+        return;
+      }
+    }
+
+    // 2. Compute the cryptographic cascade manifest only after remote deletion
+    // succeeds. The local engine is responsible for deterministic receipt data.
     const profileStore = new Map<string, StudentState>();
     profileStore.set(activeStudent.uid, activeStudent);
     const presenceStore = new Map<string, any>();
@@ -201,7 +246,7 @@ export const PrivacySecurityCenter: React.FC<PrivacySecurityCenterProps> = ({
     setErasureManifest(manifest);
     setErasureConfirmed(false);
 
-    // Audit log
+    // Audit the completed erasure only after the remote cascade succeeded.
     const lastEntry = auditChain[auditChain.length - 1];
     const prevH = lastEntry ? lastEntry.entryHash : GENESIS_PREV_HASH;
     const auditEntry = createAuditEntry(
@@ -212,6 +257,35 @@ export const PrivacySecurityCenter: React.FC<PrivacySecurityCenterProps> = ({
       prevH
     );
     setAuditChain(prev => [...prev, auditEntry]);
+
+    // 3. Delete the current Firebase Auth account after its Firestore data
+    // has been successfully purged.
+    if (isRealUser && auth?.currentUser && auth.currentUser.uid === activeStudent.uid) {
+      try {
+        await deleteUser(auth.currentUser);
+      } catch (authErr: any) {
+        if (authErr?.code === 'auth/requires-recent-login') {
+          await signOut(auth);
+          window.location.reload();
+          return;
+        }
+        console.warn('[handleExecuteErasure] Firebase Auth deleteUser warning:', authErr);
+        setErasureManifest({
+          ...manifest,
+          status: 'partial'
+        });
+        alert(
+          isArabic
+            ? 'تم حذف بيانات Firestore لكن تعذر حذف حساب تسجيل الدخول. لم يكتمل المحو.'
+            : 'Firestore data was deleted, but the authentication account could not be deleted. Erasure is partial.'
+        );
+        return;
+      }
+      try {
+        await signOut(auth);
+      } catch {}
+      window.location.reload();
+    }
   };
 
   // Tamper verification

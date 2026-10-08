@@ -99,13 +99,11 @@ export default function AccessibilityPassportModal({
     let resolvedMode: AccessibilityMode = profile.accessibilityMode;
     if (cat === 'Deaf') resolvedMode = 'Vocal-Deaf';
     else if (cat === 'Visual') resolvedMode = 'Visual';
-    else if (cat === 'Neurodiversity') resolvedMode = 'Neurodiversity';
     else if (cat === 'None') resolvedMode = 'None';
     else if (passport.primaryMode && passport.primaryMode !== 'None') resolvedMode = passport.primaryMode;
 
     try {
-      const mappedTab = resolvedMode === 'Neurodiversity' ? 'neurodiversity' :
-                        resolvedMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
+      const mappedTab = resolvedMode === 'Vocal-Deaf' ? 'deaf' : 'vision';
       localStorage.setItem('cognify_default_disability_tab', mappedTab);
       localStorage.setItem('cognify_font_scale', passport.fontSizeScale || 'normal');
       localStorage.setItem('cognify_high_contrast', String(passport.highContrast || false));
@@ -186,13 +184,10 @@ export default function AccessibilityPassportModal({
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
               {t('1. Primary Accessibility Focus:', '1. النمط الأساسي للاحتياج والوصول:', '1. Profil Principal :')}
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
                 { id: 'Visual', icon: '👁️', label: t('Visual Ecosystem', 'بصري (كفيف/ضعف بصر)', 'Visuel') },
                 { id: 'Deaf', icon: '🧏', label: t('Deaf & Hearing', 'سمعي (أصم/ضعف سمع)', 'Auditif') },
-                { id: 'Motor', icon: '♿', label: t('Motor & ALS', 'حركي / ALS / شلل', 'Moteur') },
-                { id: 'Neurodiversity', icon: '🧩', label: t('Neurodiversity', 'توحد / عسر قراءة', 'Neurodiversité') },
-                { id: 'Multiple', icon: '⚡', label: t('Multiple Needs', 'متعدد الاحتياجات', 'Multiple') },
                 { id: 'None', icon: '🌐', label: t('Standard', 'عام / قياسي', 'Standard') },
               ].map((item) => (
                 <button
