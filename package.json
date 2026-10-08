@@ -8,8 +8,7 @@
     "build": "vite build && node scripts/stamp-sw-version.mjs",
     "preview": "vite preview",
     "lint": "npx tsc --noEmit",
-    "check:fix": "node scripts/check-and-fix.mjs",
-    "prepare": "node scripts/setup-hooks.mjs"
+    "check:fix": "node scripts/check-and-fix.mjs"
   },
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1675466862",
